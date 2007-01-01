@@ -1,0 +1,727 @@
+Index
+=====
+1. What is Breve?
+     a) A simple example
+     b) Breve compared to other template engines
+2. Basic HTML generation
+3. Variable substitution
+4. Special directives
+     a) include
+     b) inheritance
+     c) conditionals
+5. Custom flatteners
+6. Custom renderers
+7. Using Python features in templates
+     a) statements vs expressions
+     b) concrete examples
+8. Putting it together
+A. TBD: Gotchas and tricks
+B. TBD: Extending Breve Tags
+C. TBD: Extending Breve Conditionals
+D. TBD: Creating new XML generators
+
+
+
+CHAPTER 1. What is Breve?
+=========================
+Breve is a template engine inspired heavily by Nevow Stan [1].  Unlike most Python template engines, Breve is not an XML parser, rather Breve templates are expressed as genuine Python code with a single limitation: only expressions are allowed.
+
+A simple example
+----------------
+html [
+    head [
+        title [ 'A simple example' ]
+    ],
+
+    body [
+        h1 [ 'This is an example of Breve' ], br,
+        div ( style = 'text-align: center;' ) [
+            span [ 
+                '''
+                As you can see, Breve markup maps very 
+                directly to the final HTML output.
+                ''' 
+            ]
+        ]
+    ]
+]
+
+This template would output the following:
+
+<html>
+    <head>
+        <title>A simple example</title>
+    </head>
+    <body>
+        <h1>This is an example of Breve</h1>
+        <div style="text-align: center;">
+             <span>
+                 As you can see, Breve markup maps very 
+                 directly to the final HTML output.
+             </span>
+        </div>
+    </body>
+</html>
+
+You can quickly see how Breve's syntax is far more terse than the generated HTML output.  
+This is the first obvious advantage of Breve.  Templates require less typing and appear
+less cluttered.
+
+
+Breve compared to other template engines
+----------------------------------------
+Most Python template engines (with only a few notable exceptions) are XML derivatives.  
+That is, they are either valid XML (e.g. Zope's ZPT) or they are non-validating XML 
+derivatives (i.e. Kid and Genshi) with template directives embedded within the XML.
+These types of template engines have the apparent advantage of being familiar to designers
+who may not be familiar with programming languages but know XML/HTML.  While most designers 
+may be familiar with X/HTML, they probably aren't familiar with the odd tags and directives
+these template engines insert into the template, so this perceived advantage is 
+unsubstantiated.  My experience has shown most template engines to be equally 
+(in)comprehensible to the average designer.
+
+One notable advantage to Breve is that it consists of a single syntax.  That is, there is not
+a separate syntax for markup and a separate syntax for template directives.  There is only
+one syntax that is universal to the entire template.  
+
+Another advantage to Breve is that because it is real Python code, rendering is fast.  
+
+Most XML-based template engines require something like the following process to render: 
+
+           parse XML template -> generate DOM -> flatten DOM to HTML.  
+
+Breve requires only:
+
+           parse Python code -> flatten DOM to HTML
+
+This is because Breve templates *are* the DOM.  Further, because Breve's parser is Python's 
+parser, Breve takes advantage of any optimizations available in the Python parser.  
+Also, once a Breve template has been parsed, the output (Python byte code) can be cached 
+and reused for further performance gains.
+    
+Another advantage Breve has over many other template engines is that it can be easily extended
+to generate other types of output besides HTML.  For instance, Breve has been used to generate
+XRC, the XML micro-language used by wxWidgets [2] for describing graphical user interface 
+elements.  It's also been used to generate RSS and Atom feeds. Because Breve has a pluggable
+XML generation system (and defining new tags is remarkably simple) it's ideally suited for
+many applications outside the web.
+ 
+
+CHAPTER 2.  Basic HTML Generation
+=================================
+Breve supports all the expected HTML tags.  Translating a typical HTML document is usually no
+more complicated than the following:
+  1) replace open tags with "tag ["
+  2) replace the close tags with "]"
+  3) put parentheses around attributes ( such as style="" and id="" )
+  4) put commas between adjacent tags
+
+Consider the example given earlier to get a good picture of what this entails.
+
+
+Using Variables
+---------------
+Template engines aren't of much use if you can't dynamically generate content (although 
+Breve's clean syntax would be an advantage in any case).  Using variables in Breve is quite
+simple: you simply pass the variable (usually from your framework's controller) and then use
+it in your template.  An example for TurboGears [3] might be as follows:
+
+# controllers.py
+from datetime import datetime
+@view ( 'breve:.index.b' )
+def index ( self, *args, **kw ):
+     today = datetime.today ( ).strftime ( '%Y/%m/%d' )
+     return dict ( 
+          message = 'Hello, world',
+          today = today
+     )
+
+# index.b
+html [
+     body [
+          span [ message ], br,
+          span [ 'Today is ', today ]
+     ]
+]
+
+Note that Breve templates usually end with a ".b" extension (although this can be changed).
+The output of the above would be something like this:
+<html>
+    <body>
+        <span>Hello, world</span><br />
+        <span>Today is 2006/12/27</span>
+    </body>
+</html>
+
+
+
+CHAPTER 3. Special Directives
+=============================
+Variable substitution is useful, but Breve supports much more powerful features that help
+organize your templates and assist with code reuse.  
+
+
+The include directive
+---------------------
+The first and simplest of these is simple file includes.  Templates may include fragments
+of Breve from other files.  For example:
+
+# index.b
+html [
+    body [
+         span ( class_ = 'title' ) [ 'Include directive' ],
+         div ( class_ = 'para' ) [
+             include ( 'fragment' )
+         ]
+    ]
+]
+
+# fragment.b
+div [
+     'This could have been any amount of Breve'
+]
+
+You could also combine this with variable substitution to dynamically select fragments to
+include in your template, for example:
+
+# index.b
+html [
+    body [
+         span [ "We're going to include %.b" % page ],
+         include ( page )
+    ]
+]
+
+Assuming that the variable "page" was populated with the path to a file containing Breve code,
+this would have included whatever file was stored in that variable.
+
+However, there are better ways of doing this that we'll be covering next.
+
+
+Template Inheritance
+--------------------
+Inheritance is more complicated than simple includes, but more powerful as well.  At some level
+it can be seen as the inverse of includes, since it's the fragments that specify what they'll 
+be included in.  This model is especially useful in frameworks (such as TurboGears and 
+CherryPy) where a class or method (referred to a a "controller") directly represent a 
+particular page on a website.  You *could* solve this problem by dynamically selecting files
+to include as in the earlier section, but it's much better to use inheritance.  It's much 
+easier to demonstrate than explain so here's a short example:
+
+# controllers.py
+@view ( 'breve:contact.b' )
+def contact ( self, *args, **kw ):
+    return ( { } )
+ 
+
+# contact.b
+inherits ( 'index' ) [
+    override ( 'content' ) [
+        div ( id = 'contacts' ) [
+            ul [
+                li [ a ( href = 'mailto:cliff@domain.com' ) [ 'Cliff' ] ],
+                li [ a ( href = 'mailto:laura@domain.com' ) [ 'Laura' ] ]
+            ]
+        ]
+    ]
+]
+
+# index.b
+html [
+     body [
+         slot ( 'content' )
+     ]
+]
+
+This may seem complicated (and there are a few new directive that must be taken together), 
+but it's really quite simple (especially if you are familiar with the concept of inheritance
+from Python and other programming languages).
+
+Here's the basic flow of events:
+The controller specifies that it will render the template "contact.b".  However this template
+gives notice that it is only part of a larger whole by using the "inherits" directive.  The 
+"inherits" directive tells Breve that this template consists only of fragments that will fill
+in empty "slots" in some other template (whose name is given in the parentheses following the
+"inherits" directive).
+Now that Breve knows what *template* to fill in with fragments from this template, it needs to 
+know what slots to fill in (our example has only one, but there could be several).  This is 
+what the "override" directive does.  It tells Breve to replace the "slot" named "content" with 
+the fragment specified.  More than one slot may be given:
+
+# fragment.b
+inherits ( 'index' ) [
+    override ( 'main-menu' ) [
+        div ( class_ = 'menu' ) [
+             ul [
+                  li [ a ( href = '/' ) [ 'Home' ] ],
+                  li [ a ( href = '/about' ) [ 'About' ] ]
+             ] 
+        ]
+    ],
+
+    override ( 'content' ) [
+        div ( class_ = 'body-text' ) [ 
+            '''Welcome to our humble site.  Enjoy your stay.'''
+        ]
+    ]
+]
+
+# index.b
+html [
+     body [
+          slot ( 'main-menu' ),
+          slot ( 'content' )
+     ]
+]
+
+The output of the above would look like this:
+<html>
+    <body>
+        <div class="main-menu">
+            <ul>
+                <li><a href="/"></a>Home</li>
+                <li><a href="/about">About</a></li>
+            </ul>
+        </div>
+        <div class="body-text">
+            Welcome to our humble site.  Enjoy your stay.
+        </div>
+    </body>
+</html>
+
+Inheritance can go many layers deep and the deepest layer (i.e. the one farthest from the 
+root template) has the final say.  For example:
+
+# frag2.b
+inherits ( 'frag1' ) [
+    override ( 'slot-1' ) [
+        span [ 'Hello from frag2' ]
+    ],
+    override ( 'slot-2' ) [
+        span [ 'Hello from frag2' ]
+    ]
+]
+
+# frag1.b
+inherits ( 'index' ) [
+    override ( 'slot-1' ) [
+        span [ 'Hello from frag1' ]
+    ],
+    override ( 'slot-3' ) [
+        span [ 'Hello from frag1' ]
+    ]
+]
+
+# index.b
+html [
+    body [
+         slot ( 'slot-1' ),
+         slot ( 'slot-2' ),
+         slot ( 'slot-3' )
+    ]
+]
+
+Then if we told our controller to render frag2.b, we would get the following:
+
+<html>
+    <body>
+        <span>Hello from frag2</span>
+        <span>Hello from frag2</span>
+        <span>Hello from frag1</span>
+    </body>
+</html>
+
+Notice that even though frag1.b specified that it would override slot-1, because frag2.b also
+specified that it would override slot-1 and, being further from the "root" document (in this
+case index.b), it has the last say and so does the override.   
+
+As an aside, something that's been used several times now but not mentioned is appending 
+an underscore ( _ ) to certain attributes.  This is side-effect of using Python as a 
+template language.  Some words that are used as HTML attributes are also reserved Python
+keywords ("class" being the most commonly used one).  Because it would be a Python syntax
+error to use the word "class" outside an actual class definition, we are forced to append an
+underscore to prevent this name clash.  Helpfully, we don't need to actually remember which
+attributes conflict with Python keywords.  If you don't know which might cause problems, simply
+append an underscore to *all* attributes.  Breve will accept it either way. 
+
+
+Conditional Expressions
+-----------------------
+For the most part, it's best to not put too much logic in your templates.  It tends to make
+them cluttered and difficult to read.  Also, debugging templates is usually more difficult
+than debugging actual program code so the simpler they are the better.
+Regardless, it's sometimes useful to be able to embed bits of simple logic in templates. To
+that end, Breve provides a few simple constructs for making rudimentary decisions directly
+within the template.  If you find yourself tempted to use these constructs, pause and consider
+if perhaps this could be better done within the controller.  Usually the controller is the 
+proper place for logic but on rare occassions it makes sense to do it in the template.  Where
+to draw the line is something that comes with experience.  If you find your templates getting 
+difficult to understand then you've probably gone too much the wrong direction.  
+
+
+The switch/case conditional
+---------------------------
+The first conditional expression is the switch/case conditional.  If you are familiar with
+languages such as C, then this is a familiar construct (albeit with somewhat different syntax).
+An example:
+
+html [
+    body [
+        switch ( username ) [
+            case ( None ) [ span [ "Please login" ] ],
+            default [ "Welcome back, %s" % username ]
+        ]
+    ]
+]
+
+In the above example, the switch/case conditional is used to test the value of the "username"
+variable.  If the variable contains None (which we assume means no one is logged in), then
+we display a message directing the user to login.  If it's *anything else*, then we assume 
+it contains a valid username and we display a welcome message.  
+There are a few things to note about this construct:
+
+1) There can be as many "case" directives as you need
+2) "case" directives are evaluated from top to bottom.  This means you should probably
+   put the most common cases near the top for performance reasons (although if your 
+   conditional is long enough to make much difference then probably you should have put  
+   this logic in the controller).
+3) The "default" directive is optional and, if present, *must be last*.  Evaluation of the
+   conditional stops whenever a "case" directive meets the criteria or the "default" directive
+   is encountered, so any further "case" directives after the default will never be evaluated.
+4) If no "case" directive satisfies the test and there is no "default" directive, the 
+   expression as a whole evaluates to nothing (i.e. it won't appear in the final HTML output).
+
+
+
+CHAPTER 5. Custom Flatteners
+============================
+So far, most of the features of Breve are pretty typical of most template engines.  In fact,
+Breve offers far fewer features than most (we consider this a good thing).  However, Breve
+tries to offer the fewest but most powerful and expressive features.  Quality over quantity.
+One of the simplest yet most powerful features of Breve is the concept of flatteners.
+As I mentioned earlier, there's only one process to turn a Breve template into its final
+HTML form and that process is called "flattening".  All the keywords such as "div" and "span"
+that you use in Breve templates have a default flattener.  In fact, anything that can be 
+printed (i.e. using the "print" statement) in Python can be flattened automatically by Breve.
+However, sometimes we want certain things to be flattened in a particular way.  Quite often
+the string representation of Python objects isn't at all what we'd want in our HTML output.
+Consider the first example back in Chapter 1 that used the datetime object. In that example, 
+we formatted the output in the controller prior to passing it to the template.
+Let's try it again using a custom flattener:
+
+# controllers.py
+from datetime import datetime
+from breve.flatten import register_flattener
+
+def flatten_date ( o ):
+    return o.strftime ( '%Y/%m/%d' )
+register_flattener ( datetime, flatten_date )
+
+@view ( 'breve:index' )
+def index ( self ):
+    today = datetime.today ( )
+    return dict ( 
+        today = today
+    )
+
+# index.b
+html [
+    body [
+        span [ 'Today is', today ] 
+    ]
+]
+
+The function "register_flattener" takes two arguments: a type and a function.  Whenever Breve
+encounters an object that matches the registered type, it will pass that object to the 
+specified function to be flattened.  The output of the function is what will appear in the
+final HTML output:
+
+<html>
+    <body>
+        <span>Today is 2006/12/27</span>
+    </body>
+</html>
+
+This is an extremely simple example, but it doesn't take much to imagine the ways this concept
+can be applied.  Database records could be flattened to forms, Python lists could be flattened 
+to HMTL tables or lists.  The beautiful thing is that no special formatting need appear 
+anywhere but in the flattener.  Again this fits with the Breve philosophy of keeping templates
+as simple and clean as possible.
+
+
+
+CHAPTER 6: Custom Renderers
+===========================
+Much as flatteners allow you to generate custom HTML when a particular Python object is 
+encountered, renderers allow you to generate custom template code for particular template
+tags.  While flatteners generate the final HTML, renderers generate template fragments.
+For example:
+
+# controllers.py
+@view ( template = 'breve:index' )
+def index ( self ):
+    def hello ( tag, data = None ):
+        return tag [ 
+            span ( style = 'font-weight: bold;' ) [ 'Hello, world' ] 
+        ]
+    return ( dict ( 
+        hello_renderer = hello
+    ) )
+
+# index.b
+html [
+    body [
+        div ( render = hello_renderer )
+    ]
+]
+
+This would output:
+
+<html>
+    <body>
+        <div>
+            <span style='font-weight: bold;'>Hello, world</span>
+        </div>
+    </body>
+</html>
+  
+You'll notice, however, that the renderer can accept a second argument "data".  You can pass 
+any value or variable in here, for example:
+
+# controllers.py
+@view ( template = 'breve:index' )
+def index ( self ):
+    def hello ( tag, data = None ):
+        return tag [ 
+            span ( style = 'font-weight: bold;' ) [ 'Hello, %s' % data ] 
+        ]
+    return ( dict ( 
+        hello_renderer = hello
+    ) )
+
+# index.b
+html [
+    body [
+        div ( render = hello_renderer, data = 'Joe' )
+    ]
+]
+
+This would output:
+
+<html>
+    <body>
+        <div>
+            <span style='font-weight: bold;'>Hello, Joe</span>
+        </div>
+    </body>
+</html>
+
+Again, this is a very simple (and rather contrived) example, but these simple building blocks
+are quite powerful when combined in creative ways.
+
+
+CHAPTER 7: Using Python constructs in templates
+===============================================
+Since Breve templates *are* Python, you are free to use Python code within them with a single
+(but important) limitation: Breve templates are expressions and since Python doesn't allow
+embedding statements within expressions, no Python statements are allowed.
+
+A) Statements vs expressions
+----------------------------
+Python is an imperative language.  This means that it makes a distinction between statements
+and expressions.  Logically, there is no real distinction between a statement and an 
+expression (all statements could be expressions if the language allowed it, and many 
+languages do, Lisp and Ruby being two notable ones).  Ultimately, the distinction boils down
+to a single rule: expressions can be embedded in other expressions, statements cannot.  
+Because of this, expressions return a value (although sometimes it is None), statements do 
+not return a value.  It's probably best to simply show some statements and expressions and
+let your intuition do the rest.
+
+Examples of statements:
+-----------------------
+if ( x == 1 ):
+    pass
+
+for x in range ( 10 ):
+    pass
+
+x = 6
+
+def f ( x ):
+    pass
+
+Examples of expressions:
+------------------------
+3 + 2
+
+x == 1
+
+f ( x )
+
+
+B) Some concrete examples
+-------------------------
+Here's some examples of Python code embedded in Breve templates to accomplish common tasks.  
+Just remember that, like the conditional expressions mentioned earlier, it's best to keep
+logic in the template to a minimum.
+
+    1) Using a list as a conditional
+    --------------------------------
+    div [
+        [ 'goodbye', 'hello' ][ bool ( logged_in ) ]
+    ]
+
+    2) List comprehensions as loops
+    -------------------------------
+    ul [
+       [ li ( s ) for s in items ]
+    ]
+
+    3) Dictionaries as selectors
+    ----------------------------
+    div [
+        { 1: span [ 'One' ], 
+          2: span [ 'Two' ],
+          3: span [ 'Three' ] } [ var ]
+    ]
+
+And of course you are free to pass functions, objects and variables into the template and
+*use* them freely.  You simply can't *define* them there.  You must define them externally 
+to the template (i.e. in your controller) and pass the object in.
+
+As an aside, it is entirely possible to implement a goodly portion of Python's statements 
+as expressions.  This has been done at least once [4].  If you truly feel the need for rich
+logic constructs in your templates you could import a module such as this and pass it into
+the template's namespace (much the same way custom tags can be passed in, which we'll 
+discuss in a later chapter).
+
+
+CHAPTER 8: Putting it all together
+==================================
+One of the biggest stumbling blocks when learning to use Breve is changing how you think 
+about template organization.  Traditional templates with rich logic features built in 
+make it quite easy to paste together a template without much thought.  However they also
+make it quite easy to create templates that appear to have been put together without much
+thought.  Templates are code and we feel they should be given as much care as any other 
+piece of code, especially since debugging HTML and CSS accounts for so much time in website
+design.  For many of the same reasons the more complicated approach of tableless CSS layout is 
+preferable to the easier-to-write table-based layouts of yore, the slightly more difficult 
+approach of Breve pays off in the long run (by "difficult" I mean "requires forethought
+to get optimal results").  
+
+Despite requiring more forethought, there are several patterns that can be readily adopted
+to make your life with Breve simpler.
+
+
+Pattern 1: the multi-faceted site
+---------------------------------
+A common architecture of sophisticated websites is to have two (or more) views of the same site
+depending on certain conditions (most often based upon the visitor's status: anonymous, 
+registered, paying/premium, administrator, etc).  Breve's inheritance model is ideal for this
+architecture.  Also custom flatteners and renderers can be a great boon.  Let's consider a 
+simple site that has two facets: anonymous ("guest") and registered ("user").  Depending 
+on the user's status, many aspects of the site will differ.  
+
+We'll start with the following templates:
+
+# index.b
+html [
+    body [
+        slot ( 'greeting' ),
+        slot ( 'sidebar' ),
+        slot ( 'content' ) 
+    ]
+]   
+
+# guest.b
+inherits ( 'index' ) [
+    override ( 'greeting' ) [
+        span [ 
+            'Welcome, guest. ',
+            'Please ', a ( href = '/login' ) [ 'login' ], 
+            ' if you have an account.' 
+        ]
+    ],
+
+    override ( 'sidebar' ) [
+        ul [
+            [ li [ m ] for m in guest_menus ]
+        ],
+        include ( 'advertisements' )
+    ],
+
+    override ( 'content' )
+]
+
+# user.b
+inherits ( 'index' ) [
+    override ( 'greeting' ) [
+        'Welcome back, %s!' % user.name,
+        'You have %d new messages' % len ( user.messages )
+    ],
+
+    override ( 'sidebar' ) [
+        ul [
+            [ li [ m ] for m in user_menus ]
+        ]
+    ],
+
+    override ( 'content' )
+]
+
+Now, you can see we've managed to dynamically change aspects of the site by simple organization
+rather than by embedding logic within the templates.  We *could* have had a single, longer
+template with conditionals for selecting output, but that would have gotten messy pretty fast.
+One thing to note is that if an "override" directive doesn't have a body, then the "slot" it 
+overrides will effectively disappear from the final HTML output.
+
+In all the examples so far, we've hard-coded URLs directly into the template.  Often this isn't
+desirable since URLs may change over time (or depend upon which facet of the site the visitor
+is viewing).  Many frameworks use a dispatching system to map URLs to to views (for example,
+Pylons [5] uses Routes [6]) and we want to be able to integrate this mapping down to the 
+template level.  This is a place where custom renderers can come in handy.  We'll change 
+the guest.b template from the example above to leverage a custom renderer for the login URL:
+
+# controllers.py
+def render_login_url ( tag, data = None ):
+    return tag ( href = '/login' ) [ 'login' ]
+
+@view ( template = 'breve:guest' )
+def index ( self ):
+    return ( dict ( 
+        render_login_url = render_login_url
+    ) )
+
+# guest.b
+inherits ( 'index' ) [
+    override ( 'greeting' ) [
+        span [ 
+            'Welcome, guest. ',
+            'Please ', a ( render = render_login_url ), 
+            ' if you have an account.' 
+        ]
+    ],
+
+    # ...
+]
+
+There's no hard-and-fast rule for when things should be coded directly into a template or
+handed off to the controller, but usually if you are finding it difficult to express
+something in the template then it probably belongs in the controller (either using
+a custom renderer or flattener).  
+
+
+For more information, see the "examples" directory that comes with Breve.
+
+
+Happy hacking!
+
+
+References
+==========
+[1] http://www.divmod.org
+[2] http://www.wxwidgets.org
+[3] http://www.turbogears.org
+[4] http://cheeseshop.python.org/pypi/statements
+[5] http://pylonshq.com
+[6] http://pylonshq.com/docs/0.9.3/module-routes.html
