@@ -64,7 +64,7 @@ class Template ( object ):
 
     def flatten_slot ( T, o ):
         return flatten (
-            T.fragments.get ( o.name, 'slot(%s) not filled' % o.name )
+            T.fragments.get ( o.name, 'slot named "%s" not filled' % o.name )
         )
 
     def include ( T, filename ):
