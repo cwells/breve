@@ -86,6 +86,10 @@ class Invisible ( Tag ):
 class invisible ( Proto ):
     Class = Invisible
 
+class xml ( str ):
+    def __str__ ( self ):
+        return self
+
 class lorem_ipsum ( Tag ):
     ''' silliness ensues '''
     children = [
@@ -113,6 +117,7 @@ tags.update ( dict (
     script = script ( 'script' ),
     cdata = cdata,
     invisible = invisible ( 'invisible' ),
+    xml = xml,
     lorem_ipsum = lorem_ipsum,
 ) )
 

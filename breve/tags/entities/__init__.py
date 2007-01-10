@@ -1,7 +1,22 @@
+from breve.flatten import register_flattener
+
 entities = { }
 
+class Entity ( str ):
+    def __init__ ( self, args ):
+        self.name, self.value, self.descr = args
+        
+    def __repr__ ( self ):
+        return self.descr
+
+def flatten_entity ( e ):
+    return e.value
+
+register_flattener ( Entity, flatten_entity )
+
 entities = dict (
-    [ ( name, "&#%s;" % value ) for ( name, value, descr ) in [
+    [ ( name, Entity ( ( name, "&#%s;" % value, descr ) ) )
+      for ( name, value, descr ) in [
         ( 'nbsp', '160', 'non-breaking space' ),
         ( 'cent', '162', 'cent sign ' ),
         ( 'pound', '163', 'pound sign' ),

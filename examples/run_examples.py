@@ -32,7 +32,8 @@ for root, template in [ ( '1_basics', 'index' ),
                         ( '3_inheritance', 'fragment' ),
                         ( '4_flatteners', 'index' ),
                         ( '5_conditionals', 'index' ),
-                        ( '6_dynamic_inheritance', 'fragment' ) ]:
+                        ( '6_dynamic_inheritance', 'fragment' ),
+                        ( '7_escape_artist', 'index' ) ]:
     print "RUNNING EXAMPLE", root, template
     print "=" * 40
     t = Template ( html.tags, root = root )

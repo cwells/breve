@@ -1,5 +1,6 @@
 from breve.flatten import flatten, register_flattener
 import _conditionals as C
+from xml.sax.saxutils import escape, quoteattr
 
 conditionals = dict ( [
     ( k, v ) for k, v in C.__dict__.items ( )
@@ -24,6 +25,7 @@ class Tag ( object ):
         self.render = render
         self.data = data
         for k, v in kwargs.items ( ):
+            v = quoteattr ( v )
             if k [ -1 ] == '_':
                 self.attrs [ k [ :-1 ] ] = v
             else:
@@ -46,7 +48,7 @@ class Tag ( object ):
             t = self
 
         attrs = ''.join (
-            [ ' %s="%s"' % ( k, v )
+            [ ' %s=%s' % ( k, v )
               for ( k, v ) in t.attrs.items ( ) ]
         )
         if t.children:
@@ -67,8 +69,9 @@ class Proto ( str ):
     
     def __getitem__ ( self, children ):
         return self.Class ( self )[ children ]
-
+        
 def flatten_proto ( p ):
     return '<%s />' % p
 
 register_flattener ( Proto, flatten_proto )
+register_flattener ( str, escape )
