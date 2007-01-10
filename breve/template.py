@@ -9,22 +9,21 @@ breve - A simple s-expression style template engine inspired by Nevow's Stan.
 '''
 
 import os
-from breve.tags import Proto, Tag, Namespace
+from breve.tags import Proto, Tag, Namespace, xml, conditionals
 from breve.tags.entities import entities
-from breve.tags import conditionals
-from breve.tags.html import xml
 from breve.flatten import flatten, register_flattener
 from breve.cache import Cache
 
 class Template ( object ):
     extension = 'b' # default template extension
+    debug = False
     doctype = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
                   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n'''
     xml_encoding = '''<?xml version="1.0" encoding="UTF-8"?>\n'''
     namespace = None # any variables passed in will be in this Namespace (a string)
     cache = Cache ( )
     
-    def __init__ ( T, tags, root = '.' ):
+    def __init__ ( T, tags, root = '.', **kw ):
         '''
         Uses "T" rather than "self" to avoid confusion with
         subclasses that refer to this class via scoping (see
@@ -32,7 +31,7 @@ class Template ( object ):
         '''
         class inherits ( Tag ):
             def __str__ ( self ):
-                return T.render ( template = self.name, fragments = self.children )
+                return T.render_partial ( template = self.name, fragments = self.children )
 
         T.root = root
         T.tags = { }
@@ -48,6 +47,10 @@ class Template ( object ):
             slot = T.__slot
         ) )
         register_flattener ( T.__slot, T.flatten_slot )
+
+    def __del__ ( T ):
+        print "UNREGISTER", T
+        unregister_flattener ( T.__slot )
 
     class override ( Tag ): 
         def __str__ ( self ):
@@ -69,22 +72,14 @@ class Template ( object ):
         )
 
     def include ( T, filename ):
-        return xml ( T.render ( template = filename ) )
+        return xml ( T.render_partial ( template = filename ) )
 
-    def render ( T, template, fragments = None, vars = None, fragment = False, **kw ):
+    def render_partial ( T, template, fragments = None, vars = None, **kw ):
         if fragments:
             for f in fragments:
                 if f.name not in T.fragments:
                     T.fragments [ f.name ] = f
 
-        if not fragment:
-            doctype = kw.get ( 'doctype', '' )
-        else:
-            doctype = ''
-            
-        if doctype:
-            doctype = T.xml_encoding + doctype
-            
         if vars:
             ns = kw.get ( 'namespace', T.namespace )
             if ns:
@@ -94,11 +89,34 @@ class Template ( object ):
                 T.vars.update ( vars )
 
         filename = "%s.%s" % ( os.path.join ( T.root, template ), T.extension )
-        bytecode = T.cache.compile ( filename )
         
         try:
-            return doctype + flatten ( eval ( bytecode, T.tags, T.vars ) )
+            bytecode = T.cache.compile ( filename )
+            return flatten ( eval ( bytecode, T.tags, T.vars ) )
         except:
-            print "Error in template ( %s )" % template
-            raise
+            if T.debug:
+                import sys, types, pydoc                
+                ( etype, evalue )= sys.exc_info ( )[ :-1 ]
 
+                exception = [
+                    '<span class="template_exception">',
+                    'Error in template: %s %s: %s' %
+                    ( filename,
+                      pydoc.html.escape ( str ( etype ) ),
+                      pydoc.html.escape ( str ( evalue ) ) )
+                ]
+                if type ( evalue ) is types.InstanceType:
+                    for name in dir ( evalue ):
+                        if name [ :1 ] == '_' or name == 'args': continue
+                        value = pydoc.html.repr ( getattr ( evalue, name ) )
+                        exception.append ( '\n<br />%s&nbsp;=\n%s' % ( name, value ) )
+                exception.append ( '</span>' )
+                return xml ( ''.join ( exception ) )
+                        
+                
+            else:
+                print "Error in template ( %s )" % template
+                raise
+        
+    def render ( T, template, fragments = None, vars = None, **kw ):
+        return T.xml_encoding + T.doctype + T.render_partial ( template, fragments, vars )
