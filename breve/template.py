@@ -19,6 +19,7 @@ class Template ( object ):
     extension = 'b' # default template extension
     doctype = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
                   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n'''
+    xml_encoding = '''<?xml version="1.0" encoding="UTF-8"?>\n'''
     namespace = None # any variables passed in will be in this Namespace (a string)
     cache = Cache ( )
     
@@ -76,6 +77,9 @@ class Template ( object ):
                     T.fragments [ f.name ] = f
 
         doctype = kw.get ( 'doctype', '' )
+        if doctype:
+            doctype = T.xml_encoding + doctype
+            
         if vars:
             ns = kw.get ( 'namespace', T.namespace )
             if ns:
@@ -86,7 +90,7 @@ class Template ( object ):
 
         filename = "%s.%s" % ( os.path.join ( T.root, template ), T.extension )
         bytecode = T.cache.compile ( filename )
-
+        
         try:
             return doctype + flatten ( eval ( bytecode, T.tags, T.vars ) )
         except:

@@ -67,7 +67,7 @@ class Tag ( object ):
             return ( '<%s%s>' % ( t.name, attrs ) +
                      ''.join ( [ flatten ( c ) for c in t.children ] ) +  
                      '</%s>' % t.name )
-        return '<%s%s />' % ( t.name, attrs )
+        return '<%s%s></%s>' % ( t.name, attrs, t.name )
 
     def clear ( self ):
         self.children = [ ]
