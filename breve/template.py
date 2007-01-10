@@ -13,11 +13,13 @@ from breve.tags import Proto, Tag
 from breve.tags.entities import entities
 from breve.tags import conditionals
 from breve.flatten import flatten, register_flattener
+from breve.cache import Cache
 
 class Template ( object ):
     extension = 'b' # default template extension
     doctype = '''<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
                    "http://www.w3.org/TR/html4/strict.dtd">'''
+    cache = Cache ( )
     
     def __init__ ( T, tags, root = '.' ):
         '''
@@ -74,9 +76,11 @@ class Template ( object ):
         if vars:
             T.vars.update ( vars )
 
-        t = file ( "%s.%s" % ( os.path.join ( T.root, template ), T.extension ), 'r' ).read ( )
+        filename = "%s.%s" % ( os.path.join ( T.root, template ), T.extension )
+        bytecode = T.cache.compile ( filename )
+
         try:
-            return doctype + '\n' + flatten ( eval ( t, T.tags, T.vars ) )
+            return doctype + '\n' + flatten ( eval ( bytecode, T.tags, T.vars ) )
         except:
             print "Error in template ( %s )" % template
             raise
