@@ -9,7 +9,7 @@ breve - A simple s-expression style template engine inspired by Nevow's Stan.
 '''
 
 import os
-from breve.tags import Proto, Tag
+from breve.tags import Proto, Tag, Namespace
 from breve.tags.entities import entities
 from breve.tags import conditionals
 from breve.flatten import flatten, register_flattener
@@ -19,6 +19,7 @@ class Template ( object ):
     extension = 'b' # default template extension
     doctype = '''<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
                    "http://www.w3.org/TR/html4/strict.dtd">'''
+    namespace = None # any variables passed in will be in this Namespace (a string)
     cache = Cache ( )
     
     def __init__ ( T, tags, root = '.' ):
@@ -68,13 +69,20 @@ class Template ( object ):
     def include ( T, filename ):
         return flatten ( T.render ( template = filename ) )
 
-    def render ( T, template, fragments = None, vars = None, doctype = '' ):
+    def render ( T, template, fragments = None, vars = None, **kw ):
         if fragments:
             for f in fragments:
                 if f.name not in T.fragments:
                     T.fragments [ f.name ] = f
+
+        doctype = kw.get ( 'doctype', T.doctype )
         if vars:
-            T.vars.update ( vars )
+            ns = kw.get ( 'namespace', T.namespace )
+            if ns:
+                T.vars [ ns ] = Namespace ( )
+                T.vars [ ns ].update ( vars )
+            else:
+                T.vars.update ( vars )
 
         filename = "%s.%s" % ( os.path.join ( T.root, template ), T.extension )
         bytecode = T.cache.compile ( filename )
