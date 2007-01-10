@@ -1,0 +1,37 @@
+This directory is for plugin adapters for various frameworks.
+This is NOT for creating Breve plugins, rather for adapting
+Breve AS a plugin to other frameworks.
+
+Included is a Buffet (CherryPy/TurboGears/Pylons) adapter.
+
+TODO: 
+ - django adapter
+
+
+Framework-specific notes:
+=========================
+Pylons
+------
+See http://pylonshq.com/docs/0.9.4/template_plugins.html
+
+To add Breve as an available template engine, edit config/middleware.py, and add 
+the following right before the line that reads 'config.init_app ( ... )':
+
+breve_opts = { }
+config.add_template_engine ( 'breve', 'yourproject.templates', breve_opts )
+
+To change the default template engine to Breve, edit yourproject/config/middleware.py, 
+and change the line containing 'config.init_app' change the line to:
+
+config.init_app(global_conf, app_conf, package='yourproject', template_engine='breve')  
+
+
+TurboGears
+----------
+Simply prefix your template with "breve:".  For example:
+
+@expose ( 'breve:templates.index' )
+def mycontroller ( self, *args, **kw ):
+    return { }
+
+

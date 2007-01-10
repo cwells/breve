@@ -1,0 +1,129 @@
+#!/usr/bin/python
+
+from HTMLParser import HTMLParser
+import sys
+
+class Html2Breve ( HTMLParser ):
+    __depth = 0
+    __indent = 4
+    __injs = False
+    __jsdepth = 0
+    __out = sys.stdout
+    __prev = None
+    __needscomma = ( None, 'data', 'entity' )
+    
+    def fmt_attrs ( self, attrs ):
+        if attrs:
+            attrs = ' ( %s )' % ', '.join ( [ '%s_ = "%s"' % ( a, v )
+                                              for ( a, v ) in attrs ] )
+        return attrs or ''
+    
+    def handle_starttag ( self, tag, attrs ):
+        if tag == 'script':
+            self.handle_startjs ( tag, attrs )
+        else:
+            self.__out.write (  '%s\n%s%s%s [' % (
+                    [ '', ',' ][ self.__depth > 0
+                                 and self.__prev in self.__needscomma ],
+                    ' ' * self.__depth,
+                    tag,
+                    self.fmt_attrs ( attrs )
+                )
+            )
+            self.__depth += self.__indent
+        self.__prev = tag
+        
+    def handle_endtag ( self, tag ):
+        if tag == 'script':
+            self.handle_endjs ( tag )
+        else:
+            self.__depth -= self.__indent
+            self.__out.write ( '\n%s]' % (
+                    # [ '', '#,#' ][ self.__prev is not None ],
+                    ' ' * self.__depth,
+                    # [ '\n', ',' ] [ self.__depth > 0 ]
+                )
+            )
+        self.__prev = None
+
+    def handle_startendtag ( self, tag, attrs ):
+        self.__out.write (  '%s\n%s%s%s' % (
+                [ '', ',' ][ self.__depth > 0
+                             and self.__prev in self.__needscomma ],
+                ' ' * self.__depth,
+                tag,
+                self.fmt_attrs ( attrs )
+            )
+        )
+        self.__prev = None
+
+    def handle_data ( self, data ):
+        data = data.strip ( )
+        if not data:
+            return
+
+        if self.__injs:
+            if data.startswith ( '}' ):
+                self.__jsdepth -= self.__indent
+                
+            self.__out.write (  '\n%s%s' % ( ' ' * ( self.__depth + self.__jsdepth ), data ) )
+            
+            if data.startswith ( '{' ):
+                self.__jsdepth += self.__indent
+        else:
+            bquote = equote = '"'
+            if '\n' in data:
+                bquote = "'''\n%s" % ( ' ' * self.__depth )
+                equote = "\n%s'''" % ( ' ' * self.__depth )
+                data = data.replace ( '\n', '\n' + ' ' * self.__depth ) 
+
+            self.__out.write (  '%s\n%s%s%s%s' % (
+                    [ '', ',' ][ self.__prev in self.__needscomma ],
+                    ' ' * self.__depth,
+                    bquote,
+                    data,
+                    equote
+                )
+           )
+        self.__prev = 'data'
+
+    def handle_startjs ( self, tag, attrs ):
+        self.__injs = True
+        self.__jsdepth = self.__indent
+        self.__out.write (  "\n%sinlineJS ( '''" % ( ' ' * self.__depth ) )
+        self.__prev = tag
+
+    def handle_endjs ( self, tag ):
+        self.__injs = False
+        self.__jsdepth = 0
+        self.__out.write (  "%s''' )," % ( ' ' * self.__depth ) )
+        self.__prev = tag
+
+    def handle_entityref ( self, name ):
+        sys.stdout.write ( '%s\n%s%s' % (
+                (
+                    [ '', ',' ][ self.__depth > 0
+                                 and self.__prev in self.__needscomma ],
+                    ' ' * self.__depth,
+                    name
+                )
+            )
+        )
+        self.__prev = 'entity'
+
+def usage ( ):
+    print '''
+        Usage:
+            %s <htmlfile>
+    ''' % sys.argv [ 0 ]
+    
+if __name__ == '__main__':
+    if len ( sys.argv ) < 2:
+        usage ( )
+        raise SystemExit
+    
+    p = Html2Breve ( )
+    html = '\n'.join ( [ l.strip ( )
+                         for l in file ( sys.argv [ 1 ], 'rU' ).readlines ( ) ] )
+    p.feed ( html )
+    p.close ( )
