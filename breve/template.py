@@ -15,6 +15,10 @@ from breve.tags import conditionals
 from breve.flatten import flatten, register_flattener
 
 class Template ( object ):
+    extension = 'b' # default template extension
+    doctype = '''<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+                   "http://www.w3.org/TR/html4/strict.dtd">'''
+    
     def __init__ ( T, tags, root = '.' ):
         '''
         Uses "T" rather than "self" to avoid confusion with
@@ -24,8 +28,7 @@ class Template ( object ):
         class inherits ( Tag ):
             def __str__ ( self ):
                 return T.render ( template = self.name, fragments = self.children )
-            
-        T.ext = '.b'
+
         T.root = root
         T.tags = { }
         T.fragments = { }
@@ -49,7 +52,7 @@ class Template ( object ):
 
     class __slot ( object ):
         '''
-        this uses a private name to avoid name clashes with other instances
+        this class uses a private name to avoid name clashes with other instances
         of Template that will also register T.flatten_slot in the global registry
         '''
         def __init__ ( self, name ):
@@ -62,8 +65,8 @@ class Template ( object ):
 
     def include ( T, filename ):
         return flatten ( T.render ( template = filename ) )
-        
-    def render ( T, template, fragments = None, vars = None ):
+
+    def render ( T, template, fragments = None, vars = None, doctype = '' ):
         if fragments:
             for f in fragments:
                 if f.name not in T.fragments:
@@ -71,9 +74,9 @@ class Template ( object ):
         if vars:
             T.vars.update ( vars )
 
-        t = file ( os.path.join ( T.root, template ) + T.ext, 'r' ).read ( )
+        t = file ( "%s.%s" % ( os.path.join ( T.root, template ), T.extension ), 'r' ).read ( )
         try:
-            return flatten ( eval ( t, T.tags, T.vars ) )
+            return doctype + '\n' + flatten ( eval ( t, T.tags, T.vars ) )
         except:
             print "Error in template ( %s )" % template
             raise

@@ -1,5 +1,5 @@
 from breve.flatten import flatten, register_flattener
-from breve.tags import Proto, Tag
+from breve.tags import Proto, Tag, Namespace
 
 #
 # register common HTML elements
@@ -58,8 +58,7 @@ class script ( Tag ):
         self.attrs.update ( kwargs )
         self.children.append ( '' ) # IE requires </script> in all cases
 
-
-tags = { }
+tags = Namespace ( )
 for t in tag_names:
     tags [ t ] = Proto ( t )
 

@@ -22,7 +22,7 @@ setup (
     zip_safe = True,
     entry_points = '''
         [python.templating.engines]
-        breve = breve:Breve
+        breve = breve.plugin.buffet:BreveTemplatePlugin
     '''
 )
     

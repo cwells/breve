@@ -6,6 +6,12 @@ conditionals = dict ( [
     if not k.startswith ( '_' )
 ] )
 
+class Namespace ( dict ):
+    def __getattr__ ( self, attr ):
+        return dict.setdefault ( self, attr, None )
+    __getitem__ = __getattr__
+
+                    
 class Proto ( str ):
     __slots__ = [ ]
     def __call__ ( self, **kwargs ):
@@ -49,15 +55,19 @@ class Tag ( object ):
     def __str__ ( self ):
         if self.render:
             self.children = [ ]
-            return str ( self.render ( self, self.data ) )
+            t = self.render ( self, self.data )
+        else:
+            t = self
 
         attrs = ''.join (
             [ ' %s="%s"' % ( k, v )
-              for ( k, v ) in self.attrs.items ( ) ]
+              for ( k, v ) in t.attrs.items ( ) ]
         )
-        if self.children:
-            return ( '<%s%s>' % ( self.name, attrs ) +
-                     ''.join ( [ flatten ( c ) for c in self.children ] ) +  
-                     '</%s>' % self.name )
-        return '<%s%s />' % ( self.name, attrs )
+        if t.children:
+            return ( '<%s%s>' % ( t.name, attrs ) +
+                     ''.join ( [ flatten ( c ) for c in t.children ] ) +  
+                     '</%s>' % t.name )
+        return '<%s%s />' % ( t.name, attrs )
 
+    def clear ( self ):
+        self.children = [ ]
