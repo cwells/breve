@@ -1,8 +1,11 @@
+import sys; sys.path.insert ( 0, '.' )
+import breve
+
 from setuptools import setup, find_packages
 
 setup (
     name = 'Breve',
-    version = '1.0.19',
+    version = breve.__version__,
     description = '''S-expression based template engine (similar to Nevow Stan)''',
     author = 'Cliff Wells',
     author_email = 'cliff@develix.com',
