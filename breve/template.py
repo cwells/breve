@@ -17,8 +17,8 @@ from breve.cache import Cache
 
 class Template ( object ):
     extension = 'b' # default template extension
-    doctype = '''<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
-                   "http://www.w3.org/TR/html4/strict.dtd">'''
+    doctype = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n'''
     namespace = None # any variables passed in will be in this Namespace (a string)
     cache = Cache ( )
     
@@ -75,7 +75,7 @@ class Template ( object ):
                 if f.name not in T.fragments:
                     T.fragments [ f.name ] = f
 
-        doctype = kw.get ( 'doctype', T.doctype )
+        doctype = kw.get ( 'doctype', '' )
         if vars:
             ns = kw.get ( 'namespace', T.namespace )
             if ns:
@@ -88,7 +88,7 @@ class Template ( object ):
         bytecode = T.cache.compile ( filename )
 
         try:
-            return doctype + '\n' + flatten ( eval ( bytecode, T.tags, T.vars ) )
+            return doctype + flatten ( eval ( bytecode, T.tags, T.vars ) )
         except:
             print "Error in template ( %s )" % template
             raise
