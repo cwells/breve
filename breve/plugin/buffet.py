@@ -67,7 +67,7 @@ class BreveTemplatePlugin ( object ):
         template_root = breve_opts [ 'root' ]
         
         template_path, template_filename = self.load_template ( template )
-        if template_path.startswith ( template_root ):
+        if template_root and template_path.startswith ( template_root ):
             # this feels a bit hackish and brittle
             template_path = template_path [ len ( template_root ) + 1: ]
 
