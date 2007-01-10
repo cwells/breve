@@ -3,7 +3,7 @@ import os
 class Cache:
     def __init__ ( self ):
         self.cache = { }
-        
+
     def compile ( self, template ):
         timestamp = long ( os.stat ( template ).st_mtime )
         if template in self.cache and self.cache [ template ] [ 'timestamp' ] == timestamp:

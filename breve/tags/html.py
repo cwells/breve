@@ -8,8 +8,8 @@ from breve.tags import Proto, Tag, Namespace
 #
 class HtmlProto ( str ):
     __slots__ = [ ]
-    def __call__ ( self, **kwargs ):
-        return Tag ( self )( **kwargs )
+    def __call__ ( self, **kw ):
+        return Tag ( self )( **kw )
     
     def __getitem__ ( self, children ):
         return Tag ( self )[ children ]
@@ -39,7 +39,7 @@ tag_names = [
     'ol','optgroup','option',
     'pre',
     'q',
-    's','samp','script','select','small','span','strike','strong','style','sub','sup',
+    's','samp','select','small','span','strike','strong','style','sub','sup',
     'table','tbody','td','textarea','tfoot','th','thead','title','tr','tt',
     'u','ul',
     'var'
@@ -65,11 +65,10 @@ class inlineJS ( str ):
         return '\n<script type="text/javascript">%s</script>' % cdata ( self.children )
         
 class Script ( Tag ):
-    def __init__ ( self, **kwargs ):
+    def __init__ ( self, *args, **kw ):
         Tag.__init__ ( self, 'script' )
-        self.attrs.update ( kwargs )
-        # self.children.append ( '' ) # IE requires </script> in all cases
-
+        self.attrs.update ( kw )
+    
 class script ( Proto ):
     Class = Script
     
@@ -111,7 +110,7 @@ for t in empty_tag_names:
     
 tags.update ( dict (
     inlineJS = inlineJS,
-    script = script,
+    script = script ( 'script' ),
     cdata = cdata,
     invisible = invisible ( 'invisible' ),
     lorem_ipsum = lorem_ipsum,

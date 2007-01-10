@@ -23,20 +23,35 @@ class case ( object ):
 default = case ( default = True )
 
 
+class when ( object ):
+    def __init__ ( self, condition ):
+        self.value = bool ( condition )
+
+    def __getitem__ ( self, children ):
+        if self.value:
+            return children
+        return ''
+
+    
 if __name__ == '__main__':
     x = 5
-    result = switch ( x ) [
+    username = 'bob'
+    
+    print switch ( x ) [
         case ( 1 ) [ 'x is 1' ],
         case ( 2 ) [ 'x is 2' ],
         case ( 3 ) [ 'x is 3' ],
         default [ 'x is not in list' ]
     ]
-    print result
 
-    logged_in = True
-    result = switch ( logged_in ) [
-        case ( True ) [ 'logged in' ],
-        case ( False ) [ 'not logged in' ]
+    print switch ( bool ( username ) ) [
+        case ( True ) [ '%s is logged in' % username ],
+        case ( False ) [ 'you are not logged in' ]
     ]
-    print result
 
+    print when ( x == 5 ) [
+        'x is 5'
+    ]
+    print when ( x != 4 ) [
+        'x is not 4'
+    ]

@@ -70,13 +70,17 @@ class Template ( object ):
     def include ( T, filename ):
         return flatten ( T.render ( template = filename ) )
 
-    def render ( T, template, fragments = None, vars = None, **kw ):
+    def render ( T, template, fragments = None, vars = None, fragment = False, **kw ):
         if fragments:
             for f in fragments:
                 if f.name not in T.fragments:
                     T.fragments [ f.name ] = f
 
-        doctype = kw.get ( 'doctype', '' )
+        if not fragment:
+            doctype = kw.get ( 'doctype', '' )
+        else:
+            doctype = ''
+            
         if doctype:
             doctype = T.xml_encoding + doctype
             

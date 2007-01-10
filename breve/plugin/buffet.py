@@ -11,6 +11,7 @@ class BreveTemplatePlugin ( object ):
     def __init__ ( self, extra_vars_func = None, options = None ):
         self.get_extra_vars = extra_vars_func
         self.options = options or { }
+        self.breve_opts = None
         
     def get_config ( self, vars ):
         '''
@@ -28,9 +29,10 @@ class BreveTemplatePlugin ( object ):
         }        
 
         if 'std' in vars: # turbogears-specific
-            breve_opts ['root' ] = vars [ 'std'] [ 'config' ] ( 'breve.root', '.' )
-            breve_opts ['doctype' ] = vars [ 'std'] [ 'config' ] ( 'breve.doctype', Template.doctype )
-            breve_opts ['namespace' ] = vars [ 'std'] [ 'config' ] ( 'breve.namespace', Template.namespace )
+            cfg = vars [ 'std'] [ 'config' ]
+            breve_opts ['root' ] = cfg ( 'breve.root', '.' )
+            breve_opts ['doctype' ] = cfg ( 'breve.doctype', Template.doctype )
+            breve_opts ['namespace' ] = cfg ( 'breve.namespace', Template.namespace )
         else: # pylons-specific
             for k, v in self.options.iteritems ( ):
                 if k.startswith ( 'breve.' ):
@@ -63,16 +65,18 @@ class BreveTemplatePlugin ( object ):
         if callable ( self.get_extra_vars ):
             vars.update ( self.get_extra_vars ( ) )
 
-        breve_opts = self.get_config ( vars )
-        template_root = breve_opts [ 'root' ]
+        if self.breve_opts is None:
+            self.breve_opts = self.get_config ( vars )
+
+        template_root = self.breve_opts [ 'root' ]
         
         template_path, template_filename = self.load_template ( template )
         if template_root and template_path.startswith ( template_root ):
-            # this feels a bit hackish and brittle
+            # this feels mildly brittle
             template_path = template_path [ len ( template_root ) + 1: ]
 
         template_obj = Template ( tags = html.tags, root = template_root )
-        
-        return template_obj.render ( template = os.path.join ( template_path, template_filename ),
-                                     vars = vars, **breve_opts )
+
+        return template_obj.render ( os.path.join ( template_path, template_filename ),
+                                     vars = vars, fragment = fragment, **self.breve_opts )
     
