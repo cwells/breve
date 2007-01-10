@@ -90,6 +90,7 @@ class invisible ( Proto ):
 class lorem_ipsum ( Tag ):
     ''' silliness ensues '''
     children = [
+
         'Lorem ipsum dolor sit amet, consectetuer adipiscing elit.',
         'In egestas nisl sit amet odio.',
         'Duis iaculis metus eu nulla.',

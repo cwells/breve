@@ -11,20 +11,6 @@ class Namespace ( dict ):
         return dict.setdefault ( self, attr, None )
     __getitem__ = __getattr__
 
-                    
-class Proto ( str ):
-    __slots__ = [ ]
-    def __call__ ( self, **kwargs ):
-        return Tag ( self )( **kwargs )
-    
-    def __getitem__ ( self, children ):
-        return Tag ( self )[ children ]
-
-def flatten_proto ( p ):
-    return '<%s />' % p
-
-register_flattener ( Proto, flatten_proto )
-
 
 class Tag ( object ):
     def __init__ ( self, name, *args, **kwargs ):
@@ -71,3 +57,18 @@ class Tag ( object ):
 
     def clear ( self ):
         self.children = [ ]
+
+
+class Proto ( str ):
+    __slots__ = [ ]
+    Class = Tag
+    def __call__ ( self, **kwargs ):
+        return self.Class ( self )( **kwargs )
+    
+    def __getitem__ ( self, children ):
+        return self.Class ( self )[ children ]
+
+def flatten_proto ( p ):
+    return '<%s />' % p
+
+register_flattener ( Proto, flatten_proto )
