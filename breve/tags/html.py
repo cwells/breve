@@ -26,18 +26,6 @@ tag_names = [
     'var'
 ]
 
-class doctype ( object ):
-    def __init__ ( self, type, dtd, validator ):
-        self.type = type
-        self.dtd = dtd
-        self.validator = validator
-        
-    def __str__ ( self ):
-        return ( '''<!DOCTYPE %s PUBLIC "%s" "%s">\n\n'''
-                 % ( self.type, self.dtd, self.validator ) )
-
-class xml ( str ): pass
-
 class cdata ( str ):
     def __init__ ( self, children ):
         self.children = children
@@ -58,15 +46,30 @@ class script ( Tag ):
         self.attrs.update ( kwargs )
         self.children.append ( '' ) # IE requires </script> in all cases
 
+class lorem_ipsum ( Tag ):
+    lines = [
+        'Lorem ipsum dolor sit amet, consectetuer adipiscing elit.',
+        'In egestas nisl sit amet odio.',
+        'Duis iaculis metus eu nulla.',
+        'Donec venenatis sapien sed urna.',
+        'Donec et felis ut elit elementum pellentesque.',
+        'Praesent bibendum turpis semper lacus.'
+    ]
+
+    def __init__ ( self, lines = 5 ):
+        Tag.__init__ ( self, 'span' )
+        self.children = self.lines [ :lines ]
+        
+        
+
 tags = Namespace ( )
 for t in tag_names:
     tags [ t ] = Proto ( t )
 
 tags.update ( dict (
-    doctype = doctype,
-    xml = xml,
     inlineJS = inlineJS,
     script = script,
     cdata = cdata,
+    lorem_ipsum = lorem_ipsum,
 ) )
 

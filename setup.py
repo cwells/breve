@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup (
     name = 'Breve',
-    version = '1.0.16',
+    version = '1.0.17',
     description = '''S-expression based template engine (similar to Nevow Stan)''',
     author = 'Cliff Wells',
     author_email = 'cliff@develix.com',
