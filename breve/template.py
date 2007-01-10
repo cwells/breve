@@ -12,6 +12,7 @@ import os
 from breve.tags import Proto, Tag, Namespace
 from breve.tags.entities import entities
 from breve.tags import conditionals
+from breve.tags.html import xml
 from breve.flatten import flatten, register_flattener
 from breve.cache import Cache
 
@@ -68,7 +69,7 @@ class Template ( object ):
         )
 
     def include ( T, filename ):
-        return flatten ( T.render ( template = filename ) )
+        return xml ( T.render ( template = filename ) )
 
     def render ( T, template, fragments = None, vars = None, fragment = False, **kw ):
         if fragments:

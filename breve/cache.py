@@ -12,7 +12,6 @@ class Cache:
         self.cache [ template ] = dict (
             timestamp = timestamp,
             bytecode = compile ( file ( template, 'U' ).read ( ) + '\n', template, 'eval' ),
-            fragments = { }
         )
         return self.cache [ template ] [ 'bytecode' ]
                                                 

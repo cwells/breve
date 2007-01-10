@@ -75,3 +75,29 @@ def flatten_proto ( p ):
 
 register_flattener ( Proto, flatten_proto )
 register_flattener ( str, escape )
+
+class cdata ( str ):
+    def __init__ ( self, children ):
+        self.children = children
+        
+    def __str__ ( self ):
+        return '<![CDATA[%s]]>' % self.children
+
+class Invisible ( Tag ):
+    def __str__ ( self ):
+        if self.render:
+            self.children = [ ]
+            t = self.render ( self, self.data )
+        else:
+            t = self
+        if t.children:
+            return ''.join ( [ flatten ( c ) for c in t.children ] )
+        return ''
+    
+class _invisible ( Proto ):
+    Class = Invisible
+invisible = _invisible ( 'invisible' )
+
+class xml ( str ):
+    def __str__ ( self ):
+        return self

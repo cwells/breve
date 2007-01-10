@@ -1,5 +1,5 @@
 from breve.flatten import flatten, register_flattener
-from breve.tags import Proto, Tag, Namespace
+from breve.tags import Proto, Tag, Namespace, cdata, xml, invisible
 
 #
 # Despite what one might think, empty elements aren't really
@@ -49,13 +49,6 @@ empty_tag_names = [
     'area', 'base', 'basefont', 'br', 'col', 'frame', 'hr',
     'img', 'input', 'isindex', 'link', 'meta', 'p', 'param'
 ]
-
-class cdata ( str ):
-    def __init__ ( self, children ):
-        self.children = children
-        
-    def __str__ ( self ):
-        return '<![CDATA[%s]]>' % self.children
         
 class inlineJS ( str ):
     def __init__ ( self, children ):
@@ -71,24 +64,6 @@ class Script ( Tag ):
     
 class script ( Proto ):
     Class = Script
-    
-class Invisible ( Tag ):
-    def __str__ ( self ):
-        if self.render:
-            self.children = [ ]
-            t = self.render ( self, self.data )
-        else:
-            t = self
-        if t.children:
-            return ''.join ( [ flatten ( c ) for c in t.children ] )
-        return ''
-    
-class invisible ( Proto ):
-    Class = Invisible
-
-class xml ( str ):
-    def __str__ ( self ):
-        return self
 
 class lorem_ipsum ( Tag ):
     ''' silliness ensues '''
@@ -116,7 +91,7 @@ tags.update ( dict (
     inlineJS = inlineJS,
     script = script ( 'script' ),
     cdata = cdata,
-    invisible = invisible ( 'invisible' ),
+    invisible = invisible,
     xml = xml,
     lorem_ipsum = lorem_ipsum,
 ) )
