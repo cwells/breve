@@ -25,8 +25,8 @@ class BreveTemplatePlugin ( object ):
         breve_opts = {
             'doctype': '',
             'root': '.',
-            'namespace': Template.namespace,
-            'debug': Template.debug
+            'namespace': '',
+            'debug': False
         }        
 
         if 'std' in vars: # turbogears-specific
