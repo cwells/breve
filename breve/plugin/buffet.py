@@ -23,7 +23,7 @@ class BreveTemplatePlugin ( object ):
         follow suit.
         '''
         breve_opts = {
-            'doctype': Template.doctype,
+            'doctype': '',
             'root': '.',
             'namespace': Template.namespace,
             'debug': Template.debug
@@ -32,7 +32,7 @@ class BreveTemplatePlugin ( object ):
         if 'std' in vars: # turbogears-specific
             cfg = vars [ 'std'] [ 'config' ]
             breve_opts ['root' ] = cfg ( 'breve.root', '.' )
-            breve_opts ['doctype' ] = cfg ( 'breve.doctype', None )
+            breve_opts ['doctype' ] = cfg ( 'breve.doctype', '' )
             breve_opts ['namespace' ] = cfg ( 'breve.namespace', None )
             breve_opts [ 'debug' ] = cfg ( 'breve.debug', False )
         else: # pylons-specific
