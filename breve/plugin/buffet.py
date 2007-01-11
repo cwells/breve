@@ -76,7 +76,14 @@ class BreveTemplatePlugin ( object ):
             # this feels mildly brittle
             template_path = template_path [ len ( template_root ) + 1: ]
 
-        template_obj = Template ( tags = html.tags, **self.breve_opts )
+        if format == 'html':
+            tag_defs = html
+        else:
+            # this seems weak.  should find a better way, but getting
+            # only a string for format makes it difficult
+            tag_defs = __import__ ( format, { }, { } )
+            
+        template_obj = Template ( tags = tag_defs.tags, xmlns = tag_defs.xmlns, **self.breve_opts )
 
         if fragment:
             return template_obj.render_partial ( os.path.join ( template_path, template_filename ),
