@@ -32,13 +32,13 @@ class BreveTemplatePlugin ( object ):
         if 'std' in vars: # turbogears-specific
             cfg = vars [ 'std'] [ 'config' ]
             breve_opts ['root' ] = cfg ( 'breve.root', '.' )
-            breve_opts ['doctype' ] = cfg ( 'breve.doctype', Template.doctype )
-            breve_opts ['namespace' ] = cfg ( 'breve.namespace', Template.namespace )
-            breve_opts [ 'debug' ] = cfg ( 'breve.debug', Template.debug )
+            breve_opts ['doctype' ] = cfg ( 'breve.doctype', None )
+            breve_opts ['namespace' ] = cfg ( 'breve.namespace', None )
+            breve_opts [ 'debug' ] = cfg ( 'breve.debug', False )
         else: # pylons-specific
             for k, v in self.options.iteritems ( ):
                 if k.startswith ( 'breve.' ):
-                    breve_opts [ k [ len ( 'breve.' ): ] ] = v
+                    breve_opts [ k [ 6: ] ] = v
 
         parts = breve_opts [ 'root' ].split ( '.' )
         breve_opts [ 'root' ] = os.path.join ( *parts )        
@@ -77,7 +77,7 @@ class BreveTemplatePlugin ( object ):
             # this feels mildly brittle
             template_path = template_path [ len ( template_root ) + 1: ]
 
-        template_obj = Template ( tags = html.tags, root = template_root )
+        template_obj = Template ( tags = html.tags, root = template_root, self.breve_opts )
 
         if fragment:
             return template_obj.render_partial ( os.path.join ( template_path, template_filename ),
