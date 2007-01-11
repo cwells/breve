@@ -9,21 +9,16 @@ breve - A simple s-expression style template engine inspired by Nevow's Stan.
 '''
 
 import os
-from breve.tags import Proto, Tag, Namespace, xml, conditionals
+from breve.tags import Proto, Tag, Namespace, xml, invisible, cdata, conditionals
 from breve.tags.entities import entities
 from breve.flatten import flatten, register_flattener
 from breve.cache import Cache
 
 class Template ( object ):
-    extension = 'b' # default template extension
-    debug = False
-    doctype = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-                  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n'''
-    xml_encoding = '''<?xml version="1.0" encoding="UTF-8"?>\n'''
-    namespace = None # any variables passed in will be in this Namespace (a string)
+
     cache = Cache ( )
     
-    def __init__ ( T, tags, root = '.', **kw ):
+    def __init__ ( T, tags, root = '.', xmlns = None, **kw ):
         '''
         Uses "T" rather than "self" to avoid confusion with
         subclasses that refer to this class via scoping (see
@@ -34,23 +29,26 @@ class Template ( object ):
                 return T.render_partial ( template = self.name, fragments = self.children )
 
         T.root = root
-        T.tags = { }
+        T.xmlns = xmlns
+        T.xml_encoding = '''<?xml version="1.0" encoding="UTF-8"?>\n'''
+        T.extension = 'b' # default template extension
+        T.debug = False
+        T.doctype = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n'''
+        T.namespace = None # any variables passed in will be in this Namespace (a string)
         T.fragments = { }
-        T.vars = { }
+        T.vars = { 'xmlns': xmlns, }
+        T.tags = { 'cdata': cdata,
+                   'xml': xml,
+                   'invisible': invisible,
+                   'include': T.include,
+                   'inherits': inherits,
+                   'override': T.override,
+                   'slot': T.__slot }
         T.tags.update ( tags )
         T.tags.update ( entities )
         T.tags.update ( conditionals )
-        T.tags.update ( dict (
-            include = T.include,
-            inherits = inherits,
-            override = T.override,
-            slot = T.__slot
-        ) )
         register_flattener ( T.__slot, T.flatten_slot )
-
-    def __del__ ( T ):
-        print "UNREGISTER", T
-        unregister_flattener ( T.__slot )
 
     class override ( Tag ): 
         def __str__ ( self ):

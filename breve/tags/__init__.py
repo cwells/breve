@@ -12,7 +12,6 @@ class Namespace ( dict ):
         return dict.setdefault ( self, attr, None )
     __getitem__ = __getattr__
 
-
 class Tag ( object ):
     def __init__ ( self, name, *args, **kwargs ):
         self.name = name
@@ -101,3 +100,5 @@ invisible = _invisible ( 'invisible' )
 class xml ( str ):
     def __str__ ( self ):
         return self
+
+    

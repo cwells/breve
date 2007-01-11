@@ -1,5 +1,5 @@
 from breve.flatten import flatten, register_flattener
-from breve.tags import Proto, Tag, Namespace, cdata, xml, invisible
+from breve.tags import Proto, Tag, Namespace
 
 #
 # Despite what one might think, empty elements aren't really
@@ -90,9 +90,6 @@ for t in empty_tag_names:
 tags.update ( dict (
     inlineJS = inlineJS,
     script = script ( 'script' ),
-    cdata = cdata,
-    invisible = invisible,
-    xml = xml,
     lorem_ipsum = lorem_ipsum,
 ) )
 
