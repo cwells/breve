@@ -31,10 +31,10 @@ class BreveTemplatePlugin ( object ):
 
         if 'std' in vars: # turbogears-specific
             cfg = vars [ 'std'] [ 'config' ]
-            breve_opts ['root' ] = cfg ( 'breve.root', '.' )
-            breve_opts ['doctype' ] = cfg ( 'breve.doctype', '' )
-            breve_opts ['namespace' ] = cfg ( 'breve.namespace', None )
-            breve_opts [ 'debug' ] = cfg ( 'breve.debug', False )
+            breve_opts [ 'root' ] = cfg ( 'breve.root', breve_opts [ 'root' ] )
+            breve_opts [ 'doctype' ] = cfg ( 'breve.doctype', breve_opts [ 'doctype' ] )
+            breve_opts [ 'namespace' ] = cfg ( 'breve.namespace', breve_opts [ 'namespace' ] )
+            breve_opts [ 'debug' ] = cfg ( 'breve.debug', breve_opts [ 'debug' ] )
         else: # pylons-specific
             for k, v in self.options.iteritems ( ):
                 if k.startswith ( 'breve.' ):

@@ -1,6 +1,8 @@
 from breve.flatten import flatten, register_flattener
 from breve.tags import Proto, Tag, Namespace
 
+xmlns = 'xmlns="http://www.w3.org/1999/xhtml'
+
 #
 # Despite what one might think, empty elements aren't really
 # supported unless the HTTP Content-type header is text/xml
