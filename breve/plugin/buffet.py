@@ -71,13 +71,12 @@ class BreveTemplatePlugin ( object ):
             self.breve_opts = self.get_config ( vars )
 
         template_root = self.breve_opts [ 'root' ]
-        
         template_path, template_filename = self.load_template ( template )
         if template_root and template_path.startswith ( template_root ):
             # this feels mildly brittle
             template_path = template_path [ len ( template_root ) + 1: ]
 
-        template_obj = Template ( tags = html.tags, root = template_root, **self.breve_opts )
+        template_obj = Template ( tags = html.tags, **self.breve_opts )
 
         if fragment:
             return template_obj.render_partial ( os.path.join ( template_path, template_filename ),
