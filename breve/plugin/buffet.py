@@ -77,7 +77,7 @@ class BreveTemplatePlugin ( object ):
             # this feels mildly brittle
             template_path = template_path [ len ( template_root ) + 1: ]
 
-        template_obj = Template ( tags = html.tags, root = template_root, self.breve_opts )
+        template_obj = Template ( tags = html.tags, root = template_root, **self.breve_opts )
 
         if fragment:
             return template_obj.render_partial ( os.path.join ( template_path, template_filename ),
