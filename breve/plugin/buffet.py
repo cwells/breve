@@ -23,7 +23,6 @@ class BreveTemplatePlugin ( object ):
         follow suit.
         '''
         breve_opts = {
-            'doctype': '',
             'root': '.',
             'namespace': '',
             'debug': False
@@ -32,7 +31,6 @@ class BreveTemplatePlugin ( object ):
         if 'std' in vars: # turbogears-specific
             cfg = vars [ 'std'] [ 'config' ]
             breve_opts [ 'root' ] = cfg ( 'breve.root', breve_opts [ 'root' ] )
-            breve_opts [ 'doctype' ] = cfg ( 'breve.doctype', breve_opts [ 'doctype' ] )
             breve_opts [ 'namespace' ] = cfg ( 'breve.namespace', breve_opts [ 'namespace' ] )
             breve_opts [ 'debug' ] = cfg ( 'breve.debug', breve_opts [ 'debug' ] )
         else: # pylons-specific
@@ -42,7 +40,7 @@ class BreveTemplatePlugin ( object ):
 
         parts = breve_opts [ 'root' ].split ( '.' )
         breve_opts [ 'root' ] = os.path.join ( *parts )        
-        
+
         return breve_opts
         
     def load_template ( self, template_name ):
@@ -79,13 +77,14 @@ class BreveTemplatePlugin ( object ):
         if format == 'html':
             tag_defs = html
         else:
-            # this seems weak.  should find a better way, but getting
-            # only a string for format makes it difficult
+            # this seems weak (concerns about path). Should perhaps
+            # find a better way, but getting only a string for format
+            # makes it difficult to do too much
             tag_defs = __import__ ( format, { }, { } )
-            
+
+        self.breve_opts [ 'doctype' ] = self.breve_opts.get ( 'doctype', tag_defs.doctype )
         template_obj = Template ( tags = tag_defs.tags,
                                   xmlns = tag_defs.xmlns,
-                                  doctype = tag_defs.doctype,
                                   **self.breve_opts )
 
         if fragment:
