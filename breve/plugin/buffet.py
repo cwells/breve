@@ -66,15 +66,18 @@ class BreveTemplatePlugin ( object ):
         # check to see if we were passed a function get extra vars
         if callable ( self.get_extra_vars ):
             vars.update ( self.get_extra_vars ( ) )
-
+        
         if self.breve_opts is None:
             self.breve_opts = self.get_config ( vars )
-
+        
         template_root = self.breve_opts [ 'root' ]
         template_path, template_filename = self.load_template ( template )
         if template_root and template_path.startswith ( template_root ):
             # this feels mildly brittle
             template_path = template_path [ len ( template_root ) + 1: ]
+
+        # pylons-specific crap - this is broken and needs to be fixed in pylons
+        format = vars.get ( 'format', format )
 
         if format == 'html':
             tag_defs = html

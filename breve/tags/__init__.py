@@ -72,6 +72,10 @@ class Proto ( str ):
 def flatten_proto ( p ):
     return '<%s />' % p
 
+def flatten_sequence ( o ):
+    return ''.join ( [ flatten ( i ) for i in o ] )
+
+register_flattener ( list, flatten_sequence )
 register_flattener ( Proto, flatten_proto )
 register_flattener ( str, escape )
 
