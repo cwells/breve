@@ -8,6 +8,8 @@ except ImportError:
     print 'run "python setup.py install" from the parent directory first'
     raise SystemExit
 
+
+########## test basic functionality
 from datetime import datetime
 
 def flatten_datetime ( o ):
@@ -36,6 +38,23 @@ for root, template in [ ( '1_basics', 'index' ),
                         ( '7_escape_artist', 'index' ) ]:
     print "RUNNING EXAMPLE", root, template
     print "=" * 40
-    t = Template ( html.tags, root = root )
+    t = Template ( html.tags, root = root, doctype = html.doctype, xmlns = html.xmlns )
     print t.render ( template = template, vars = vars )
     print "\n\n\n"
+
+
+####### test custom tags
+import sys
+sys.path.insert ( 0, '.' )
+import sitemap # our custom tag definitions
+
+vars = dict ( loc = 'http://www.example.com/',
+              lastmod = '2007-01-01',
+              changefreq = 'monthly',
+              priority = 0.8 )
+root, template = ( '8_custom_tags', 'index' )
+t = Template ( tags = sitemap.tags, xmlns = sitemap.xmlns, doctype = sitemap.doctype, root = root )
+t.namespace = 'v'
+print t.render ( template = template, vars = vars )
+print "\n\n\n"
+

@@ -18,7 +18,7 @@ class Template ( object ):
 
     cache = Cache ( )
     
-    def __init__ ( T, tags, root = '.', xmlns = None, **kw ):
+    def __init__ ( T, tags, root = '.', xmlns = None, doctype = '', **kw ):
         '''
         Uses "T" rather than "self" to avoid confusion with
         subclasses that refer to this class via scoping (see
@@ -30,11 +30,10 @@ class Template ( object ):
 
         T.root = root
         T.xmlns = xmlns
-        T.xml_encoding = '''<?xml version="1.0" encoding="UTF-8"?>\n'''
+        T.xml_encoding = '''<?xml version="1.0" encoding="UTF-8"?>'''
         T.extension = 'b' # default template extension
         T.debug = False
-        T.doctype = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-                        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n'''
+        T.doctype = doctype
         T.namespace = None # any variables passed in will be in this Namespace (a string)
         T.fragments = { }
         T.vars = { 'xmlns': xmlns, }
@@ -110,11 +109,11 @@ class Template ( object ):
                         exception.append ( '\n<br />%s&nbsp;=\n%s' % ( name, value ) )
                 exception.append ( '</span>' )
                 return xml ( ''.join ( exception ) )
-                        
-                
             else:
                 print "Error in template ( %s )" % template
                 raise
         
     def render ( T, template, fragments = None, vars = None, **kw ):
-        return T.xml_encoding + T.doctype + T.render_partial ( template, fragments, vars )
+        return '\n'.join ( ( T.xml_encoding,
+                             T.doctype,
+                             T.render_partial ( template, fragments, vars ) ) )
