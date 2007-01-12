@@ -83,7 +83,10 @@ class BreveTemplatePlugin ( object ):
             # only a string for format makes it difficult
             tag_defs = __import__ ( format, { }, { } )
             
-        template_obj = Template ( tags = tag_defs.tags, xmlns = tag_defs.xmlns, **self.breve_opts )
+        template_obj = Template ( tags = tag_defs.tags,
+                                  xmlns = tag_defs.xmlns,
+                                  doctype = tag_defs.doctype,
+                                  **self.breve_opts )
 
         if fragment:
             return template_obj.render_partial ( os.path.join ( template_path, template_filename ),
