@@ -4,7 +4,8 @@ from breve.tags import html
 
 class BreveTemplatePlugin ( object ):
     """
-    Breve Template Plugin for Pylons
+    Breve Template Plugin for Buffet-compatible frameworks
+    Tested with TurboGears and Pylons
     """
     extension = "b"
 
