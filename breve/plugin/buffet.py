@@ -49,7 +49,9 @@ class BreveTemplatePlugin ( object ):
         """
         parts = template_name.split ( '.' )
         template_filename = parts.pop ( )
-        template_path = os.path.join ( *parts )
+        template_path = ''
+        if parts:
+            template_path = os.path.join ( *parts )
         return template_path, template_filename
 
     def render ( self, info, format = "html", fragment = False, template = None ):
