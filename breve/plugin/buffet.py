@@ -57,9 +57,11 @@ class BreveTemplatePlugin ( object ):
         """
 
         template, args = splitquery ( template_name )
-        args = dict ( [ a.split ( '=' )
-                        for a in args.split ( '&' ) ] )
-        
+        if args:
+            args = dict ( [ a.split ( '=' )
+                            for a in args.split ( '&' ) ] )
+        else:
+            args = { }
         parts = template.split ( '.' )
         template_filename = parts.pop ( )
         template_path = ''
