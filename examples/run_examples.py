@@ -9,6 +9,8 @@ except ImportError:
     raise SystemExit
 
 
+Template.tidy = True
+
 ########## test basic functionality
 from datetime import datetime
 
@@ -53,8 +55,28 @@ vars = dict ( loc = 'http://www.example.com/',
               changefreq = 'monthly',
               priority = 0.8 )
 root, template = ( '8_custom_tags', 'index' )
+print "RUNNING EXAMPLE", root, template
+print "=" * 40
+
 t = Template ( tags = sitemap.tags, xmlns = sitemap.xmlns, doctype = sitemap.doctype, root = root )
 t.namespace = 'v'
 print t.render ( template = template, vars = vars )
 print "\n\n\n"
+
+
+####### test it all!
+root = 'A_all_features'
+
+vars = dict (
+    message = 'Hello, World.'
+)
+
+for template in [ 'include/index' ]:
+    print "RUNNING EXAMPLE", root, template
+    print "=" * 40
+
+    t = Template ( tags = html.tags, xmlns = html.xmlns, doctype = html.doctype, root = root )
+    t.namespace = 'v'
+    print t.render ( template = template, vars = vars )
+    print "\n\n\n"
 

@@ -22,7 +22,7 @@ except ImportError:
 class Template ( object ):
 
     cache = Cache ( )
-    tidy_output = False
+    tidy = False
     debug = False
     
     def __init__ ( T, tags, root = '.', xmlns = None, doctype = '', **kw ):
@@ -103,7 +103,7 @@ class Template ( object ):
                 print "Error in template ( %s )" % template
                 raise
             
-        if T.tidy_output and tidylib:
+        if T.tidy and tidylib:
             options = dict ( input_xml = True,
                              output_xhtml = True,
                              add_xml_decl = False,
