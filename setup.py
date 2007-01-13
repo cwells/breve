@@ -40,7 +40,7 @@ setup (
         'License :: OSI Approved :: MIT License',
         'Topic :: Software Development :: Libraries :: Python Modules'
     ],
-        
+    keywords = [ 'python.templating.engines' ],        
     install_requires = [ ],
     scripts = [ ],
     packages = find_packages ( ),
