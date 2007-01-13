@@ -1,6 +1,7 @@
 import os
 from breve import Template
 from breve.tags import html
+from urllib import splitquery
 
 class BreveTemplatePlugin ( object ):
     """
@@ -22,11 +23,16 @@ class BreveTemplatePlugin ( object ):
         on the config being passed at instantiation.  This should be fixed by
         having Buffet specify how this should be done and having the frameworks
         follow suit.
+        
+        Breve now allows a url-style syntax in the template name to bypass the
+        brokenness in the various frameworks, e.g.:
+            index?format=html&debug=1
         '''
         breve_opts = {
             'root': '.',
             'namespace': '',
-            'debug': False
+            'debug': False,
+            'tidy': False,
         }        
 
         if 'std' in vars: # turbogears-specific
@@ -34,6 +40,7 @@ class BreveTemplatePlugin ( object ):
             breve_opts [ 'root' ] = cfg ( 'breve.root', breve_opts [ 'root' ] )
             breve_opts [ 'namespace' ] = cfg ( 'breve.namespace', breve_opts [ 'namespace' ] )
             breve_opts [ 'debug' ] = cfg ( 'breve.debug', breve_opts [ 'debug' ] )
+            breve_opts [ 'tidy' ] = cfg ( 'breve.tidy', breve_opts [ 'tidy' ] )
         else: # pylons-specific
             for k, v in self.options.iteritems ( ):
                 if k.startswith ( 'breve.' ):
@@ -48,12 +55,17 @@ class BreveTemplatePlugin ( object ):
         """
         template_name == dotted.path.to.template (without .ext)
         """
-        parts = template_name.split ( '.' )
+
+        template, args = splitquery ( template_name )
+        args = dict ( [ a.split ( '=' )
+                        for a in args.split ( '&' ) ] )
+        
+        parts = template.split ( '.' )
         template_filename = parts.pop ( )
         template_path = ''
         if parts:
             template_path = os.path.join ( *parts )
-        return template_path, template_filename
+        return template_path, template_filename, args
 
     def render ( self, info, format = "html", fragment = False, template = None ):
         """
@@ -70,15 +82,15 @@ class BreveTemplatePlugin ( object ):
         
         if self.breve_opts is None:
             self.breve_opts = self.get_config ( vars )
-        
+        template_path, template_filename, args = self.load_template ( template )
+        self.breve_opts.update ( args )
+
         template_root = self.breve_opts [ 'root' ]
-        template_path, template_filename = self.load_template ( template )
+        format = self.breve_opts.get ( 'format', format )
+
         if template_root and template_path.startswith ( template_root ):
             # this feels mildly brittle
             template_path = template_path [ len ( template_root ) + 1: ]
-
-        # pylons-specific crap - this is broken and needs to be fixed in pylons
-        format = vars.get ( 'format', format )
 
         if format == 'html':
             tag_defs = html

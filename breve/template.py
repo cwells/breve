@@ -14,9 +14,16 @@ from breve.tags.entities import entities
 from breve.flatten import flatten, register_flattener
 from breve.cache import Cache
 
+try:
+    import tidy as tidylib
+except ImportError:
+    tidylib = None
+    
 class Template ( object ):
 
     cache = Cache ( )
+    tidy_output = False
+    debug = False
     
     def __init__ ( T, tags, root = '.', xmlns = None, doctype = '', **kw ):
         '''
@@ -32,7 +39,6 @@ class Template ( object ):
         T.xmlns = xmlns
         T.xml_encoding = '''<?xml version="1.0" encoding="UTF-8"?>'''
         T.extension = 'b' # default template extension
-        T.debug = False
         T.doctype = doctype
         T.namespace = None # any variables passed in will be in this Namespace (a string)
         T.fragments = { }
@@ -64,9 +70,9 @@ class Template ( object ):
             self.name = name
 
     def flatten_slot ( T, o ):
-        return flatten (
+        return xml ( flatten (
             T.fragments.get ( o.name, 'slot named "%s" not filled' % o.name )
-        )
+        ) )
 
     def include ( T, filename ):
         return xml ( T.render_partial ( template = filename ) )
@@ -89,31 +95,46 @@ class Template ( object ):
         
         try:
             bytecode = T.cache.compile ( filename )
-            return flatten ( eval ( bytecode, T.tags, T.vars ) )
+            output = flatten ( eval ( bytecode, T.tags, T.vars ) )
         except:
             if T.debug:
-                import sys, types, pydoc                
-                ( etype, evalue )= sys.exc_info ( )[ :-1 ]
-
-                exception = [
-                    '<span class="template_exception">',
-                    'Error in template: %s %s: %s' %
-                    ( filename,
-                      pydoc.html.escape ( str ( etype ) ),
-                      pydoc.html.escape ( str ( evalue ) ) )
-                ]
-                if type ( evalue ) is types.InstanceType:
-                    for name in dir ( evalue ):
-                        if name [ :1 ] == '_' or name == 'args': continue
-                        value = pydoc.html.repr ( getattr ( evalue, name ) )
-                        exception.append ( '\n<br />%s&nbsp;=\n%s' % ( name, value ) )
-                exception.append ( '</span>' )
-                return xml ( ''.join ( exception ) )
+                self.debug_output ( sys.exc_info ( )[ :-1 ] )
             else:
                 print "Error in template ( %s )" % template
                 raise
-        
+            
+        if T.tidy_output and tidylib:
+            options = dict ( input_xml = True,
+                             output_xhtml = True,
+                             add_xml_decl = False,
+                             doctype = 'omit',
+                             indent = 'auto',
+                             tidy_mark = False )
+            return str ( tidylib.parseString ( output, **options )  )
+        else:
+            return output
+            
     def render ( T, template, fragments = None, vars = None, **kw ):
         return '\n'.join ( ( T.xml_encoding,
                              T.doctype,
                              T.render_partial ( template, fragments, vars ) ) )
+
+    def debug_out ( T, exc_info ):
+        import sys, types, pydoc                
+        ( etype, evalue )= exc_info
+
+        exception = [
+            '<span class="template_exception">',
+            'Error in template: %s %s: %s' %
+            ( filename,
+              pydoc.html.escape ( str ( etype ) ),
+              pydoc.html.escape ( str ( evalue ) ) )
+        ]
+        if type ( evalue ) is types.InstanceType:
+            for name in dir ( evalue ):
+                if name [ :1 ] == '_' or name == 'args': continue
+                value = pydoc.html.repr ( getattr ( evalue, name ) )
+                exception.append ( '\n<br />%s&nbsp;=\n%s' % ( name, value ) )
+        exception.append ( '</span>' )
+        return xml ( ''.join ( exception ) )
+            
