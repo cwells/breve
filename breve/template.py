@@ -8,7 +8,7 @@ breve - A simple s-expression style template engine inspired by Nevow's Stan.
         required too much hacking in Stan.
 '''
 
-import os
+import os, sys
 from breve.tags import Proto, Tag, Namespace, xml, invisible, cdata, conditionals
 from breve.tags.entities import entities
 from breve.flatten import flatten, register_flattener
@@ -92,13 +92,14 @@ class Template ( object ):
                 T.vars.update ( vars )
 
         filename = "%s.%s" % ( os.path.join ( T.root, template ), T.extension )
+        output = ''
         
         try:
             bytecode = T.cache.compile ( filename )
             output = flatten ( eval ( bytecode, T.tags, T.vars ) )
         except:
             if T.debug:
-                T.debug_output ( sys.exc_info ( )[ :-1 ] )
+                T.debug_out ( sys.exc_info ( )[ :-1 ], filename )
             else:
                 print "Error in template ( %s )" % template
                 raise
@@ -119,7 +120,7 @@ class Template ( object ):
                              T.doctype,
                              T.render_partial ( template, fragments, vars ) ) )
 
-    def debug_out ( T, exc_info ):
+    def debug_out ( T, exc_info, filename ):
         import sys, types, pydoc                
         ( etype, evalue )= exc_info
 
