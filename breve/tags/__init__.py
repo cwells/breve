@@ -76,6 +76,7 @@ def flatten_sequence ( o ):
     return ''.join ( [ flatten ( i ) for i in o ] )
 
 register_flattener ( list, flatten_sequence )
+register_flattener ( tuple, flatten_sequence )
 register_flattener ( Proto, flatten_proto )
 register_flattener ( str, escape )
 

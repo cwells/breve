@@ -98,7 +98,7 @@ class Template ( object ):
             output = flatten ( eval ( bytecode, T.tags, T.vars ) )
         except:
             if T.debug:
-                self.debug_output ( sys.exc_info ( )[ :-1 ] )
+                T.debug_output ( sys.exc_info ( )[ :-1 ] )
             else:
                 print "Error in template ( %s )" % template
                 raise
