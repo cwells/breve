@@ -55,7 +55,7 @@ class BreveTemplatePlugin ( object ):
         """
         template_name == dotted.path.to.template (without .ext)
         """
-
+        
         template, args = splitquery ( template_name )
         if args:
             args = dict ( [ a.split ( '=' )
@@ -76,6 +76,7 @@ class BreveTemplatePlugin ( object ):
         fragment == special rules about rendering part of a page
         template == dotted.path.to.template (without .ext)
         """
+
         vars = info
 
         # check to see if we were passed a function get extra vars

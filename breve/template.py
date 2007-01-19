@@ -9,9 +9,10 @@ breve - A simple s-expression style template engine inspired by Nevow's Stan.
 '''
 
 import os, sys
+from urllib2 import urlopen, URLError
 from breve.tags import Proto, Tag, Namespace, xml, invisible, cdata, conditionals
 from breve.tags.entities import entities
-from breve.flatten import flatten, register_flattener
+from breve.flatten import flatten, register_flattener, registry
 from breve.cache import Cache
 
 try:
@@ -30,10 +31,19 @@ class Template ( object ):
         Uses "T" rather than "self" to avoid confusion with
         subclasses that refer to this class via scoping (see
         the "inherits" class for one.
-        '''
+        '''        
         class inherits ( Tag ):
             def __str__ ( self ):
                 return T.render_partial ( template = self.name, fragments = self.children )
+
+        class __slot ( object ):
+            '''
+            this class uses a private name to avoid name clashes with other instances
+            of Template that will also register T.flatten_slot in the global registry
+            '''
+            def __init__ ( self, name ):
+                self.name = name
+
 
         T.root = root
         T.xmlns = xmlns
@@ -47,35 +57,35 @@ class Template ( object ):
                    'xml': xml,
                    'invisible': invisible,
                    'include': T.include,
+                   'xinclude': T.xinclude,
                    'inherits': inherits,
                    'override': T.override,
-                   'slot': T.__slot }
+                   'slot': __slot }
         T.tags.update ( tags )
         T.tags.update ( entities )
         T.tags.update ( conditionals )
-        register_flattener ( T.__slot, T.flatten_slot )
-
+        register_flattener ( __slot, T.flatten_slot )
+        
     class override ( Tag ): 
         def __str__ ( self ):
             if self.children:
                 return ( ''.join ( [ flatten ( c ) for c in self.children ] ) )
             return ''
 
-    class __slot ( object ):
-        '''
-        this class uses a private name to avoid name clashes with other instances
-        of Template that will also register T.flatten_slot in the global registry
-        '''
-        def __init__ ( self, name ):
-            self.name = name
-
     def flatten_slot ( T, o ):
         return xml ( flatten (
             T.fragments.get ( o.name, 'slot named "%s" not filled' % o.name )
         ) )
 
-    def include ( T, filename ):
-        return xml ( T.render_partial ( template = filename ) )
+    def include ( T, filename, vars = None ):
+        return xml ( T.render_partial ( template = filename, vars = vars ) )
+
+    def xinclude ( T, url ):
+        try:
+            data = urlopen ( url ).read ( )
+        except URLError, e:
+            return "Error loading %s: %s" % ( url, e )
+        return xml ( data )
 
     def render_partial ( T, template, fragments = None, vars = None, **kw ):
         if fragments:

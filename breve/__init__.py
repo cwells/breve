@@ -1,4 +1,4 @@
 from template import *
 
-__version__ = '1.0.30'
+__version__ = '1.0.31'
 

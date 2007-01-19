@@ -35,6 +35,7 @@ setup (
     classifiers = [
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
+        'Environment :: Web Environment :: Buffet',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'License :: OSI Approved :: MIT License',
