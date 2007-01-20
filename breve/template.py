@@ -36,14 +36,14 @@ class Template ( object ):
             def __str__ ( self ):
                 return T.render_partial ( template = self.name, fragments = self.children )
 
-        class __slot ( object ):
-            '''
-            this class uses a private name to avoid name clashes with other instances
-            of Template that will also register T.flatten_slot in the global registry
-            '''
+        class slot ( object ):
             def __init__ ( self, name ):
                 self.name = name
 
+            def __str__ ( self ):
+                return xml ( flatten (
+                    T.fragments.get ( self.name, 'slot named "%s" not filled' % self.name )
+                ) )
 
         T.root = root
         T.xmlns = xmlns
@@ -60,22 +60,16 @@ class Template ( object ):
                    'xinclude': T.xinclude,
                    'inherits': inherits,
                    'override': T.override,
-                   'slot': __slot }
+                   'slot': slot }
         T.tags.update ( tags )
         T.tags.update ( entities )
         T.tags.update ( conditionals )
-        register_flattener ( __slot, T.flatten_slot )
         
     class override ( Tag ): 
         def __str__ ( self ):
             if self.children:
                 return ( ''.join ( [ flatten ( c ) for c in self.children ] ) )
             return ''
-
-    def flatten_slot ( T, o ):
-        return xml ( flatten (
-            T.fragments.get ( o.name, 'slot named "%s" not filled' % o.name )
-        ) )
 
     def include ( T, filename, vars = None ):
         return xml ( T.render_partial ( template = filename, vars = vars ) )
