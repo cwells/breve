@@ -39,26 +39,25 @@ class Tag ( object ):
             self.children.append ( k )
         return self
     
-    def __str__ ( self ):
-        if self.render:
-            self.children = [ ]
-            t = self.render ( self, self.data )
-        else:
-            t = self
-
-        attrs = ''.join (
-            [ ' %s=%s' % ( k, v )
-              for ( k, v ) in t.attrs.items ( ) ]
-        )
-        if t.children:
-            return ( '<%s%s>' % ( t.name, attrs ) +
-                     ''.join ( [ flatten ( c ) for c in t.children ] ) +  
-                     '</%s>' % t.name )
-        return '<%s%s></%s>' % ( t.name, attrs, t.name )
-
     def clear ( self ):
         self.children = [ ]
 
+def flatten_tag ( o ):
+    if o.render:
+        o.children = [ ]
+        t = o.render ( o, o.data )
+    else:
+        t = o
+
+    attrs = ''.join (
+        [ ' %s=%s' % ( k, v )
+          for ( k, v ) in t.attrs.items ( ) ]
+    )
+    if t.children:
+        return ( '<%s%s>' % ( t.name, attrs ) +
+                 ''.join ( [ flatten ( c ) for c in t.children ] ) +  
+                 '</%s>' % t.name )
+    return '<%s%s></%s>' % ( t.name, attrs, t.name )
 
 class Proto ( str ):
     __slots__ = [ ]
@@ -78,6 +77,7 @@ def flatten_sequence ( o ):
 register_flattener ( list, flatten_sequence )
 register_flattener ( tuple, flatten_sequence )
 register_flattener ( Proto, flatten_proto )
+register_flattener ( Tag, flatten_tag )
 register_flattener ( str, escape )
 
 class cdata ( str ):
