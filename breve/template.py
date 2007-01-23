@@ -62,9 +62,9 @@ class Template ( object ):
                    'inherits': inherits,
                    'override': T.override,
                    'slot': slot }
-        T.tags.update ( tags )
         T.tags.update ( entities )
         T.tags.update ( conditionals )
+        T.tags.update ( tags )
 
     class override ( Tag ): 
         def __str__ ( self ):

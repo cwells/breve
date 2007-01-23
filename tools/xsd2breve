@@ -25,13 +25,14 @@ class TagGenerator ( handler.ContentHandler ):
 
     def endDocument ( self ):
         self.tags.sort ( )
+        
         if self.xmlns:
             self._out.write ( '\n'.join ( [
                 'xmlns = "%s"' % self.xmlns,
                 'doctype = ""\n' 
             ] ) )
         self._out.write ( '\n'.join ( [
-            'tag_names = [ "%s" ]' % '", "'.join ( self.tags ),
+            'tag_names = [ "%s" ]' % '", "'.join ( set ( self.tags ) ),
             'tags = { }',
             'for t in tag_names:',
             '    tags [ t ] = Proto ( t )\n\n'
