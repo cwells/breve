@@ -19,10 +19,11 @@ try:
     import tidy as tidylib
 except ImportError:
     tidylib = None
-    
+
+_cache = Cache ( )
+                                                                                    
 class Template ( object ):
 
-    cache = Cache ( )
     tidy = False
     debug = False
     
@@ -64,7 +65,7 @@ class Template ( object ):
         T.tags.update ( tags )
         T.tags.update ( entities )
         T.tags.update ( conditionals )
-        
+
     class override ( Tag ): 
         def __str__ ( self ):
             if self.children:
@@ -74,12 +75,13 @@ class Template ( object ):
     def include ( T, filename, vars = None ):
         return xml ( T.render_partial ( template = filename, vars = vars ) )
 
-    def xinclude ( T, url ):
-        try:
-            data = urlopen ( url ).read ( )
-        except URLError, e:
-            return "Error loading %s: %s" % ( url, e )
-        return xml ( data )
+    def xinclude ( T, url, timeout = 300 ):
+        def fetch ( url ):
+            try:
+                return urlopen ( url ).read ( )
+            except URLError, e:
+                return "Error loading %s: %s" % ( url, e )
+        return xml ( _cache.memoize ( url, timeout, fetch, url ) )
 
     def render_partial ( T, template, fragments = None, vars = None, **kw ):
         if fragments:
@@ -99,7 +101,7 @@ class Template ( object ):
         output = ''
         
         try:
-            bytecode = T.cache.compile ( filename )
+            bytecode = _cache.compile ( filename )
             output = flatten ( eval ( bytecode, T.tags, T.vars ) )
         except:
             if T.debug:
@@ -118,7 +120,7 @@ class Template ( object ):
             return str ( tidylib.parseString ( output, **options )  )
         else:
             return output
-            
+
     def render ( T, template, fragments = None, vars = None, **kw ):
         return '\n'.join ( ( T.xml_encoding,
                              T.doctype,
