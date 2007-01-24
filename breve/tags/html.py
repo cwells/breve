@@ -43,7 +43,7 @@ tag_names = [
     'ol','optgroup','option',
     'pre',
     'q',
-    's','samp','select','small','span','strike','strong','style','sub','sup',
+    's','samp','script', 'select','small','span','strike','strong','style','sub','sup',
     'table','tbody','td','textarea','tfoot','th','thead','title','tr','tt',
     'u','ul',
     'var'
@@ -61,14 +61,6 @@ class inlineJS ( str ):
     def __str__ ( self ):
         return '\n<script type="text/javascript">%s</script>' % cdata ( self.children )
         
-class Script ( Tag ):
-    def __init__ ( self, *args, **kw ):
-        Tag.__init__ ( self, 'script' )
-        self.attrs.update ( kw )
-    
-class script ( Proto ):
-    Class = Script
-
 class lorem_ipsum ( Tag ):
     ''' silliness ensues '''
     children = [
@@ -93,7 +85,6 @@ for t in empty_tag_names:
     
 tags.update ( dict (
     inlineJS = inlineJS,
-    script = script ( 'script' ),
     lorem_ipsum = lorem_ipsum,
 ) )
 
