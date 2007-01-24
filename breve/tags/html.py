@@ -59,7 +59,7 @@ class inlineJS ( str ):
         self.children = children
 
     def __str__ ( self ):
-        return '\n<script type="text/javascript">%s</script>' % cdata ( self.children )
+        return '\n<script type="text/javascript">\n//<![CDATA[%s\n//]]></script>\n' % self.children
         
 class lorem_ipsum ( Tag ):
     ''' silliness ensues '''
