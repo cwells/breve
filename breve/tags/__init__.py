@@ -44,7 +44,7 @@ class Tag ( object ):
     def clear ( self ):
         self.children = [ ]
 
-class Proto ( str ):
+class Proto ( unicode ):
     __slots__ = [ ]
     Class = Tag
     def __call__ ( self, **kw ):
@@ -53,12 +53,12 @@ class Proto ( str ):
     def __getitem__ ( self, children ):
         return self.Class ( self )[ children ]
         
-class cdata ( str ):
+class cdata ( unicode ):
     def __init__ ( self, children ):
         self.children = children
         
     def __str__ ( self ):
-        return '<![CDATA[%s]]>' % self.children
+        return u'<![CDATA[%s]]>' % self.children
 
 class Invisible ( Tag ):
     def __str__ ( self ):
@@ -68,13 +68,13 @@ class Invisible ( Tag ):
         else:
             t = self
         if t.children:
-            return ''.join ( [ flatten ( c ) for c in t.children ] )
-        return ''
+            return u''.join ( [ flatten ( c ) for c in t.children ] )
+        return u''
 class _invisible ( Proto ):
     Class = Invisible
 invisible = _invisible ( 'invisible' )
 
-class xml ( str ):
+class xml ( unicode ):
     def __str__ ( self ):
         return self
 
@@ -86,25 +86,26 @@ def flatten_tag ( o ):
     else:
         t = o
 
-    attrs = ''.join (
-        [ ' %s=%s' % ( k, v )
+    attrs = u''.join (
+        [ u' %s=%s' % ( k, v )
           for ( k, v ) in t.attrs.items ( ) ]
     )
     if t.children:
-        return ( '<%s%s>' % ( t.name, attrs ) +
-                 ''.join ( [ flatten ( c ) for c in t.children ] ) +  
-                 '</%s>' % t.name )
-    return '<%s%s></%s>' % ( t.name, attrs, t.name )
+        return ( u'<%s%s>' % ( t.name, attrs ) +
+                 u''.join ( [ flatten ( c ) for c in t.children ] ) +  
+                 u'</%s>' % t.name )
+    return u'<%s%s></%s>' % ( t.name, attrs, t.name )
 
 def flatten_proto ( p ):
-    return '<%s />' % p
+    return u'<%s />' % p
 
 def flatten_sequence ( o ):
-    return ''.join ( [ flatten ( i ) for i in o ] )
+    return u''.join ( [ flatten ( i ) for i in o ] )
 
 register_flattener ( list, flatten_sequence )
 register_flattener ( tuple, flatten_sequence )
 register_flattener ( Proto, flatten_proto )
 register_flattener ( Tag, flatten_tag )
 register_flattener ( str, escape )
+register_flattener ( unicode, escape )
 

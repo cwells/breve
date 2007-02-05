@@ -10,7 +10,7 @@ doctype = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 # supported unless the HTTP Content-type header is text/xml
 # and in fact the W3C recommends against such empty elements.
 #
-class HtmlProto ( str ):
+class HtmlProto ( unicode ):
     __slots__ = [ ]
     def __call__ ( self, **kw ):
         return Tag ( self )( **kw )
@@ -19,7 +19,7 @@ class HtmlProto ( str ):
         return Tag ( self )[ children ]
 
 def flatten_htmlproto ( p ):
-    return '<%s></%s>' % ( p, p )
+    return u'<%s></%s>' % ( p, p )
 
 register_flattener ( HtmlProto, flatten_htmlproto )
 
@@ -54,12 +54,12 @@ empty_tag_names = [
     'img', 'input', 'isindex', 'link', 'meta', 'p', 'param'
 ]
         
-class inlineJS ( str ):
+class inlineJS ( unicode ):
     def __init__ ( self, children ):
         self.children = children
 
     def __str__ ( self ):
-        return '\n<script type="text/javascript">\n//<![CDATA[%s\n//]]></script>\n' % self.children
+        return u'\n<script type="text/javascript">\n//<![CDATA[%s\n//]]></script>\n' % self.children
         
 class lorem_ipsum ( Tag ):
     ''' silliness ensues '''

@@ -15,6 +15,6 @@ def registry ( ):
     return __registry 
     
 def flatten ( o ):
-    return __registry.get ( type ( o ), str )( o )
+    return __registry.get ( type ( o ), unicode )( o )
 
 

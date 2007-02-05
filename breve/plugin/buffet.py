@@ -55,6 +55,10 @@ class BreveTemplatePlugin ( object ):
     def load_template ( self, template_name ):
         """
         template_name == dotted.path.to.template (without .ext)
+        @@ 1.1: Let's dump the dotted notation. It was a bad idea, the engine that
+        inspired it (Kid) is probably dead, and it was always meaningless
+        to everyone else anyway.  Also, let's support an extension as a synonym
+        for "format", i.e. /blog/feed.rss would be the same as /blog/feed?format=rss
         """
 
         template, args = splitquery ( template_name )

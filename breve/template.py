@@ -26,6 +26,7 @@ class Template ( object ):
 
     tidy = False
     debug = False
+    namespace = ''
     
     def __init__ ( T, tags, root = '.', xmlns = None, doctype = '', **kw ):
         '''
@@ -51,7 +52,6 @@ class Template ( object ):
         T.xml_encoding = '''<?xml version="1.0" encoding="UTF-8"?>'''
         T.extension = 'b' # default template extension
         T.doctype = doctype
-        T.namespace = None # any variables passed in will be in this Namespace (a string)
         T.fragments = { }
         T.vars = { 'xmlns': xmlns, }
         T.tags = { 'cdata': cdata,
@@ -69,8 +69,8 @@ class Template ( object ):
     class override ( Tag ): 
         def __str__ ( self ):
             if self.children:
-                return ( ''.join ( [ flatten ( c ) for c in self.children ] ) )
-            return ''
+                return ( u''.join ( [ flatten ( c ) for c in self.children ] ) )
+            return u''
 
     def include ( T, filename, vars = None ):
         return xml ( T.render_partial ( template = filename, vars = vars ) )
@@ -98,7 +98,7 @@ class Template ( object ):
                 T.vars.update ( vars )
 
         filename = "%s.%s" % ( os.path.join ( T.root, template ), T.extension )
-        output = ''
+        output = u''
         
         try:
             bytecode = _cache.compile ( filename )
@@ -117,14 +117,14 @@ class Template ( object ):
                              doctype = 'omit',
                              indent = 'auto',
                              tidy_mark = False )
-            return str ( tidylib.parseString ( output, **options )  )
+            return tidylib.parseString ( output, **options )
         else:
             return output
 
     def render ( T, template, fragments = None, vars = None, **kw ):
-        return '\n'.join ( ( T.xml_encoding,
-                             T.doctype,
-                             T.render_partial ( template, fragments, vars ) ) )
+        return u'\n'.join ( ( T.xml_encoding,
+                              T.doctype,
+                              T.render_partial ( template, fragments, vars ) ) )
 
     def debug_out ( T, exc_info, filename ):
         import sys, types, pydoc                
