@@ -63,6 +63,7 @@ class Template ( object ):
                    'override': T.override,
                    'slot': slot }
         T.tags.update ( entities )
+        T.tags.update ( dict ( E = entities ) ) # fallback in case of name clashes
         T.tags.update ( conditionals )
         T.tags.update ( tags )
 
