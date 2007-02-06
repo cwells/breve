@@ -2,8 +2,6 @@ from breve.flatten import flatten, register_flattener
 import _conditionals as C
 from xml.sax.saxutils import escape, quoteattr
 
-from breve.cache import memoize
-
 conditionals = dict ( [
     ( k, v ) for k, v in C.__dict__.items ( )
     if not k.startswith ( '_' )

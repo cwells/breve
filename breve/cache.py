@@ -1,6 +1,7 @@
 import os
 from time import time
-
+from breve.const_opt import bind_all
+ 
 class Cache ( object ):
     __slots__ = [ 'ccache', 'scache' ]
     def __init__ ( self ):
@@ -32,6 +33,8 @@ class Cache ( object ):
             }
             
         return self.scache [ id ] [ 'string' ]
+
+bind_all ( Cache )
         
 def memoize ( f ):
     return Memoize ( f )

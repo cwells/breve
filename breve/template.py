@@ -14,6 +14,7 @@ from breve.tags import Proto, Tag, Namespace, xml, invisible, cdata, conditional
 from breve.tags.entities import entities
 from breve.flatten import flatten, register_flattener, registry
 from breve.cache import Cache
+# from breve.const_opt import bind_all
 
 try:
     import tidy as tidylib
@@ -146,3 +147,4 @@ class Template ( object ):
         exception.append ( '</span>' )
         return xml ( ''.join ( exception ) )
             
+# bind_all ( Template )

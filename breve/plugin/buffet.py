@@ -47,8 +47,8 @@ class BreveTemplatePlugin ( object ):
                 if k.startswith ( 'breve.' ):
                     breve_opts [ k [ 6: ] ] = v
 
-        parts = breve_opts [ 'root' ].split ( '.' )
-        breve_opts [ 'root' ] = os.path.join ( *parts )        
+        # parts = breve_opts [ 'root' ].split ( '.' )
+        # breve_opts [ 'root' ] = os.path.join ( *parts )        
 
         return breve_opts
         
