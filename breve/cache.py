@@ -14,7 +14,7 @@ class Cache ( object ):
 
         self.ccache [ template ] = dict (
             timestamp = timestamp,
-            bytecode = compile ( file ( template, 'U' ).read ( ) + '\n', template, 'eval' )
+            bytecode = compile ( file ( template, 'U' ).read ( ), template, 'eval' )
         )
         return self.ccache [ template ] [ 'bytecode' ]
 

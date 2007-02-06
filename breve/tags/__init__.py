@@ -23,20 +23,15 @@ class Tag ( object ):
     def __call__ ( self, render = None, data = None, *args, **kw ):
         self.render = render
         self.data = data
-        for k, v in kw.items ( ):
-            v = quoteattr ( v )
-            if k [ -1 ] == '_':
-                self.attrs [ k [ :-1 ] ] = v
-            else:
-                self.attrs [ k ] = v
+        self.attrs = kw
         self.args = args
         return self
 
     def __getitem__ ( self, k ):
-        if type ( k ) in ( tuple, list ):
-            self.children.extend ( list ( k ) )
-        else:
-            self.children.append ( k )
+        # if type ( k ) in ( tuple, list ):
+        # self.children.extend ( list ( k ) )
+        # else:
+        self.children.append ( k )
         return self
     
     def clear ( self ):
@@ -85,7 +80,7 @@ def flatten_tag ( o ):
         t = o
 
     attrs = u''.join (
-        [ u' %s=%s' % ( k, v )
+        [ u' %s=%s' % ( [ k, k[ :-1 ] ][ k [ -1 ] == '_' ], quoteattr ( v ) )
           for ( k, v ) in t.attrs.items ( ) ]
     )
     if t.children:
@@ -103,7 +98,7 @@ def flatten_sequence ( o ):
 register_flattener ( list, flatten_sequence )
 register_flattener ( tuple, flatten_sequence )
 register_flattener ( Proto, flatten_proto )
-register_flattener ( Tag, flatten_tag )
+# register_flattener ( Tag, flatten_tag )
 register_flattener ( str, escape )
 register_flattener ( unicode, escape )
 
