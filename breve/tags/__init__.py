@@ -98,7 +98,7 @@ def flatten_sequence ( o ):
 register_flattener ( list, flatten_sequence )
 register_flattener ( tuple, flatten_sequence )
 register_flattener ( Proto, flatten_proto )
-# register_flattener ( Tag, flatten_tag )
+register_flattener ( Tag, flatten_tag )
 register_flattener ( str, escape )
 register_flattener ( unicode, escape )
 
