@@ -1,6 +1,5 @@
 from breve.flatten import register_flattener
-
-entities = { }
+from breve.tags import Namespace
 
 class Entity ( str ):
     def __init__ ( self, args ):
@@ -14,7 +13,7 @@ def flatten_entity ( e ):
 
 register_flattener ( Entity, flatten_entity )
 
-entities = dict (
+entities = Namespace ( dict (
     [ ( name, Entity ( ( name, "&#%s;" % value, descr ) ) )
       for ( name, value, descr ) in [
         ( 'nbsp', '160', 'non-breaking space' ),
@@ -269,5 +268,5 @@ entities = dict (
         ( 'rsaquo', '8250', 'single right-pointing angle quotation' ),
         ( 'euro', '8364', 'euro sign' )
     ] ]
-)
+) )
 

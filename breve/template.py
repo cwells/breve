@@ -27,6 +27,7 @@ class Template ( object ):
     tidy = False
     debug = False
     namespace = ''
+    mashup_entities = False  # set to True for old behaviour
     
     def __init__ ( T, tags, root = '.', xmlns = None, doctype = '', **kw ):
         '''
@@ -62,8 +63,9 @@ class Template ( object ):
                    'inherits': inherits,
                    'override': T.override,
                    'slot': slot }
-        T.tags.update ( entities )
-        T.tags.update ( dict ( E = entities ) ) # fallback in case of name clashes
+        if T.mashup_entities:
+            T.tags.update ( entities )
+        T.tags.update ( E = entities ) # fallback in case of name clashes
         T.tags.update ( conditionals )
         T.tags.update ( tags )
 

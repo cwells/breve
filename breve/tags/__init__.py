@@ -28,10 +28,10 @@ class Tag ( object ):
         return self
 
     def __getitem__ ( self, k ):
-        # if type ( k ) in ( tuple, list ):
-        # self.children.extend ( list ( k ) )
-        # else:
-        self.children.append ( k )
+        if type ( k ) in ( tuple, list ):
+            self.children.extend ( list ( k ) )
+        else:
+            self.children.append ( k )
         return self
     
     def clear ( self ):
@@ -75,19 +75,17 @@ class xml ( unicode ):
 def flatten_tag ( o ):
     if o.render:
         o.children = [ ]
-        t = o.render ( o, o.data )
-    else:
-        t = o
+        o = o.render ( o, o.data )
 
     attrs = u''.join (
-        [ u' %s=%s' % ( [ k, k[ :-1 ] ][ k [ -1 ] == '_' ], quoteattr ( v ) )
-          for ( k, v ) in t.attrs.items ( ) ]
+        [ u' %s=%s' % ( k.strip ( '_' ), quoteattr ( v ) )
+          for ( k, v ) in o.attrs.items ( ) ]
     )
-    if t.children:
-        return ( u'<%s%s>' % ( t.name, attrs ) +
-                 u''.join ( [ flatten ( c ) for c in t.children ] ) +  
-                 u'</%s>' % t.name )
-    return u'<%s%s></%s>' % ( t.name, attrs, t.name )
+    if o.children:
+        return ( u'<%s%s>' % ( o.name, attrs ) +
+                 u''.join ( [ flatten ( c ) for c in o.children ] ) +  
+                 u'</%s>' % o.name )
+    return u'<%s%s></%s>' % ( o.name, attrs, o.name )
 
 def flatten_proto ( p ):
     return u'<%s />' % p
