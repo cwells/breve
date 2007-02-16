@@ -33,6 +33,9 @@ class Tag ( object ):
         else:
             self.children.append ( k )
         return self
+
+    def __str__ ( self ):
+        return flatten ( self )
     
     def clear ( self ):
         self.children = [ ]
