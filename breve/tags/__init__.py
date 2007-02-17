@@ -1,3 +1,4 @@
+from breve.util import Namespace
 from breve.flatten import flatten, register_flattener
 import _conditionals as C
 from xml.sax.saxutils import escape, quoteattr
@@ -6,11 +7,6 @@ conditionals = dict ( [
     ( k, v ) for k, v in C.__dict__.items ( )
     if not k.startswith ( '_' )
 ] )
-
-class Namespace ( dict ):
-    def __getattr__ ( self, attr ):
-        return dict.setdefault ( self, attr, None )
-    __getitem__ = __getattr__
 
 class Tag ( object ):
     def __init__ ( self, name, *args, **kw ):

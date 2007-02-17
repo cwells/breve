@@ -10,7 +10,8 @@ breve - A simple s-expression style template engine inspired by Nevow's Stan.
 
 import os, sys
 from urllib2 import urlopen, URLError
-from breve.tags import Proto, Tag, Namespace, xml, invisible, cdata, conditionals
+from breve.util import Namespace
+from breve.tags import Proto, Tag, xml, invisible, cdata, conditionals
 from breve.tags.entities import entities
 from breve.flatten import flatten, register_flattener, registry
 from breve.cache import Cache
@@ -21,7 +22,7 @@ except ImportError:
     tidylib = None
 
 _cache = Cache ( )
-                                                                                    
+
 class Template ( object ):
 
     tidy = False
