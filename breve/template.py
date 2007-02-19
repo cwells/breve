@@ -120,7 +120,9 @@ class Template ( object ):
                              add_xml_decl = False,
                              doctype = 'omit',
                              indent = 'auto',
-                             tidy_mark = False )
+                             tidy_mark = False,
+                             input_encoding = 'utf8' )
+            print tidylib.parseString ( output.encode ( 'utf-8' ), **options )
             return unicode ( tidylib.parseString ( output, **options ) )
         else:
             return output
