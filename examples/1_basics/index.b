@@ -25,7 +25,7 @@ html [
             p [ message ],
             
             # entities (like &amp;)
-            p [ 'Coffee', nbsp, amp, nbsp, 'cream' ]
+            p [ 'Coffee', E.nbsp, E.amp, E.nbsp, 'cream' ]
         ]
     ]
 ]

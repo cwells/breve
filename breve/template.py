@@ -28,7 +28,7 @@ class Template ( object ):
     tidy = False
     debug = False
     namespace = ''
-    mashup_entities = False  # set to True for old behaviour
+    mashup_entities = False  # set to True for old 1.0 behaviour
     
     def __init__ ( T, tags, root = '.', xmlns = None, doctype = '', **kw ):
         '''
@@ -121,14 +121,14 @@ class Template ( object ):
                              doctype = 'omit',
                              indent = 'auto',
                              tidy_mark = False )
-            return tidylib.parseString ( output, **options )
+            return unicode ( tidylib.parseString ( output, **options ) )
         else:
             return output
 
-    def render ( T, template, fragments = None, vars = None, **kw ):
-        return u'\n'.join ( ( T.xml_encoding,
+    def render ( T, template, vars = None, **kw ):
+        return u'\n'.join ( [ T.xml_encoding,
                               T.doctype,
-                              T.render_partial ( template, fragments, vars ) ) )
+                              T.render_partial ( template, vars = vars ) ] )
 
     def debug_out ( T, exc_info, filename ):
         import sys, types, pydoc                

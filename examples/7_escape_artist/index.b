@@ -7,7 +7,7 @@ html [
             p ( class_ = 'foo' ) [ message, '&&&' ],
             
             # entities (like &amp;)
-            p [ 'Coffee', nbsp, amp, nbsp, 'cream' ],
+            p [ 'Coffee', E.nbsp, E.amp, E.nbsp, 'cream' ],
 
             xml ( '''<div>this should be <u>unescaped</u> &amp; unaltered.</div>''' )
         ]

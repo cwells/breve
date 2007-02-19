@@ -44,6 +44,7 @@ for root, template in [ ( '1_basics', 'index' ),
     print t.render ( template = template, vars = vars )
     print "\n\n\n"
 
+raise SystemExit
 
 ####### test custom tags
 import sys
