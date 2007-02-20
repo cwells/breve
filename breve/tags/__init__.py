@@ -1,7 +1,6 @@
-from breve.util import Namespace
+from breve.util import Namespace, escape, quoteattrs
 from breve.flatten import flatten, register_flattener
 import _conditionals as C
-from xml.sax.saxutils import escape, quoteattr
 
 conditionals = dict ( [
     ( k, v ) for k, v in C.__dict__.items ( )
@@ -9,6 +8,8 @@ conditionals = dict ( [
 ] )
 
 class Tag ( object ):
+    __slots__ = [ 'name', 'children', 'attrs', 'render', 'data', 'args' ]
+    
     def __init__ ( self, name, *args, **kw ):
         self.name = name
         self.children = [ ]
@@ -76,10 +77,8 @@ def flatten_tag ( o ):
         o.children = [ ]
         o = o.render ( o, o.data )
 
-    attrs = u''.join (
-        [ u' %s=%s' % ( k.strip ( '_' ), quoteattr ( v ) )
-          for ( k, v ) in o.attrs.items ( ) ]
-    )
+    attrs = u''.join ( quoteattrs ( o.attrs ) )
+    
     if o.children:
         return ( u'<%s%s>' % ( o.name, attrs ) +
                  u''.join ( [ flatten ( c ) for c in o.children ] ) +  

@@ -32,23 +32,3 @@ class Cache ( object ):
             }
             
         return self.scache [ id ] [ 'string' ]
-        
-def memoize ( f ):
-    return Memoize ( f )
-
-class Memoize ( object ):
-    __slots__ = [ 'cache', 'fn', 'instance', 'expires' ]
-    def __init__ ( self, fn ):
-        self.cache = { }
-        self.fn = fn
-
-    def __get__ ( self, instance, cls=None ):
-        self.instance = instance
-        return self
-
-    def __call__ ( self, *args ):
-        if self.cache.has_key ( args ):
-            return self.cache [ args ]
-        else:
-            object = self.cache [ args ] = self.fn ( self.instance, *args )
-        return object

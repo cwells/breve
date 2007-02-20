@@ -19,7 +19,7 @@ class HtmlProto ( unicode ):
         return Tag ( self )[ children ]
 
 def flatten_htmlproto ( p ):
-    return u'<%s></%s>' % ( p, p )
+    return '<%s></%s>' % ( p, p )
 
 register_flattener ( HtmlProto, flatten_htmlproto )
 

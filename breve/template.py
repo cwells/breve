@@ -122,8 +122,7 @@ class Template ( object ):
                              indent = 'auto',
                              tidy_mark = False,
                              input_encoding = 'utf8' )
-            print tidylib.parseString ( output.encode ( 'utf-8' ), **options )
-            return unicode ( tidylib.parseString ( output, **options ) )
+            return unicode ( tidylib.parseString ( output.encode ( 'utf-8' ), **options ) )
         else:
             return output
 
