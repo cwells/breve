@@ -25,7 +25,7 @@ html [
             p [ message ],
             
             # entities (like &amp;)
-            p [ 'Coffee', E.nbsp, E.amp, E.nbsp, 'cream' ]
+            p [ 'Coffee', E.nbsp, E.amp, E.nbsp, 'cream', E.copy, ' 2007, Cliff Wells' ]
         ]
     ]
 ]

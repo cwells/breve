@@ -13,7 +13,16 @@ def flatten_entity ( e ):
 
 register_flattener ( Entity, flatten_entity )
 
-entities = Namespace ( dict (
+class EntityNamespace ( object ):
+    def __init__ ( self, values ):
+        self._dict = values
+
+    def __getattr__ ( self, attr ):
+        return self._dict.setdefault ( attr, None )
+    __getitem__ = __getattr__
+
+
+entities = EntityNamespace ( dict (
     [ ( name, Entity ( ( name, "&#%s;" % value, descr ) ) )
       for ( name, value, descr ) in [
         ( 'nbsp', '160', 'non-breaking space' ),

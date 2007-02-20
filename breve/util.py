@@ -3,7 +3,6 @@ class Namespace ( dict ):
         return dict.setdefault ( self, attr, None )
     __getitem__ = __getattr__
 
-
 def quoteattrs ( attrs ):
     """
     Escape and quote a dict of attribute/value pairs.
