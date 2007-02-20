@@ -57,9 +57,11 @@ empty_tag_names = [
 class inlineJS ( unicode ):
     def __init__ ( self, children ):
         self.children = children
+        
+def flatten_inlineJS ( o ):
+    return u'\n<script type="text/javascript">\n//<![CDATA[%s\n//]]></script>\n' % o.children
 
-    def __str__ ( self ):
-        return u'\n<script type="text/javascript">\n//<![CDATA[%s\n//]]></script>\n' % self.children
+register_flattener ( inlineJS, flatten_inlineJS )
         
 class lorem_ipsum ( Tag ):
     ''' silliness ensues '''
