@@ -47,11 +47,10 @@ for root, template in [ ( '1_basics', 'index' ),
 ####### test custom loaders
 import os
 
-paths = ( '9_custom_loaders', '9_custom_loaders/inc1', '9_custom_loaders/inc2' )
 class PathLoader ( object ):
     __slots__ = [ 'paths' ]
 
-    def __init__ ( self, paths ):
+    def __init__ ( self, *paths ):
         self.paths = paths
 
     def stat ( self, template, root ):
@@ -60,16 +59,20 @@ class PathLoader ( object ):
             if os.path.isfile ( f ):
                 timestamp = long ( os.stat ( f ).st_mtime )
                 uid = f
-        return uid, timestamp
+                return uid, timestamp
+        raise OSError, 'No such file or directory %s' % template
     
     def load ( self, uid ):
         return file ( uid, 'U' ).read ( )
 
-root, template = '', 'index'
+root, template = '9_custom_loaders', 'index'
 vars = { }
 
+print "RUNNING EXAMPLE", root, template
+print "=" * 40
+
 t = Template ( tags = html.tags, root = root )
-t.loader = PathLoader ( paths )
+t.loader = PathLoader ( '', 'inc1', 'inc2' )
 print t.render ( template = template, vars = vars )
 
 
