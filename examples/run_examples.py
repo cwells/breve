@@ -4,6 +4,7 @@ try:
     from breve import Template
     from breve.tags import html
     from breve.flatten import register_flattener
+    from breve.util import Namespace
 except ImportError:
     print 'run "python setup.py install" from the parent directory first'
     raise SystemExit
@@ -65,17 +66,30 @@ class PathLoader ( object ):
     def load ( self, uid ):
         return file ( uid, 'U' ).read ( )
 
+class StringLoader ( object ):
+    __slots__ = [ ]
+    
+    def stat ( self, template, root ):
+        return ( root, template ), 0
+
+    def load ( self, uid ):
+        return u'span [ "Hello, world" ]'
+    
 root, template = '9_custom_loaders', 'index'
-vars = { }
+pathloader = PathLoader ( 'inc1', 'inc2' )
+stringloader = StringLoader ( )
+vars = dict (
+    loaders = Namespace ( {
+        'pathloader': pathloader,
+        'stringloader': stringloader
+    } )
+)
 
 print "RUNNING EXAMPLE", root, template
 print "=" * 40
 
 t = Template ( tags = html.tags, root = root )
-t.loader = PathLoader ( '', 'inc1', 'inc2' )
 print t.render ( template = template, vars = vars )
-
-
 
 
     

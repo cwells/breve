@@ -31,7 +31,7 @@ class Template ( object ):
     debug = False
     namespace = ''
     mashup_entities = False  # set to True for old 1.0 behaviour
-    loader = _loader
+    loaders = [ _loader ]
     
     def __init__ ( T, tags, root = '.', xmlns = None, doctype = '', **kw ):
         '''
@@ -79,8 +79,8 @@ class Template ( object ):
                 return ( u''.join ( [ flatten ( c ) for c in self.children ] ) )
             return u''
 
-    def include ( T, filename, vars = None ):
-        return xml ( T.render_partial ( template = filename, vars = vars ) )
+    def include ( T, filename, vars = None, loader = None ):
+        return xml ( T.render_partial ( template = filename, vars = vars, loader = loader ) )
 
     def xinclude ( T, url, timeout = 300 ):
         def fetch ( url ):
@@ -90,7 +90,10 @@ class Template ( object ):
                 return "Error loading %s: %s" % ( url, e )
         return xml ( _cache.memoize ( url, timeout, fetch, url ) )
 
-    def render_partial ( T, template, fragments = None, vars = None, **kw ):
+    def render_partial ( T, template, fragments = None, vars = None, loader = None, **kw ):
+        if loader:
+            T.loaders.append ( loader )
+            
         if fragments:
             for f in fragments:
                 if f.name not in T.fragments:
@@ -104,13 +107,11 @@ class Template ( object ):
             else:
                 T.vars.update ( vars )
 
-        
-        # filename = "%s.%s" % ( os.path.join ( T.root, template ), T.extension )
         filename = "%s.%s" % ( template, T.extension )
         output = u''
         
         try:
-            bytecode = _cache.compile ( filename, T.root, T.loader )
+            bytecode = _cache.compile ( filename, T.root, T.loaders [ -1 ] )
             output = flatten ( eval ( bytecode, T.tags, T.vars ) )
         except:
             if T.debug:
@@ -118,6 +119,9 @@ class Template ( object ):
             else:
                 print "Error in template ( %s )" % template
                 raise
+        else:
+            if loader:
+                T.loaders.pop ( ) # restore the previous loader
             
         if T.tidy and tidylib:
             options = dict ( input_xml = True,
@@ -131,7 +135,9 @@ class Template ( object ):
         else:
             return output
 
-    def render ( T, template, vars = None, **kw ):
+    def render ( T, template, vars = None, loader = None, **kw ):
+        if loader:
+            T.loaders.append ( loader )
         return u'\n'.join ( [ T.xml_encoding,
                               T.doctype,
                               T.render_partial ( template, vars = vars ) ] )

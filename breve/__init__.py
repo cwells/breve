@@ -1,5 +1,5 @@
 from breve.template import Template
 from breve.util import Namespace
 
-__version__ = '1.1.4'
+__version__ = '1.1.5'
 
