@@ -14,6 +14,7 @@ from breve.util import Namespace
 from breve.tags import Proto, Tag, xml, invisible, cdata, conditionals
 from breve.tags.entities import entities
 from breve.flatten import flatten, register_flattener, registry
+from breve.loaders import FileLoader
 from breve.cache import Cache
 
 try:
@@ -22,6 +23,7 @@ except ImportError:
     tidylib = None
 
 _cache = Cache ( )
+_loader = FileLoader ( )
 
 class Template ( object ):
 
@@ -29,6 +31,7 @@ class Template ( object ):
     debug = False
     namespace = ''
     mashup_entities = False  # set to True for old 1.0 behaviour
+    loader = _loader
     
     def __init__ ( T, tags, root = '.', xmlns = None, doctype = '', **kw ):
         '''
@@ -101,11 +104,13 @@ class Template ( object ):
             else:
                 T.vars.update ( vars )
 
-        filename = "%s.%s" % ( os.path.join ( T.root, template ), T.extension )
+        
+        # filename = "%s.%s" % ( os.path.join ( T.root, template ), T.extension )
+        filename = "%s.%s" % ( template, T.extension )
         output = u''
         
         try:
-            bytecode = _cache.compile ( filename )
+            bytecode = _cache.compile ( filename, T.root, T.loader )
             output = flatten ( eval ( bytecode, T.tags, T.vars ) )
         except:
             if T.debug:

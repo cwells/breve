@@ -44,6 +44,38 @@ for root, template in [ ( '1_basics', 'index' ),
     print t.render ( template = template, vars = vars )
     print "\n\n\n"
 
+####### test custom loaders
+import os
+
+paths = ( '9_custom_loaders', '9_custom_loaders/inc1', '9_custom_loaders/inc2' )
+class PathLoader ( object ):
+    __slots__ = [ 'paths' ]
+
+    def __init__ ( self, paths ):
+        self.paths = paths
+
+    def stat ( self, template, root ):
+        for p in self.paths:
+            f = os.path.join ( root, p, template )
+            if os.path.isfile ( f ):
+                timestamp = long ( os.stat ( f ).st_mtime )
+                uid = f
+        return uid, timestamp
+    
+    def load ( self, uid ):
+        return file ( uid, 'U' ).read ( )
+
+root, template = '', 'index'
+vars = { }
+
+t = Template ( tags = html.tags, root = root )
+t.loader = PathLoader ( paths )
+print t.render ( template = template, vars = vars )
+
+
+
+
+    
 raise SystemExit
 
 ####### test custom tags

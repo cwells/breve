@@ -1,22 +1,21 @@
-import os
 from time import time
- 
+
 class Cache ( object ):
-    __slots__ = [ 'ccache', 'scache' ]
+    __slots__ = [ 'ccache', 'scache', 'loader' ]
     def __init__ ( self ):
         self.ccache = { }
         self.scache = { }
-        
-    def compile ( self, template ):
-        timestamp = long ( os.stat ( template ).st_mtime )
-        if template in self.ccache and self.ccache [ template ] [ 'timestamp' ] == timestamp:
-            return self.ccache [ template ] [ 'bytecode' ]
-
-        self.ccache [ template ] = dict (
+       
+    def compile ( self, template, root, loader ):
+        uid, timestamp = loader.stat ( template, root )
+        if uid in self.ccache:
+            if timestamp == self.ccache [ uid ][ 'timestamp' ]:
+                return self.ccache [ uid ][ 'bytecode' ]
+        self.ccache [ uid ] = dict (
             timestamp = timestamp,
-            bytecode = compile ( file ( template, 'U' ).read ( ), template, 'eval' )
+            bytecode = compile ( loader.load ( uid ), template, 'eval' )
         )
-        return self.ccache [ template ] [ 'bytecode' ]
+        return self.ccache [ uid ] [ 'bytecode' ]
 
     def memoize ( self, id, timeout, f, *args, **kw ):
         t = time ( )
