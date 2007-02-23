@@ -1,7 +1,26 @@
-class Namespace ( dict ):
-    def __getattr__ ( self, attr ):
-        return dict.setdefault ( self, attr, None )
-    __getitem__ = __getattr__
+class Namespace ( object ):
+    __slots__ = [ '_dict' ]
+    
+    def __init__ ( self, values = None ):
+        self._dict = { }
+        if values:
+            self._dict.update ( values )
+            
+    def __getitem__ ( self, k ):
+        return self._dict [ k ]
+
+    def __setitem__ ( self, k, v ):
+        self._dict [ k ] = v
+        
+    def __getattr__ ( self, k ):
+        if k in self._dict:
+            return self._dict [ k ]
+        return getattr ( self._dict, k )
+
+# class Namespace ( dict ):
+#    def __getattr__ ( self, attr ):
+#        return dict.setdefault ( self, attr, None )
+#     __getitem__ = __getattr__
 
 def quoteattrs ( attrs ):
     """

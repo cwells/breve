@@ -1,5 +1,5 @@
 from breve.flatten import register_flattener
-from breve.tags import Namespace
+from breve.util import Namespace
 
 class Entity ( str ):
     def __init__ ( self, args ):
@@ -13,16 +13,16 @@ def flatten_entity ( e ):
 
 register_flattener ( Entity, flatten_entity )
 
-class EntityNamespace ( object ):
-    def __init__ ( self, values ):
-        self._dict = values
+# class EntityNamespace ( object ):
+#    def __init__ ( self, values ):
+#        self._dict = values
+#
+#    def __getattr__ ( self, attr ):
+#        return self._dict.setdefault ( attr, None )
+#    __getitem__ = __getattr__
 
-    def __getattr__ ( self, attr ):
-        return self._dict.setdefault ( attr, None )
-    __getitem__ = __getattr__
 
-
-entities = EntityNamespace ( dict (
+entities = Namespace ( dict (
     [ ( name, Entity ( ( name, "&#%s;" % value, descr ) ) )
       for ( name, value, descr ) in [
         ( 'nbsp', '160', 'non-breaking space' ),
