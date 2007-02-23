@@ -31,3 +31,4 @@ class Cache ( object ):
             }
             
         return self.scache [ id ] [ 'string' ]
+

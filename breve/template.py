@@ -16,6 +16,7 @@ from breve.tags.entities import entities
 from breve.flatten import flatten, register_flattener, registry
 from breve.loaders import FileLoader
 from breve.cache import Cache
+from breve.globals import _globals
 
 try:
     import tidy as tidylib
@@ -103,9 +104,13 @@ class Template ( object ):
             ns = kw.get ( 'namespace', T.namespace )
             if ns:
                 T.vars [ ns ] = Namespace ( )
+                T.vars [ ns ].update ( _globals )
                 T.vars [ ns ].update ( vars )
             else:
+                T.vars.update ( _globals )
                 T.vars.update ( vars )
+        else:
+            T.vars.update ( _globals )
 
         filename = "%s.%s" % ( template, T.extension )
         output = u''

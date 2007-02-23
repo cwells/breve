@@ -3,8 +3,9 @@
 try:
     from breve import Template
     from breve.tags import html
-    from breve.flatten import register_flattener
     from breve.util import Namespace
+    from breve.flatten import register_flattener
+    from breve.globals import register_global
 except ImportError:
     print 'run "python setup.py install" from the parent directory first'
     raise SystemExit
@@ -18,6 +19,7 @@ from datetime import datetime
 def flatten_datetime ( o ):
     return o.strftime ( '%Y/%m/%d' )
 register_flattener ( datetime, flatten_datetime )
+register_global ( 'today', datetime.today ( ) )
 
 def example_renderer ( tag, data ):
     return tag ( class_ = 'custom-renderer' ) [
@@ -25,8 +27,9 @@ def example_renderer ( tag, data ):
         'We also passed in this data: ', data
     ]
 
+
+
 vars = dict ( 
-    today = datetime.today ( ),
     message = 'Hello, world!',
     example_renderer = example_renderer,
     username = 'admin'
