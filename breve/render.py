@@ -89,6 +89,9 @@ class mapping ( object ):
                         c.data = v 
                         walk ( c, v )
 
+        if not data:
+            return tag.clear ( )
+        
         output = [ ]
         
         return tag [ output ]
