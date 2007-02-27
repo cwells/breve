@@ -22,12 +22,12 @@ class sequence ( object ):
             if items:
                 while data:
                     for i in items:
-                        if not data:
-                            break
                         if isinstance ( i, Curval ) and i.name == self.name:
                             # output.append ( v )
                             output.append ( i.data )
                         elif isinstance ( i, Tag ):
+                            if not data:
+                                continue
                             itemtag = deepcopy ( i )
                             v = data.pop ( 0 )
                             itemtag.data = v
@@ -50,7 +50,7 @@ class sequence ( object ):
         output = [ ]
 
         while tag.children:
-            c = tag.children.pop ( )
+            c = tag.children.pop ( 0 )
             if isinstance ( c, Tag ) or isinstance ( c, Curval ):
                 if c.pattern == 'header':
                     header = [ c ]
@@ -60,10 +60,10 @@ class sequence ( object ):
                     footers.append ( data.pop ( -1 ) )
                 elif c.pattern == 'item':
                     items.append ( c )
-                elif c.pattern == 'value':
-                    items.append ( c )
+                else:
+                    output.append ( c )
             else:
-                items.append ( c )
+                output.append ( c )
 
         if header:
             output.extend ( process ( header, headers ) )
@@ -86,7 +86,6 @@ class mapping ( object ):
                 if isinstance ( c, Curval ) and c.name == self.name:
                     o.children [ idx ] = v [ o.pattern ]
                 elif isinstance ( c, Tag ):
-                    print "tag", c.name, v
                     c.data = v 
                     walk ( c, v )
 

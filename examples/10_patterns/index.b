@@ -11,10 +11,10 @@ html [
                  th ( pattern = 'item' ) [ curval ( 'row-seq' ) ], 
              ],
 
-             tr ( pattern = 'item', render = sequence ( 'row-seq' ), class_ = 'odd-row' ) [ 
+             tr ( pattern = 'item', render = sequence ( 'row-seq' ), class_ = 'even-row' ) [ 
                  td ( pattern = 'item' ) [ curval ( 'row-seq' ) ]
              ],
-             tr ( pattern = 'item', render = sequence ( 'row-seq' ), class_ = 'even-row' ) [ 
+             tr ( pattern = 'item', render = sequence ( 'row-seq' ), class_ = 'odd-row' ) [ 
                  td ( pattern = 'item' ) [ curval ( 'row-seq' ) ]
              ],
 
@@ -26,10 +26,15 @@ html [
          p [ '''Render a list of dictionaries using patterns''' ],
          table ( render = sequence ( 'userlist' ), data = userlist ) [
              th [ 'firstname' ], th [ 'lastname' ],
-             tr ( pattern = 'item', render = mapping ( 'user' ) ) [
+             tr ( pattern = 'item', render = mapping ( 'user' ), class_ = 'even-row' ) [
+                 td ( pattern = 'firstname' ) [ curval ( 'user' ) ],
+                 td ( pattern = 'lastname' ) [ curval ( 'user' ) ],
+             ],
+             tr ( pattern = 'item', render = mapping ( 'user' ), class_ = 'odd-row' ) [
                  td ( pattern = 'firstname' ) [ curval ( 'user' ) ],
                  td ( pattern = 'lastname' ) [ curval ( 'user' ) ],
              ]
+
          ]
     ]
 ]
