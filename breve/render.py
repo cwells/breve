@@ -80,18 +80,18 @@ class mapping ( object ):
         
     def __call__ ( self, tag, data ):
         def walk ( o, v ):
-            if isinstance ( o, Tag ):
-                for idx in range ( len ( o.children ) ):
-                    c = o.children [ idx ]
-                    if isinstance ( c, Curval ) and c.name == self.name:
-                        o.children [ idx ] = v
-                    elif isinstance ( c, Tag ):
-                        c.data = v 
-                        walk ( c, v )
+            for idx in range ( len ( o.children ) ):
+                c = o.children [ idx ]
+                if isinstance ( c, Curval ) and c.name == self.name:
+                    o.children [ idx ] = v [ o.pattern ]
+                elif isinstance ( c, Tag ):
+                    print "tag", c.name, v
+                    c.data = v 
+                    walk ( c, v )
 
         if not data:
             return tag.clear ( )
-        
-        output = [ ]
-        
-        return tag [ output ]
+
+        walk ( tag, data )
+
+        return tag 

@@ -103,8 +103,8 @@ class Template ( object ):
                     T.fragments [ f.name ] = f
 
         T.vars.update ( {
-            'sequence': lambda *a, **kw: breve.render.sequence ( *a, **kw ),
-            'mapping': lambda *a, **kw: breve.render.mapping ( *a, **kw )
+            'sequence': breve.render.sequence,
+            'mapping': breve.render.mapping
         } )
 
         if vars:
