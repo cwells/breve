@@ -54,6 +54,10 @@ class Template ( object ):
                     T.fragments.get ( self.name, 'slot named "%s" not filled' % self.name )
                 ) )
 
+        def preamble ( **kw ):
+            T.__dict__.update ( kw )
+            return ''
+
         T.root = root
         T.xmlns = xmlns
         T.xml_encoding = '''<?xml version="1.0" encoding="UTF-8"?>'''
@@ -69,7 +73,8 @@ class Template ( object ):
                    'inherits': inherits,
                    'override': T.override,
                    'slot': slot,
-                   'curval': Curval }
+                   'curval': Curval,
+                   'preamble': preamble }
         if T.mashup_entities:
             T.tags.update ( entities )
         T.tags.update ( E = entities ) # fallback in case of name clashes
@@ -148,9 +153,8 @@ class Template ( object ):
     def render ( T, template, vars = None, loader = None, **kw ):
         if loader:
             T.loaders.append ( loader )
-        return u'\n'.join ( [ T.xml_encoding,
-                              T.doctype,
-                              T.render_partial ( template, vars = vars ) ] )
+        output = T.render_partial ( template, vars = vars )
+        return u'\n'.join ( [ T.xml_encoding, T.doctype, output ] )
 
     def debug_out ( T, exc_info, filename ):
         import sys, types, pydoc                

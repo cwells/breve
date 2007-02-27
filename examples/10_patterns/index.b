@@ -1,10 +1,16 @@
 html [
-    head [ 
+    preamble (
+        xml_encoding = '''<?xml version="1.0" encoding="UTF-8"?>''',
+        doctype = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">''',
+    ),
+    
+    head [
         title [ 'Patterns' ]
     ],
 
     body [ 
-         p [ '''Render a 3 column x 10 row table using patterns''' ],
+         p [ '''=== Render a 3 column x 10 row table using patterns ===''' ],
          table ( render = sequence ( 'table-seq' ), data = mytable ) [
              invisible ( pattern = 'header', render = sequence ( 'row-seq' ) ) [
                  th ( pattern = 'item' ) [ curval ( 'row-seq' ) ], 
@@ -22,13 +28,13 @@ html [
              ]
          ],
 
-         p [ '''Render a dictionary as a pattern''' ],
+         p [ '''=== Render a dictionary as a pattern ===''' ],
          ul ( render = mapping ( 'user' ), data = person ) [
              li ( pattern = 'firstname' ) [ 'First Name: ', curval ( 'user' ) ],
              li ( pattern = 'lastname' ) [ 'Last Name: ', curval ( 'user' ) ],
          ],
 
-         p [ '''Render a list of dictionaries using patterns''' ],
+         p [ '''==== Render a list of dictionaries using patterns ===''' ],
          table ( render = sequence ( 'userlist' ), data = userlist ) [
              th [ 'First Name' ], th [ 'Last Name' ], th [ 'Projects' ],
              tr ( pattern = 'item', render = mapping ( 'user' ), class_ = 'odd-row' ) [
