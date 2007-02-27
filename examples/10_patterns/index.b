@@ -25,6 +25,7 @@ html [
 
          p [ '''Render a list of dictionaries using patterns''' ],
          table ( render = sequence ( 'userlist' ), data = userlist ) [
+             th [ 'firstname' ], th [ 'lastname' ],
              tr ( pattern = 'item', render = mapping ( 'user' ) ) [
                  td ( pattern = 'firstname' ) [ curval ( 'user' ) ],
                  td ( pattern = 'lastname' ) [ curval ( 'user' ) ],

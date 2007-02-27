@@ -25,7 +25,8 @@ class sequence ( object ):
                         if not data:
                             break
                         if isinstance ( i, Curval ) and i.name == self.name:
-                            output.append ( v )
+                            # output.append ( v )
+                            output.append ( i.data )
                         elif isinstance ( i, Tag ):
                             itemtag = deepcopy ( i )
                             v = data.pop ( 0 )
