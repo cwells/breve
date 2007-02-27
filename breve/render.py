@@ -11,7 +11,7 @@ class sequence ( object ):
             if isinstance ( o, Tag ):
                 for idx in range ( len ( o.children ) ):
                     c = o.children [ idx ]
-                    if isinstance ( c, Curval ) and c.seqname == self.name:
+                    if isinstance ( c, Curval ) and c.name == self.name:
                         o.children [ idx ] = v
                     elif isinstance ( c, Tag ):
                         c.data = v 
@@ -24,7 +24,7 @@ class sequence ( object ):
                     for i in items:
                         if not data:
                             break
-                        if isinstance ( i, Curval ) and i.seqname == self.name:
+                        if isinstance ( i, Curval ) and i.name == self.name:
                             output.append ( v )
                         elif isinstance ( i, Tag ):
                             itemtag = deepcopy ( i )
@@ -74,5 +74,21 @@ class sequence ( object ):
         return tag [ output ]
 
 
-def mapping ( tag, data ):
-    pass
+class mapping ( object ):
+    def __init__ ( self, name ):
+        self.name = name
+        
+    def __call__ ( self, tag, data ):
+        def walk ( o, v ):
+            if isinstance ( o, Tag ):
+                for idx in range ( len ( o.children ) ):
+                    c = o.children [ idx ]
+                    if isinstance ( c, Curval ) and c.name == self.name:
+                        o.children [ idx ] = v
+                    elif isinstance ( c, Tag ):
+                        c.data = v 
+                        walk ( c, v )
+
+        output = [ ]
+        
+        return tag [ output ]

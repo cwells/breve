@@ -21,6 +21,14 @@ html [
              tr ( pattern = 'footer', render = sequence ( 'row-seq'), class_ = 'footer' ) [
                  td ( pattern = 'item' ) [ curval ( 'row-seq' ) ]
              ]
+         ],
+
+         p [ '''Render a list of dictionaries using patterns''' ],
+         table ( render = sequence ( 'userlist' ), data = users ) [
+             tr ( pattern = 'item', render = mapping ( 'user' ) ) [
+                 td ( pattern = 'firstname' ) [ curval ( 'user' ) ],
+                 td ( pattern = 'lastname' ) [ curval ( 'user' ) ],
+             ]
          ]
     ]
 ]
