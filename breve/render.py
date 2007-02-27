@@ -3,9 +3,8 @@ from breve.tags import Tag
 from breve.util import Curval
 
 class sequence ( object ):
-    def __init__ ( self, context, name ):
+    def __init__ ( self, name ):
         self.name = name
-        self.context = context
         
     def __call__ ( self, tag, data ):
         def walk ( o, v ):

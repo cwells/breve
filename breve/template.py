@@ -27,11 +27,6 @@ except ImportError:
 _cache = Cache ( )
 _loader = FileLoader ( )
 
-class Context ( dict ):
-    def _get_value ( self ):
-        return 'get_value!'
-    value = property ( _get_value )
-    
 class Template ( object ):
 
     tidy = False
@@ -99,9 +94,6 @@ class Template ( object ):
         return xml ( _cache.memoize ( url, timeout, fetch, url ) )
 
     def render_partial ( T, template, fragments = None, vars = None, loader = None, **kw ):
-        T._context = Context ( )
-        T.vars [ 'context' ] = T._context
-
         if loader:
             T.loaders.append ( loader )
             
@@ -111,8 +103,8 @@ class Template ( object ):
                     T.fragments [ f.name ] = f
 
         T.vars.update ( {
-            'sequence': lambda *a, **kw: breve.render.sequence ( T._context, *a, **kw ),
-            'mapping': lambda *a, **kw: breve.render.mapping ( T._context, *a, **kw )
+            'sequence': lambda *a, **kw: breve.render.sequence ( *a, **kw ),
+            'mapping': lambda *a, **kw: breve.render.mapping ( *a, **kw )
         } )
 
         if vars:
