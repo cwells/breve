@@ -5,7 +5,6 @@ html [
 
     body [ 
          p [ '''Render a 3 column x 10 row table using patterns''' ],
-
          table ( render = sequence ( 'table-seq' ), data = mytable ) [
              invisible ( pattern = 'header', render = sequence ( 'row-seq' ) ) [
                  th ( pattern = 'item' ) [ curval ( 'row-seq' ) ], 
@@ -34,7 +33,6 @@ html [
                  td ( pattern = 'firstname' ) [ curval ( 'user' ) ],
                  td ( pattern = 'lastname' ) [ curval ( 'user' ) ],
              ]
-
          ]
     ]
 ]

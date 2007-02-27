@@ -32,8 +32,15 @@ vars = dict (
     message = 'Hello, world!',
     example_renderer = example_renderer,
     username = 'admin',
-    mytable = [ ( 'value', 'squared', 'cubed' ) ] + [ ( a, a**2, a**3 ) for a in range ( 10 ) ],
-    userlist = [ dict ( firstname = 'John', lastname = 'Doe' ), dict ( firstname = 'Jane', lastname = 'Doe' ) ]
+    mytable = [ ( 'value', 'squared', 'cubed' ) ]
+                + [ ( a, a**2, a**3 ) for a in range ( 10 ) ],
+    userlist = [
+        dict ( firstname = 'Ian', lastname = 'Bicking' ),
+        dict ( firstname = 'Tim', lastname = 'Peters' ),
+        dict ( firstname = 'Guido', lastname = 'Van Rossum' ),
+        dict ( firstname = 'Linus', lastname = 'Torvalds' ),
+        dict ( firstname = 'Michael', lastname = 'Stonebaker' )
+    ]
 )
 
 for root, template in [ ( '1_basics', 'index' ),
