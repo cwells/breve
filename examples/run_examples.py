@@ -33,13 +33,14 @@ vars = dict (
     example_renderer = example_renderer,
     username = 'admin',
     mytable = [ ( 'value', 'squared', 'cubed' ) ]
-                + [ ( a, a**2, a**3 ) for a in range ( 10 ) ],
+            + [ ( a, a**2, a**3 ) for a in range ( 10 ) ],
+    person = { 'firstname': 'John', 'lastname': 'Doe' },
     userlist = [
         dict ( firstname = 'Ian', lastname = 'Bicking', projects = [ 'paste', 'sqlobject' ] ),
-        dict ( firstname = 'Tim', lastname = 'Peters', projects = [ 'python' ] ),
-        dict ( firstname = 'Guido', lastname = 'Van Rossum', projects = [ 'python' ] ),
-        dict ( firstname = 'Linus', lastname = 'Torvalds', projects = [ 'linux' ] ),
-        dict ( firstname = 'Michael', lastname = 'Stonebaker', projects = [ 'postgresql' ] )
+        dict ( firstname = 'Michael', lastname = 'Bayer', projects = [ 'sqlalchemy' ] ),
+        dict ( firstname = 'Kevin', lastname = 'Dangoor', projects = [ 'turbogears', 'zesty news' ] ),
+        dict ( firstname = 'Ben', lastname = 'Bangert', projects = [ 'pylons' ] ),
+        dict ( firstname = 'Bob', lastname = 'Ippolito', projects = [ 'mochikit', 'mochibot' ] )
     ]
 )
 

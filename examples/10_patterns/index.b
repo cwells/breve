@@ -22,15 +22,21 @@ html [
              ]
          ],
 
+         p [ '''Render a dictionary as a pattern''' ],
+         ul ( render = mapping ( 'user' ), data = person ) [
+             li ( pattern = 'firstname' ) [ 'First Name: ', curval ( 'user' ) ],
+             li ( pattern = 'lastname' ) [ 'Last Name: ', curval ( 'user' ) ],
+         ],
+
          p [ '''Render a list of dictionaries using patterns''' ],
          table ( render = sequence ( 'userlist' ), data = userlist ) [
-             th [ 'First Name' ], th [ 'Last Name' ],
+             th [ 'First Name' ], th [ 'Last Name' ], th [ 'Projects' ],
              tr ( pattern = 'item', render = mapping ( 'user' ), class_ = 'odd-row' ) [
                  td ( pattern = 'firstname' ) [ curval ( 'user' ) ],
                  td ( pattern = 'lastname' ) [ curval ( 'user' ) ],
                  td ( pattern = 'projects' ) [ 
-                     span [ 'Projects' ],
-                     ul ( render = sequence ( 'projects' ) ) [ 
+                     # one of the dictionary values is a list too...
+                     ul ( render = sequence ( 'projects' ), data = curval ( 'user' ) ) [ 
                          li ( pattern = 'item' ) [ curval ( 'projects' ) ]
                      ]
                  ]

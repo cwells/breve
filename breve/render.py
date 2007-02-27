@@ -1,4 +1,4 @@
-from copy import deepcopy
+from copy import copy, deepcopy
 from breve.tags import Tag
 from breve.util import Curval
 
@@ -14,7 +14,8 @@ class sequence ( object ):
                     if isinstance ( c, Curval ) and c.name == self.name:
                         o.children [ idx ] = v
                     elif isinstance ( c, Tag ):
-                        c.data = v 
+                        if not c.data:
+                            c.data = v 
                         walk ( c, v )
 
         def process ( items, data ):
@@ -28,8 +29,10 @@ class sequence ( object ):
                             if not data:
                                 continue
                             itemtag = deepcopy ( i )
-                            itemtag.data = data.pop ( 0 )
-                            walk ( itemtag, itemtag.data )
+                            v = data.pop ( 0 )
+                            if not itemtag.data:
+                                itemtag.data = v
+                            walk ( itemtag, v )
                             output.append ( itemtag )
                         else:
                             output.append ( itemtag )
@@ -38,7 +41,7 @@ class sequence ( object ):
         if not data:
             return tag.clear ( )
 
-        data = list ( data ) # coerce tuples
+        data = list ( copy ( data ) ) # coerce tuples
 
         items = [ ]
         header = None
