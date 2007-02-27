@@ -24,14 +24,16 @@ html [
 
          p [ '''Render a list of dictionaries using patterns''' ],
          table ( render = sequence ( 'userlist' ), data = userlist ) [
-             th [ 'firstname' ], th [ 'lastname' ],
-             tr ( pattern = 'item', render = mapping ( 'user' ), class_ = 'even-row' ) [
-                 td ( pattern = 'firstname' ) [ curval ( 'user' ) ],
-                 td ( pattern = 'lastname' ) [ curval ( 'user' ) ],
-             ],
+             th [ 'First Name' ], th [ 'Last Name' ],
              tr ( pattern = 'item', render = mapping ( 'user' ), class_ = 'odd-row' ) [
                  td ( pattern = 'firstname' ) [ curval ( 'user' ) ],
                  td ( pattern = 'lastname' ) [ curval ( 'user' ) ],
+                 td ( pattern = 'projects' ) [ 
+                     span [ 'Projects' ],
+                     ul ( render = sequence ( 'projects' ) ) [ 
+                         li ( pattern = 'item' ) [ curval ( 'projects' ) ]
+                     ]
+                 ]
              ]
          ]
     ]

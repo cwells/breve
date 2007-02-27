@@ -84,10 +84,13 @@ class mapping ( object ):
             for idx in range ( len ( o.children ) ):
                 c = o.children [ idx ]
                 if isinstance ( c, Curval ) and c.name == self.name:
-                    o.children [ idx ] = v [ o.pattern ]
+                    o.children [ idx ] = v # [ o.pattern ]
                 elif isinstance ( c, Tag ):
-                    c.data = v 
-                    walk ( c, v )
+                    if c.pattern in v:
+                        c.data = v [ c.pattern ]
+                    else:
+                        c.data = v 
+                    walk ( c, c.data )
 
         if not data:
             return tag.clear ( )

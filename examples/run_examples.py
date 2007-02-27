@@ -35,11 +35,11 @@ vars = dict (
     mytable = [ ( 'value', 'squared', 'cubed' ) ]
                 + [ ( a, a**2, a**3 ) for a in range ( 10 ) ],
     userlist = [
-        dict ( firstname = 'Ian', lastname = 'Bicking' ),
-        dict ( firstname = 'Tim', lastname = 'Peters' ),
-        dict ( firstname = 'Guido', lastname = 'Van Rossum' ),
-        dict ( firstname = 'Linus', lastname = 'Torvalds' ),
-        dict ( firstname = 'Michael', lastname = 'Stonebaker' )
+        dict ( firstname = 'Ian', lastname = 'Bicking', projects = [ 'paste', 'sqlobject' ] ),
+        dict ( firstname = 'Tim', lastname = 'Peters', projects = [ 'python' ] ),
+        dict ( firstname = 'Guido', lastname = 'Van Rossum', projects = [ 'python' ] ),
+        dict ( firstname = 'Linus', lastname = 'Torvalds', projects = [ 'linux' ] ),
+        dict ( firstname = 'Michael', lastname = 'Stonebaker', projects = [ 'postgresql' ] )
     ]
 )
 
