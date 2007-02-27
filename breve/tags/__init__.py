@@ -8,7 +8,7 @@ conditionals = dict ( [
 ] )
 
 class Tag ( object ):
-    __slots__ = [ 'name', 'children', 'attrs', 'render', 'data', 'args' ]
+    __slots__ = [ 'name', 'children', 'attrs', 'render', 'data', 'args', 'pattern' ]
     
     def __init__ ( self, name, *args, **kw ):
         self.name = name
@@ -16,17 +16,19 @@ class Tag ( object ):
         self.attrs = { }
         self.render = None
         self.data = None
-
-    def __call__ ( self, render = None, data = None, *args, **kw ):
+        self.pattern = None
+        
+    def __call__ ( self, render = None, data = None, pattern = None, *args, **kw ):
         self.render = render
         self.data = data
         self.attrs = kw
         self.args = args
+        self.pattern = pattern
         return self
 
     def __getitem__ ( self, k ):
         if type ( k ) in ( tuple, list ):
-            self.children.extend ( list ( k ) )
+            self.children.extend ( k )
         else:
             self.children.append ( k )
         return self
@@ -36,6 +38,7 @@ class Tag ( object ):
     
     def clear ( self ):
         self.children = [ ]
+        return self
 
 class Proto ( unicode ):
     __slots__ = [ ]
@@ -54,15 +57,16 @@ class cdata ( unicode ):
         return u'<![CDATA[%s]]>' % self.children
 
 class Invisible ( Tag ):
-    def __str__ ( self ):
-        if self.render:
-            self.children = [ ]
-            t = self.render ( self, self.data )
-        else:
-            t = self
-        if t.children:
-            return u''.join ( [ flatten ( c ) for c in t.children ] )
-        return u''
+    pass
+def flatten_invisible ( o ):
+    if o.render:
+        # o.children = [ ]
+        t = o.render ( o, o.data )
+    else:
+        t = o
+    if t.children:
+        return u''.join ( [ flatten ( c ) for c in t.children ] )
+    return u''
 class _invisible ( Proto ):
     Class = Invisible
 invisible = _invisible ( 'invisible' )
@@ -74,11 +78,11 @@ class xml ( unicode ):
 ### standard flatteners
 def flatten_tag ( o ):
     if o.render:
-        o.children = [ ]
+        # o.children = [ ]
         o = o.render ( o, o.data )
 
     attrs = u''.join ( quoteattrs ( o.attrs ) )
-    
+
     if o.children:
         return ( u'<%s%s>' % ( o.name, attrs ) +
                  u''.join ( [ flatten ( c ) for c in o.children ] ) +  
@@ -97,4 +101,5 @@ register_flattener ( Proto, flatten_proto )
 register_flattener ( Tag, flatten_tag )
 register_flattener ( str, escape )
 register_flattener ( unicode, escape )
-
+register_flattener ( Invisible, flatten_invisible )
+register_flattener ( cdata, unicode )

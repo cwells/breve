@@ -1,3 +1,10 @@
+
+class Curval ( object ):
+    ''' marker for filling in value from sequences '''
+    def __init__ ( self, seqname ):
+        self.seqname = seqname
+        self.pattern = 'item'
+
 class Namespace ( object ):
     __slots__ = [ '_dict' ]
     

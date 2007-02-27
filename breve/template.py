@@ -10,13 +10,14 @@ breve - A simple s-expression style template engine inspired by Nevow's Stan.
 
 import os, sys
 from urllib2 import urlopen, URLError
-from breve.util import Namespace
+from breve.util import Namespace, Curval
 from breve.tags import Proto, Tag, xml, invisible, cdata, conditionals
 from breve.tags.entities import entities
 from breve.flatten import flatten, register_flattener, registry
 from breve.loaders import FileLoader
 from breve.cache import Cache
 from breve.globals import _globals
+import breve.render
 
 try:
     import tidy as tidylib
@@ -26,6 +27,11 @@ except ImportError:
 _cache = Cache ( )
 _loader = FileLoader ( )
 
+class Context ( dict ):
+    def _get_value ( self ):
+        return 'get_value!'
+    value = property ( _get_value )
+    
 class Template ( object ):
 
     tidy = False
@@ -67,7 +73,8 @@ class Template ( object ):
                    'xinclude': T.xinclude,
                    'inherits': inherits,
                    'override': T.override,
-                   'slot': slot }
+                   'slot': slot,
+                   'curval': Curval }
         if T.mashup_entities:
             T.tags.update ( entities )
         T.tags.update ( E = entities ) # fallback in case of name clashes
@@ -92,6 +99,9 @@ class Template ( object ):
         return xml ( _cache.memoize ( url, timeout, fetch, url ) )
 
     def render_partial ( T, template, fragments = None, vars = None, loader = None, **kw ):
+        T._context = Context ( )
+        T.vars [ 'context' ] = T._context
+
         if loader:
             T.loaders.append ( loader )
             
@@ -99,6 +109,11 @@ class Template ( object ):
             for f in fragments:
                 if f.name not in T.fragments:
                     T.fragments [ f.name ] = f
+
+        T.vars.update ( {
+            'sequence': lambda *a, **kw: breve.render.sequence ( T._context, *a, **kw ),
+            'mapping': lambda *a, **kw: breve.render.mapping ( T._context, *a, **kw )
+        } )
 
         if vars:
             ns = kw.get ( 'namespace', T.namespace )
@@ -109,8 +124,6 @@ class Template ( object ):
             else:
                 T.vars.update ( _globals )
                 T.vars.update ( vars )
-        else:
-            T.vars.update ( _globals )
 
         filename = "%s.%s" % ( template, T.extension )
         output = u''

@@ -28,11 +28,11 @@ def example_renderer ( tag, data ):
     ]
 
 
-
 vars = dict ( 
     message = 'Hello, world!',
     example_renderer = example_renderer,
-    username = 'admin'
+    username = 'admin',
+    mytable = [ ( 'value', 'squared', 'cubed' ) ] + [ ( a, a**2, a**3 ) for a in range ( 10 ) ]
 )
 
 for root, template in [ ( '1_basics', 'index' ),
@@ -41,7 +41,8 @@ for root, template in [ ( '1_basics', 'index' ),
                         ( '4_flatteners', 'index' ),
                         ( '5_conditionals', 'index' ),
                         ( '6_dynamic_inheritance', 'fragment' ),
-                        ( '7_escape_artist', 'index' ) ]:
+                        ( '7_escape_artist', 'index' ),
+                        ( '10_patterns', 'index' ) ]:
     print "RUNNING EXAMPLE", root, template
     print "=" * 40
     t = Template ( html.tags, root = root, doctype = html.doctype, xmlns = html.xmlns )
