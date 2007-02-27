@@ -23,15 +23,13 @@ class sequence ( object ):
                 while data:
                     for i in items:
                         if isinstance ( i, Curval ) and i.name == self.name:
-                            # output.append ( v )
                             output.append ( i.data )
                         elif isinstance ( i, Tag ):
                             if not data:
                                 continue
                             itemtag = deepcopy ( i )
-                            v = data.pop ( 0 )
-                            itemtag.data = v
-                            walk ( itemtag, v )
+                            itemtag.data = data.pop ( 0 )
+                            walk ( itemtag, itemtag.data )
                             output.append ( itemtag )
                         else:
                             output.append ( itemtag )
@@ -84,7 +82,7 @@ class mapping ( object ):
             for idx in range ( len ( o.children ) ):
                 c = o.children [ idx ]
                 if isinstance ( c, Curval ) and c.name == self.name:
-                    o.children [ idx ] = v # [ o.pattern ]
+                    o.children [ idx ] = v 
                 elif isinstance ( c, Tag ):
                     if c.pattern in v:
                         c.data = v [ c.pattern ]
