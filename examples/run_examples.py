@@ -37,7 +37,7 @@ vars = dict (
     person = { 'firstname': 'John', 'lastname': 'Doe' },
     userlist = [
         dict ( firstname = 'Ian', lastname = 'Bicking', projects = [ 'paste', 'sqlobject' ] ),
-        dict ( firstname = 'Michael', lastname = 'Bayer', projects = [ 'sqlalchemy' ] ),
+        dict ( firstname = 'Michael', lastname = 'Bayer', projects = [ 'sqlalchemy', 'mako', 'myghty' ] ),
         dict ( firstname = 'Kevin', lastname = 'Dangoor', projects = [ 'turbogears', 'zesty news' ] ),
         dict ( firstname = 'Ben', lastname = 'Bangert', projects = [ 'pylons' ] ),
         dict ( firstname = 'Bob', lastname = 'Ippolito', projects = [ 'mochikit', 'mochibot' ] )
