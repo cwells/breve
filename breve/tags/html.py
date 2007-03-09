@@ -30,7 +30,7 @@ register_flattener ( HtmlProto, flatten_htmlproto )
 tag_names = [
     'a','abbr','acronym','address','applet',
     'b','bdo','big','blockquote', 'body','button',
-    'caption','center','cite','code','colgroup',
+    'canvas', 'caption','center','cite','code','colgroup',
     'dd','dfn','div','dl','dt',
     'em',
     'fieldset','font','form','frameset',
