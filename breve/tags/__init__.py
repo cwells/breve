@@ -87,8 +87,8 @@ def flatten_tag ( o ):
         return ( u'<%s%s>' % ( o.name, attrs ) +
                  u''.join ( [ flatten ( c ) for c in o.children ] ) +  
                  u'</%s>' % o.name )
-    # return u'<%s%s></%s>' % ( o.name, attrs, o.name )
-    return u'<%s%s />' % ( o.name, attrs )
+    return u'<%s%s></%s>' % ( o.name, attrs, o.name )
+    # return u'<%s%s />' % ( o.name, attrs )
 
 def flatten_proto ( p ):
     return u'<%s />' % p
