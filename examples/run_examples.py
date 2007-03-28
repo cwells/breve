@@ -41,7 +41,9 @@ vars = dict (
         dict ( firstname = 'Kevin', lastname = 'Dangoor', projects = [ 'turbogears', 'zesty news' ] ),
         dict ( firstname = 'Ben', lastname = 'Bangert', projects = [ 'pylons' ] ),
         dict ( firstname = 'Bob', lastname = 'Ippolito', projects = [ 'mochikit', 'mochibot' ] )
-    ]
+    ],
+    public = True,
+    published = False
 )
 
 for root, template in [ ( '1_basics', 'index' ),

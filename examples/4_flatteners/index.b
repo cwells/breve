@@ -12,6 +12,11 @@ html [
         ],
 
         p [ '''And now for a custom renderer''' ], br,
-        div ( render = example_renderer, data = today ) [ 'this will be replaced' ]
+        div ( render = example_renderer, data = today ) [ 'this will be replaced' ],
+
+        div [ 
+            'Public', checkbox ( name = 'public', checked = public ),
+            'Published', checkbox ( name = 'published', checked = published )
+        ]
     ]
 ]

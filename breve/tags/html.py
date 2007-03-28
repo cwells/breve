@@ -1,5 +1,5 @@
 from breve.flatten import flatten, register_flattener
-from breve.tags import Proto, Tag, Namespace, cdata, xml
+from breve.tags import Proto, Tag, Namespace, cdata, xml, flatten_tag
 
 xmlns = 'xmlns="http://www.w3.org/1999/xhtml'
 doctype = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -53,7 +53,8 @@ empty_tag_names = [
     'area', 'base', 'basefont', 'br', 'col', 'frame', 'hr',
     'img', 'input', 'isindex', 'link', 'meta', 'p', 'param'
 ]
-        
+    
+    
 class inlineJS ( unicode ):
     def __init__ ( self, children ):
         self.children = children
@@ -62,7 +63,26 @@ def flatten_inlineJS ( o ):
     return u'\n<script type="text/javascript">\n//<![CDATA[%s\n//]]></script>\n' % o.children
 
 register_flattener ( inlineJS, flatten_inlineJS )
+
+
+
+# convenience tags
+class checkbox ( Tag ):
+    def __init__ ( self, *args, **kw ):
+        Tag.__init__ ( self, 'input' )
+        self ( *args, **kw )
         
+def flatten_checkbox ( o ):
+    if o.attrs.get ( 'checked', False ):
+        o.attrs [ 'checked' ] = 'checked'
+    else:
+        try:
+            del o.attrs [ 'checked' ]
+        except KeyError:
+            pass
+    return flatten_tag ( o )
+register_flattener ( checkbox, flatten_checkbox )
+
 class lorem_ipsum ( Tag ):
     ''' silliness ensues '''
     children = [
@@ -86,6 +106,7 @@ for t in empty_tag_names:
     tags [ t ] = Proto ( t )
     
 tags.update ( dict (
+    checkbox = checkbox,
     inlineJS = inlineJS,
     lorem_ipsum = lorem_ipsum,
 ) )
