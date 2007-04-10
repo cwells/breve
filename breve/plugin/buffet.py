@@ -40,7 +40,6 @@ class BreveTemplatePlugin ( object ):
             cfg = vars [ 'std'] [ 'config' ]
             breve_opts [ 'root' ] = cfg ( 'breve.root', breve_opts [ 'root' ] )
             breve_opts [ 'namespace' ] = cfg ( 'breve.namespace', breve_opts [ 'namespace' ] )
-            print "NAMESPACE", breve_opts [ 'namespace' ]
             breve_opts [ 'debug' ] = cfg ( 'breve.debug', breve_opts [ 'debug' ] )
             breve_opts [ 'tidy' ] = cfg ( 'breve.tidy', breve_opts [ 'tidy' ] )
 
@@ -88,7 +87,8 @@ class BreveTemplatePlugin ( object ):
             vars.update ( self.get_extra_vars ( ) )
             
         if self.breve_opts is None:
-            self.breve_opts = self.get_config ( vars )
+            self.breve_opts = { }    
+        self.breve_opts = self.get_config ( vars )
         template_path, template_filename, args = self.load_template ( template )
         # self.breve_opts.update ( args )
 
