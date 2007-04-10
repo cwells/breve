@@ -90,10 +90,9 @@ class Template ( object ):
     def include ( T, filename, vars = None, loader = None ):
         locals = Namespace ( vars )
         if T.namespace:
-            vars = T.vars [ T.namespace ]
+            locals.update ( T.vars [ T.namespace ] )
         else:
-            vars = T.vars
-        locals.update ( vars )
+            locals.update ( T.vars )
         return xml ( T.render_partial ( template = filename, loader = loader, vars = locals ) )
 
     def xinclude ( T, url, timeout = 300 ):
