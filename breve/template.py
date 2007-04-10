@@ -103,6 +103,8 @@ class Template ( object ):
         return xml ( _cache.memoize ( url, timeout, fetch, url ) )
 
     def render_partial ( T, template, fragments = None, vars = None, loader = None, **kw ):
+        print "VARS", vars
+        
         if loader:
             T.loaders.append ( loader )
             

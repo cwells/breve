@@ -106,9 +106,9 @@ class BreveTemplatePlugin ( object ):
 
         print "BREVE VARS", vars
 
-        self.breve_opts [ 'doctype' ] = self.breve_opts.get ( 'doctype', self.tag_defs[ format ].doctype )
+        self.breve_opts [ 'doctype' ] = self.breve_opts.get ( 'doctype', self.tag_defs [ format ].doctype )
         template_obj = Template ( tags = self.tag_defs [ format ].tags,
-                                  xmlns = self.tag_defs [ format].xmlns,
+                                  xmlns = self.tag_defs [ format ].xmlns,
                                   **self.breve_opts )
 
         if fragment:
