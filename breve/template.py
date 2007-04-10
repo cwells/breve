@@ -143,7 +143,7 @@ class Template ( object ):
         else:
             _g.update ( T.vars )
 
-        print "GEE", _g.items ( )
+        print "GEE", T.vars.items()
         try:
             bytecode = _cache.compile ( filename, T.root, T.loaders [ -1 ] )
             output = flatten ( eval ( bytecode, T.tags, T.vars ) )
