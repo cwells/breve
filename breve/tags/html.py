@@ -70,10 +70,11 @@ register_flattener ( inlineJS, flatten_inlineJS )
 class checkbox ( Tag ):
     def __init__ ( self, *args, **kw ):
         Tag.__init__ ( self, 'input' )
-        kw [ 'type' ] = 'checkbox'
-        self ( *args, **kw )
+        # kw [ 'type' ] = 'checkbox'
+        # self ( *args, **kw )
 
     def __call__ ( self, checked = False, *args, **kw ):
+        kw [ 'type' ] = 'checkbox'
         self.checked = checked
         return Tag.__call__ ( self, *args, **kw )
     
