@@ -127,10 +127,13 @@ class Template ( object ):
         filename = "%s.%s" % ( template, T.extension )
         output = u''
 
-        T.vars.update ( T.tags )
+        g = { }
+        g.update ( T.tags )
+        g [ ns ] = T.vars
+            
         try:
             bytecode = _cache.compile ( filename, T.root, T.loaders [ -1 ] )
-            output = flatten ( eval ( bytecode, T.vars, { } ) )
+            output = flatten ( eval ( bytecode, g, { } ) )
         except:
             if T.debug:
                 return T.debug_out ( sys.exc_info ( )[ :-1 ], filename )
