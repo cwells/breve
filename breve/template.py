@@ -87,12 +87,8 @@ class Template ( object ):
                 return ( u''.join ( [ flatten ( c ) for c in self.children ] ) )
             return u''
 
-    def include ( T, filename, vars = None, locals = None, loader = None ):
-        if not vars:
-            vars = Namespace ( )
-        if locals:
-            vars.update ( locals )
-        return xml ( T.render_partial ( template = filename, vars = vars, loader = loader ) )
+    def include ( T, filename, vars = None, loader = None ):
+        return xml ( T.render_partial ( template = filename, loader = loader ) )
 
     def xinclude ( T, url, timeout = 300 ):
         def fetch ( url ):
@@ -103,8 +99,6 @@ class Template ( object ):
         return xml ( _cache.memoize ( url, timeout, fetch, url ) )
 
     def render_partial ( T, template, fragments = None, vars = None, loader = None, **kw ):
-        print "VARS", vars
-        
         if loader:
             T.loaders.append ( loader )
             
