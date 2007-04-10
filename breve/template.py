@@ -142,10 +142,6 @@ class Template ( object ):
             _g.update ( T.vars )
 
         print "TEMPLATE", filename
-        print "NAMESPACE", ns, type ( _g['v'] )
-        print "_G", _g.items()
-        print "_GVARS", _g['v'].items()
-        print "TEST", _g['v'].previous_url
         
         try:
             bytecode = _cache.compile ( filename, T.root, T.loaders [ -1 ] )
