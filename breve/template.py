@@ -144,6 +144,7 @@ class Template ( object ):
         print "TEMPLATE", filename
         print "_G", _g.items()
         print "_GVARS", _g['v'].items()
+        print "TEST", _g['v'].previous_url
 
         try:
             bytecode = _cache.compile ( filename, T.root, T.loaders [ -1 ] )
