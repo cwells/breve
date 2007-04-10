@@ -89,9 +89,8 @@ class Template ( object ):
 
     def include ( T, filename, vars = None, loader = None ):
         locals = Namespace ( vars )
-        print "NS", T.namespace
-        if T.namespace:
-            locals.update ( T.vars [ T.namespace ] )
+        if T.vars [ '__namespace' ]:
+            locals.update ( T.vars [ T.vars [ '__namespace' ] ] )
         else:
             locals.update ( T.vars )
         print "LOCALS", locals.items ( )
@@ -136,7 +135,7 @@ class Template ( object ):
         filename = "%s.%s" % ( template, T.extension )
         output = u''
 
-        _g = { }
+        _g = { '__namespace': ns }
         _g.update ( T.tags )
         if ns:
             _g [ ns ] = T.vars [ ns ]
