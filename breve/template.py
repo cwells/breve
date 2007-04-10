@@ -88,6 +88,7 @@ class Template ( object ):
             return u''
 
     def include ( T, filename, vars = None, loader = None ):
+        return xml ( 'include' )
         locals = Namespace ( vars )
         if '__namespace' in T.vars:
             print "NAMESPACE", T.vars [ '__namespace' ]
