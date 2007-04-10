@@ -89,7 +89,7 @@ class Template ( object ):
 
     def include ( T, filename, vars = None, loader = None ):
         locals = Namespace ( vars )
-        if T.vars [ '__namespace' ]:
+        if T.vars.has_key ( '__namespace' ):
             locals.update ( T.vars [ T.vars [ '__namespace' ] ] )
         else:
             locals.update ( T.vars )
@@ -113,13 +113,15 @@ class Template ( object ):
                 if f.name not in T.fragments:
                     T.fragments [ f.name ] = f
 
+        ns = kw.get ( 'namespace', T.namespace )
+
         T.vars.update ( {
             'sequence': breve.render.sequence,
-            'mapping': breve.render.mapping
+            'mapping': breve.render.mapping,
+            '__namespace': ns
         } )
 
-        ns = kw.get ( 'namespace', T.namespace )
-        
+
         if vars:
             if ns:
                 if not T.vars.has_key ( ns ):
@@ -135,7 +137,7 @@ class Template ( object ):
         filename = "%s.%s" % ( template, T.extension )
         output = u''
 
-        _g = { '__namespace': ns }
+        _g = { }
         _g.update ( T.tags )
         if ns:
             _g [ ns ] = T.vars [ ns ]
