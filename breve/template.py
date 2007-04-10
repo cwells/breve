@@ -58,8 +58,6 @@ class Template ( object ):
             T.__dict__.update ( kw )
             return ''
 
-        T.render_path = [ ] # Stack containing the rendering path. Not needed, just informative.
-
         T.root = root
         T.xmlns = xmlns
         T.xml_encoding = '''<?xml version="1.0" encoding="UTF-8"?>'''
