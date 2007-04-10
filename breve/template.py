@@ -142,7 +142,9 @@ class Template ( object ):
             _g [ ns ] = T.vars [ ns ]
         else:
             _g.update ( T.vars )
-            
+
+
+        print "GEE", _g [ ns ].items ( )
         try:
             bytecode = _cache.compile ( filename, T.root, T.loaders [ -1 ] )
             output = flatten ( eval ( bytecode, _g, { } ) )

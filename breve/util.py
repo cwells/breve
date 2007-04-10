@@ -20,9 +20,7 @@ class Namespace ( object ):
         self._dict [ k ] = v
         
     def __getattr__ ( self, k ):
-        if k in self._dict:
-            return self._dict [ k ]
-        return getattr ( self._dict, k )
+        return self._dict.get ( k, getattr ( self._dict, k ) )
 
 def quoteattrs ( attrs ):
     """
