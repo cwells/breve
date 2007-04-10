@@ -21,7 +21,11 @@ class Namespace ( object ):
         
     def __getattr__ ( self, k ):
         print "DEBUG", k, self._dict.keys ( ), k in self._dict
-        return self._dict [ k ]
+        try:
+            return self._dict [ k ]
+        except KeyError:
+            return getattr ( self._dict, k )
+        
         return self._dict.get ( k, getattr ( self._dict, k ) )
 
 def quoteattrs ( attrs ):
