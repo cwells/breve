@@ -24,11 +24,6 @@ class Namespace ( object ):
             return self._dict [ k ]
         return getattr ( self._dict, k )
 
-# class Namespace ( dict ):
-#    def __getattr__ ( self, attr ):
-#        return dict.setdefault ( self, attr, None )
-#     __getitem__ = __getattr__
-
 def quoteattrs ( attrs ):
     """
     Escape and quote a dict of attribute/value pairs.
@@ -44,7 +39,6 @@ def quoteattrs ( attrs ):
                   ).replace ( '"', "&quot;" ) + '"'
         quoted.append ( ' %s=%s' % ( a.strip ( '_' ), v ) )
     return quoted
-
 
 def escape ( s ):
     """
