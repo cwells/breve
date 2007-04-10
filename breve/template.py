@@ -113,12 +113,11 @@ class Template ( object ):
         } )
 
         ns = kw.get ( 'namespace', T.namespace )
-        print ns
-        print T.vars
         
         if vars:
             if ns:
-                T.vars [ ns ] = Namespace ( )
+                if not ns in T.vars:
+                    T.vars [ ns ] = Namespace ( )
                 T.vars [ ns ].update ( _globals )
                 T.vars [ ns ].update ( vars )
             else:
