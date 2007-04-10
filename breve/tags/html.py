@@ -81,7 +81,7 @@ class checkbox ( Tag ):
                 del self.attrs [ 'checked' ]
             except KeyError:
                 pass
-        return Tag.__call__ ( self, *args, **kw )
+        return super ( Tag, self ).__call__ ( self, *args, **kw )
     
 def flatten_checkbox ( o ):
     if o.attrs.get ( 'checked', False ):
