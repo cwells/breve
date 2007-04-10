@@ -143,7 +143,7 @@ class Template ( object ):
         else:
             _g.update ( T.vars )
 
-        print "NAMESPACE VARS", T.vars[ns].items()
+        print "TEST", T.vars [ 'v' ].message
         try:
             bytecode = _cache.compile ( filename, T.root, T.loaders [ -1 ] )
             output = flatten ( eval ( bytecode, T.tags, T.vars ) )
