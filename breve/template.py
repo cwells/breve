@@ -43,7 +43,9 @@ class Template ( object ):
         '''        
         class inherits ( Tag ):
             def __str__ ( self ):
-                return T.render_partial ( template = self.name, fragments = self.children, vars = T.vars )
+                global vars
+                print vars
+                return T.render_partial ( template = self.name, fragments = self.children )
 
         class slot ( object ):
             def __init__ ( self, name ):
