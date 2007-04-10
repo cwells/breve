@@ -43,6 +43,7 @@ class Template ( object ):
         '''        
         class inherits ( Tag ):
             def __str__ ( self ):
+                print "INHERITS NAMESPACE", T.namespace
                 return T.render_partial ( template = self.name, fragments = self.children )
 
         class slot ( object ):
