@@ -116,6 +116,8 @@ class Template ( object ):
         
         if vars:
             if ns:
+                print "NS", ns
+                print "TVARS", T.vars
                 if not ns in T.vars:
                     T.vars [ ns ] = Namespace ( )
                 T.vars [ ns ].update ( _globals )
