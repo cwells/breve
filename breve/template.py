@@ -145,8 +145,8 @@ class Template ( object ):
         print "NAMESPACE", ns, type ( _g['v'] )
         print "_G", _g.items()
         print "_GVARS", _g['v'].items()
-        print "TEST", getattr ( _g['v'], 'previous_url' )
-
+        print "TEST", _g['v'].previous_url
+        
         try:
             bytecode = _cache.compile ( filename, T.root, T.loaders [ -1 ] )
             output = flatten ( eval ( bytecode, _g, { } ) )
