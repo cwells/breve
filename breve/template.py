@@ -88,7 +88,8 @@ class Template ( object ):
             return u''
 
     def include ( T, filename, vars = None, loader = None ):
-        return xml ( T.render_partial ( template = filename, loader = loader, vars = T.vars ) )
+        print T.vars.items ( )
+        return xml ( T.render_partial ( template = filename, loader = loader ) )
 
     def xinclude ( T, url, timeout = 300 ):
         def fetch ( url ):
