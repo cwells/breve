@@ -72,7 +72,7 @@ class Template ( object ):
                    'invisible': invisible,
                    'include': T.include,
                    'xinclude': T.xinclude,
-                   'inherits': T.inherits,
+                   'inherits': inherits,
                    'override': T.override,
                    'slot': slot,
                    'curval': Curval,
