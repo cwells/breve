@@ -39,7 +39,7 @@ def quoteattrs ( attrs ):
                 ).replace ( "<", "&lt;"
                 ).replace ( '"', "&quot;" ) + '"'
         except:
-            print "A,V", a, v
+            print "Error quoting %s = %s" % ( a, v )
         else:
             quoted.append ( ' %s=%s' % ( a.strip ( '_' ), v ) )
     return quoted
