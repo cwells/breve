@@ -14,7 +14,7 @@ class BreveTemplatePlugin ( object ):
     def __init__ ( self, extra_vars_func = None, options = None ):
         self.get_extra_vars = extra_vars_func
         self.options = options or { }
-        self.breve_opts = None
+        self.breve_opts = { }
         
     def get_config ( self, vars ):
         '''
@@ -86,9 +86,7 @@ class BreveTemplatePlugin ( object ):
         if callable ( self.get_extra_vars ):
             vars.update ( self.get_extra_vars ( ) )
             
-        if self.breve_opts is None:
-            self.breve_opts = { }    
-        self.breve_opts = self.get_config ( vars )
+        self.breve_opts.update ( self.get_config ( vars ) )
         template_path, template_filename, args = self.load_template ( template )
         # self.breve_opts.update ( args )
 
