@@ -34,6 +34,13 @@ class Template ( object ):
     namespace = ''
     mashup_entities = False  # set to True for old 1.0 behaviour
     loaders = [ _loader ]
+
+    def inherits ( T, *args, **kw ):
+        class _inherits ( Tag ):
+            def __str__ ( self ):
+                print "INHERITS NAMESPACE", T.namespace
+                return T.render_partial ( template = self.name, fragments = self.children, namespace = T.namespace )
+        return _inherits ( *args, **kw )
     
     def __init__ ( T, tags, root = '.', xmlns = None, doctype = '', **kw ):
         '''
@@ -47,11 +54,6 @@ class Template ( object ):
         T.extension = 'b' # default template extension
         T.doctype = doctype
         T.fragments = { }
-
-        class inherits ( Tag ):
-            def __str__ ( self ):
-                print "INHERITS NAMESPACE", T.namespace
-                return T.render_partial ( template = self.name, fragments = self.children, namespace = T.namespace )
 
         class slot ( object ):
             def __init__ ( self, name ):
@@ -72,7 +74,7 @@ class Template ( object ):
                    'invisible': invisible,
                    'include': T.include,
                    'xinclude': T.xinclude,
-                   'inherits': inherits,
+                   'inherits': T.inherits,
                    'override': T.override,
                    'slot': slot,
                    'curval': Curval,
