@@ -138,8 +138,11 @@ class Template ( object ):
 
         _g = { }
         _g.update ( T.tags )
-        _g [ 'v' ] = T.vars [ 'v' ]
-        
+        if ns:
+            _g [ ns ] = T.vars [ ns ]
+        else:
+            _g.update ( T.vars )
+            
         try:
             bytecode = _cache.compile ( filename, T.root, T.loaders [ -1 ] )
             output = flatten ( eval ( bytecode, _g, { } ) )
