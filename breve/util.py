@@ -6,7 +6,7 @@ class Curval ( object ):
         self.pattern = 'item'
 
 class Namespace ( object ):
-    __slots__ = [ '_dict' ]
+    # __slots__ = [ '_dict' ]
     
     def __init__ ( self, values = None ):
         self._dict = { }
@@ -20,6 +20,7 @@ class Namespace ( object ):
         self._dict [ k ] = v
         
     def __getattr__ ( self, k ):
+        print "DEBUG", k, self._dict.keys ( )
         return self._dict.get ( k, getattr ( self._dict, k ) )
 
 def quoteattrs ( attrs ):
