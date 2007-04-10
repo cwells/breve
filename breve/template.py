@@ -118,8 +118,9 @@ class Template ( object ):
         T.vars.update ( {
             'sequence': breve.render.sequence,
             'mapping': breve.render.mapping,
-            '__namespace': ns
         } )
+        if ns:
+            T.vars [ '__namespace' ] = ns
 
         if vars:
             if ns:
