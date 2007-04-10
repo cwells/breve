@@ -121,6 +121,8 @@ class Template ( object ):
             else:
                 T.vars.update ( _globals )
                 T.vars.update ( vars )
+        else:
+            T.vars.update ( _globals )
 
         filename = "%s.%s" % ( template, T.extension )
         output = u''
