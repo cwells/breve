@@ -23,6 +23,9 @@ class Namespace ( object ):
         print "DEBUG", k, self._dict.keys ( ), k in self._dict
         return self._dict.get ( k, getattr ( self._dict, k ) )
 
+    def update ( self, values ):
+        self._dict.update ( values )
+
 def quoteattrs ( attrs ):
     """
     Escape and quote a dict of attribute/value pairs.
