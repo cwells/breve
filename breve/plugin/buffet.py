@@ -104,7 +104,7 @@ class BreveTemplatePlugin ( object ):
             # makes it difficult to do too much
             self.tag_defs [ format ] = __import__ ( format, { }, { } )
 
-        print "BREVE OPTS", self.breve_opts
+        print "BREVE VARS", vars
 
         self.breve_opts [ 'doctype' ] = self.breve_opts.get ( 'doctype', self.tag_defs[ format ].doctype )
         template_obj = Template ( tags = self.tag_defs [ format ].tags,
