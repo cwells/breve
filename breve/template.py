@@ -143,7 +143,7 @@ class Template ( object ):
 
         try:
             bytecode = _cache.compile ( filename, T.root, T.loaders [ -1 ] )
-            output = flatten ( eval ( bytecode, T.tags, T.vars ) )
+            output = flatten ( eval ( bytecode, _g, { } ) )
         except:
             if T.debug:
                 return T.debug_out ( sys.exc_info ( )[ :-1 ], filename )
