@@ -92,6 +92,7 @@ class Template ( object ):
             vars = Namespace ( )
         if locals:
             vars.update ( locals )
+        print "VARS", type(vars), vars
         return xml ( T.render_partial ( template = filename, vars = vars, loader = loader ) )
 
     def xinclude ( T, url, timeout = 300 ):
