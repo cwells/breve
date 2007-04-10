@@ -89,6 +89,8 @@ class Template ( object ):
 
     def include ( T, filename, vars = None, loader = None ):
         locals = { }
+        if vars:
+            locals.update ( vars )
         if T.namespace:
             vars = T.vars [ T.namespace ]
         else:
