@@ -69,12 +69,10 @@ register_flattener ( inlineJS, flatten_inlineJS )
 # convenience tags
 class checkbox ( Tag ):
     def __init__ ( self, *args, **kw ):
-        print args
-        print kw
-        Tag.__init__ ( self, 'input', *args, **kw )
-        self ( *args, **kw )
+        Tag.__init__ ( self, 'input' )
+        self.__call__ ( self, *args, **kw )
 
-    def x__call__ ( self, checked = False, *args, **kw ):
+    def __call__ ( self, checked = False, *args, **kw ):
         kw [ 'type' ] = 'checkbox'
         if checked:
             self.attrs [ 'checked' ] = 'checked'
