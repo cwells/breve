@@ -71,8 +71,9 @@ class checkbox ( Tag ):
     def __init__ ( self, *args, **kw ):
         Tag.__init__ ( self, 'input' )
         self ( self, *args, **kw )
+        self.attrs [ 'type' ] = 'checkbox'
+        
 def flatten_checkbox ( o ):
-    print "FLATTEN CHECKBOX"
     if o.attrs.get ( 'checked', False ):
         o.attrs [ 'checked' ] = 'checked'
     else:
