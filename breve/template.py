@@ -143,7 +143,8 @@ class Template ( object ):
         else:
             _g.update ( T.vars )
 
-        print "TEST", T.vars [ 'v' ].message, "END TEST"
+        print "TEST", `T.vars [ 'v' ].message`, "END TEST"
+        print "="*20
         try:
             bytecode = _cache.compile ( filename, T.root, T.loaders [ -1 ] )
             output = flatten ( eval ( bytecode, T.tags, { 'v': T.vars ['v'] } ) )
