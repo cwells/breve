@@ -143,11 +143,9 @@ class Template ( object ):
         else:
             _g.update ( T.vars )
 
-        print "TEST", T.vars [ 'v' ], "END TEST"
-        print "="*20
         try:
             bytecode = _cache.compile ( filename, T.root, T.loaders [ -1 ] )
-            output = flatten ( eval ( bytecode, T.tags, { 'v': T.vars ['v'] } ) )
+            output = flatten ( eval ( bytecode, _g, { } ) )
         except:
             if T.debug:
                 return T.debug_out ( sys.exc_info ( )[ :-1 ], filename )
