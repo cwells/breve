@@ -88,11 +88,13 @@ class Template ( object ):
             return u''
 
     def include ( T, filename, vars = None, loader = None ):
+        locals = { }
         if T.namespace:
             vars = T.vars [ T.namespace ]
         else:
             vars = T.vars
-        return xml ( T.render_partial ( template = filename, loader = loader, vars = vars ) )
+        locals.update ( vars )
+        return xml ( T.render_partial ( template = filename, loader = loader, vars = locals ) )
 
     def xinclude ( T, url, timeout = 300 ):
         def fetch ( url ):
