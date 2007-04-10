@@ -13,7 +13,7 @@ class Tag ( object ):
     def __init__ ( self, name, *args, **kw ):
         self.name = name
         self.children = [ ]
-        self.attrs = { }
+        self.attrs = kw
         self.render = None
         self.data = None
         self.pattern = None
@@ -21,7 +21,7 @@ class Tag ( object ):
     def __call__ ( self, render = None, data = None, pattern = None, *args, **kw ):
         self.render = render
         self.data = data
-        self.attrs = kw
+        self.attrs.update ( kw )
         self.args = args
         self.pattern = pattern
         return self

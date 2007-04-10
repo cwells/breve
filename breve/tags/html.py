@@ -72,7 +72,7 @@ class checkbox ( Tag ):
         Tag.__init__ ( self, 'input' )
         # self ( *args, **kw )
 
-    def __call__ ( self, checked = False, *args, **kw ):
+    def x__call__ ( self, checked = False, *args, **kw ):
         kw [ 'type' ] = 'checkbox'
         if checked:
             self.attrs [ 'checked' ] = 'checked'
@@ -93,7 +93,7 @@ def flatten_checkbox ( o ):
         except KeyError:
             pass
     return flatten_tag ( o )
-# register_flattener ( checkbox, flatten_checkbox )
+register_flattener ( checkbox, flatten_checkbox )
 
 class lorem_ipsum ( Tag ):
     ''' silliness ensues '''
