@@ -129,7 +129,7 @@ class Template ( object ):
 
         g = { }
         g.update ( T.tags )
-        g [ ns ] = T.vars
+        g [ ns ] = T.vars [ ns ]
             
         try:
             bytecode = _cache.compile ( filename, T.root, T.loaders [ -1 ] )
