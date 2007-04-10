@@ -112,8 +112,8 @@ class Template ( object ):
             'mapping': breve.render.mapping
         } )
 
+        ns = kw.get ( 'namespace', T.namespace )
         if vars:
-            ns = kw.get ( 'namespace', T.namespace )
             if ns:
                 T.vars [ ns ] = Namespace ( )
                 T.vars [ ns ].update ( _globals )
