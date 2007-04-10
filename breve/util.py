@@ -33,6 +33,7 @@ def quoteattrs ( attrs ):
     """
     quoted = [ ]
     for a, v in attrs.items ( ):
+        print "A,V", a, v
         v = '"' + v.replace ( "&", "&amp;"
                   ).replace ( ">", "&gt;"
                   ).replace ( "<", "&lt;"
