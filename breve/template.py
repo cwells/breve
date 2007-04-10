@@ -39,7 +39,7 @@ class Template ( object ):
         '''
         Uses "T" rather than "self" to avoid confusion with
         subclasses that refer to this class via scoping (see
-        the "inherits" class for one.
+        the "inherits" class for one example).
         '''        
         class inherits ( Tag ):
             def __str__ ( self ):
@@ -58,13 +58,15 @@ class Template ( object ):
             T.__dict__.update ( kw )
             return ''
 
+        T.render_path = [ ] # Stack containing the rendering path. Not needed, just informative.
+
         T.root = root
         T.xmlns = xmlns
         T.xml_encoding = '''<?xml version="1.0" encoding="UTF-8"?>'''
         T.extension = 'b' # default template extension
         T.doctype = doctype
         T.fragments = { }
-        T.vars = { 'xmlns': xmlns, }
+        T.vars = Namespace ( { 'xmlns': xmlns, } )
         T.tags = { 'cdata': cdata,
                    'xml': xml,
                    'invisible': invisible,
