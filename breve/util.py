@@ -34,15 +34,11 @@ def quoteattrs ( attrs ):
     quoted = [ ]
     for a, v in attrs.items ( ):
         v = str ( v )
-        try:
-            v = '"' + v.replace ( "&", "&amp;"
-                ).replace ( ">", "&gt;"
-                ).replace ( "<", "&lt;"
-                ).replace ( '"', "&quot;" ) + '"'
-        except:
-            print "Error quoting %s=%s" % ( a, v )
-        else:
-            quoted.append ( ' %s=%s' % ( a.strip ( '_' ), v ) )
+        v = '"' + v.replace ( "&", "&amp;"
+            ).replace ( ">", "&gt;"
+            ).replace ( "<", "&lt;"
+            ).replace ( '"', "&quot;" ) + '"'
+        quoted.append ( ' %s=%s' % ( a.strip ( '_' ), v ) )
     return quoted
 
 def escape ( s ):
