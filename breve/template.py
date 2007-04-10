@@ -90,9 +90,10 @@ class Template ( object ):
     def include ( T, filename, vars = None, loader = None ):
         locals = Namespace ( vars )
         if '__namespace' in T.vars:
+            print "NAMESPACE", T.vars [ '__namespace' ]
             locals.update ( T.vars [ T.vars [ '__namespace' ] ] )
         else:
-            locals.update ( T.vars )
+            locals.update ( T.vars._dict )
         print "LOCALS", locals.items ( )
         return xml ( T.render_partial ( template = filename, loader = loader, vars = locals ) )
 
