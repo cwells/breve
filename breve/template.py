@@ -43,7 +43,7 @@ class Template ( object ):
         '''        
         class inherits ( Tag ):
             def __str__ ( self ):
-                return T.render_partial ( template = self.name, fragments = self.children )
+                return T.render_partial ( template = self.name, fragments = self.children, vars = T.vars )
 
         class slot ( object ):
             def __init__ ( self, name ):
@@ -99,9 +99,6 @@ class Template ( object ):
         return xml ( _cache.memoize ( url, timeout, fetch, url ) )
 
     def render_partial ( T, template, fragments = None, vars = None, loader = None, **kw ):
-        print "T", template, vars
-        print T.vars
-        
         if loader:
             T.loaders.append ( loader )
             
