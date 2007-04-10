@@ -34,13 +34,6 @@ class Template ( object ):
     namespace = ''
     mashup_entities = False  # set to True for old 1.0 behaviour
     loaders = [ _loader ]
-
-    def inherits ( T, *args, **kw ):
-        class _inherits ( Tag ):
-            def __str__ ( self ):
-                print "INHERITS NAMESPACE", T.namespace
-                return T.render_partial ( template = self.name, fragments = self.children, namespace = T.namespace )
-        return _inherits ( *args, **kw )
     
     def __init__ ( T, tags, root = '.', xmlns = None, doctype = '', **kw ):
         '''
@@ -48,12 +41,9 @@ class Template ( object ):
         subclasses that refer to this class via scoping (see
         the "inherits" class for one example).
         '''        
-        T.root = root
-        T.xmlns = xmlns
-        T.xml_encoding = '''<?xml version="1.0" encoding="UTF-8"?>'''
-        T.extension = 'b' # default template extension
-        T.doctype = doctype
-        T.fragments = { }
+        class inherits ( Tag ):
+            def __str__ ( self ):
+                return T.render_partial ( template = self.name, fragments = self.children )
 
         class slot ( object ):
             def __init__ ( self, name ):
@@ -68,13 +58,19 @@ class Template ( object ):
             T.__dict__.update ( kw )
             return ''
 
+        T.root = root
+        T.xmlns = xmlns
+        T.xml_encoding = '''<?xml version="1.0" encoding="UTF-8"?>'''
+        T.extension = 'b' # default template extension
+        T.doctype = doctype
+        T.fragments = { }
         T.vars = Namespace ( { 'xmlns': xmlns, } )
         T.tags = { 'cdata': cdata,
                    'xml': xml,
                    'invisible': invisible,
                    'include': T.include,
                    'xinclude': T.xinclude,
-                   'inherits': T.inherits,
+                   'inherits': inherits,
                    'override': T.override,
                    'slot': slot,
                    'curval': Curval,
@@ -116,10 +112,8 @@ class Template ( object ):
             'mapping': breve.render.mapping
         } )
 
-        ns = kw.get ( 'namespace', T.namespace )
-        print "NAMESPACE", ns
-        
         if vars:
+            ns = kw.get ( 'namespace', T.namespace )
             if ns:
                 T.vars [ ns ] = Namespace ( )
                 T.vars [ ns ].update ( _globals )
@@ -132,7 +126,7 @@ class Template ( object ):
 
         filename = "%s.%s" % ( template, T.extension )
         output = u''
-
+        
         try:
             bytecode = _cache.compile ( filename, T.root, T.loaders [ -1 ] )
             output = flatten ( eval ( bytecode, T.tags, T.vars ) )
