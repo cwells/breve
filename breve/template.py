@@ -112,8 +112,8 @@ class Template ( object ):
             'mapping': breve.render.mapping
         } )
 
+        ns = kw.get ( 'namespace', T.namespace )
         if vars:
-            ns = kw.get ( 'namespace', T.namespace )
             if ns:
                 T.vars [ ns ] = Namespace ( )
                 T.vars [ ns ].update ( _globals )
@@ -129,7 +129,7 @@ class Template ( object ):
 
         _g = { }
         _g.update ( T.tags )
-        _g [ 'v' ] = T.vars [ ns ]
+        _g [ 'v' ] = T.vars [ 'v' ]
         
         try:
             bytecode = _cache.compile ( filename, T.root, T.loaders [ -1 ] )
