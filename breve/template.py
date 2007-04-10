@@ -113,6 +113,8 @@ class Template ( object ):
         } )
 
         ns = kw.get ( 'namespace', T.namespace )
+        print "NAMESPACE", ns
+        
         if vars:
             if ns:
                 T.vars [ ns ] = Namespace ( )
