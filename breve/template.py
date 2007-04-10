@@ -124,8 +124,6 @@ class Template ( object ):
         else:
             T.vars.update ( _globals )
 
-        print "T.VARS", T.vars.vars.items ( )
-
         filename = "%s.%s" % ( template, T.extension )
         output = u''
         
