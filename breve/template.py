@@ -89,14 +89,10 @@ class Template ( object ):
 
     def include ( T, filename, vars = None, loader = None ):
         locals = Namespace ( vars )
-        if '__namespace' in T.vars._dict:
-            print "HERE"
-            print "NAMESPACE", T.vars [ '__namespace' ]
+        try:
             locals.update ( T.vars [ T.vars [ '__namespace' ] ] )
-        else:
-            print "NOPE, HERE"
+        except KeyError:
             locals.update ( T.vars._dict )
-        print "LOCALS", locals.items ( )
         return xml ( T.render_partial ( template = filename, loader = loader, vars = locals ) )
 
     def xinclude ( T, url, timeout = 300 ):
