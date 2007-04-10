@@ -41,6 +41,13 @@ class Template ( object ):
         subclasses that refer to this class via scoping (see
         the "inherits" class for one example).
         '''        
+        T.root = root
+        T.xmlns = xmlns
+        T.xml_encoding = '''<?xml version="1.0" encoding="UTF-8"?>'''
+        T.extension = 'b' # default template extension
+        T.doctype = doctype
+        T.fragments = { }
+
         class inherits ( Tag ):
             def __str__ ( self ):
                 print "INHERITS NAMESPACE", T.namespace
@@ -59,12 +66,6 @@ class Template ( object ):
             T.__dict__.update ( kw )
             return ''
 
-        T.root = root
-        T.xmlns = xmlns
-        T.xml_encoding = '''<?xml version="1.0" encoding="UTF-8"?>'''
-        T.extension = 'b' # default template extension
-        T.doctype = doctype
-        T.fragments = { }
         T.vars = Namespace ( { 'xmlns': xmlns, } )
         T.tags = { 'cdata': cdata,
                    'xml': xml,
