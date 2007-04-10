@@ -141,6 +141,7 @@ class Template ( object ):
         else:
             _g.update ( T.vars )
 
+        print "TEMPLATE", filename
         print "_G", _g.items()
         print "_GVARS", _g['v'].items()
 
