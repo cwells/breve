@@ -43,8 +43,6 @@ class Template ( object ):
         '''        
         class inherits ( Tag ):
             def __str__ ( self ):
-                global vars
-                print vars
                 return T.render_partial ( template = self.name, fragments = self.children )
 
         class slot ( object ):
@@ -157,6 +155,7 @@ class Template ( object ):
     def render ( T, template, vars = None, loader = None, **kw ):
         if loader:
             T.loaders.append ( loader )
+        T.vars.update ( vars )
         output = T.render_partial ( template, vars = vars )
         return u'\n'.join ( [ T.xml_encoding, T.doctype, output ] )
 
