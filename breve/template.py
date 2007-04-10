@@ -124,6 +124,8 @@ class Template ( object ):
         else:
             T.vars.update ( _globals )
 
+        print "T.VARS", T.vars.items ( )
+
         filename = "%s.%s" % ( template, T.extension )
         output = u''
         
@@ -155,8 +157,7 @@ class Template ( object ):
     def render ( T, template, vars = None, loader = None, **kw ):
         if loader:
             T.loaders.append ( loader )
-        T.vars.update ( vars )
-        output = T.render_partial ( template, vars = vars )
+        output = T.render_partial ( template )
         return u'\n'.join ( [ T.xml_encoding, T.doctype, output ] )
 
     def debug_out ( T, exc_info, filename ):
