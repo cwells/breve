@@ -94,6 +94,7 @@ class Template ( object ):
         except KeyError:
             locals.update ( T.vars )
         print "INCLUDING", filename
+        print locals.items ( )
         return xml ( T.render_partial ( template = filename, loader = loader, vars = locals ) )
 
     def xinclude ( T, url, timeout = 300 ):
