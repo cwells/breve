@@ -42,6 +42,7 @@ class BreveTemplatePlugin ( object ):
             breve_opts [ 'namespace' ] = cfg ( 'breve.namespace', breve_opts [ 'namespace' ] )
             breve_opts [ 'debug' ] = cfg ( 'breve.debug', breve_opts [ 'debug' ] )
             breve_opts [ 'tidy' ] = cfg ( 'breve.tidy', breve_opts [ 'tidy' ] )
+
         else: # pylons-specific
             for k, v in self.options.iteritems ( ):
                 if k.startswith ( 'breve.' ):
@@ -102,6 +103,8 @@ class BreveTemplatePlugin ( object ):
             # find a better way, but getting only a string for format
             # makes it difficult to do too much
             self.tag_defs [ format ] = __import__ ( format, { }, { } )
+
+        print "BREVE OPTS", self.breve_opts
 
         self.breve_opts [ 'doctype' ] = self.breve_opts.get ( 'doctype', self.tag_defs[ format ].doctype )
         template_obj = Template ( tags = self.tag_defs [ format ].tags,
