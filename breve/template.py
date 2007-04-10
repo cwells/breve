@@ -89,7 +89,7 @@ class Template ( object ):
 
     def include ( T, filename, vars = None, loader = None ):
         locals = Namespace ( vars )
-        if '__namespace' in T.vars:
+        if '__namespace' in T.vars._dict:
             print "HERE"
             print "NAMESPACE", T.vars [ '__namespace' ]
             locals.update ( T.vars [ T.vars [ '__namespace' ] ] )
