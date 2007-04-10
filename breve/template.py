@@ -88,7 +88,7 @@ class Template ( object ):
             return u''
 
     def include ( T, filename, vars = None, loader = None ):
-        return xml ( T.render_partial ( template = filename, loader = loader, vars = vars ) )
+        return xml ( T.render_partial ( template = filename, loader = loader ) )
 
     def xinclude ( T, url, timeout = 300 ):
         def fetch ( url ):
@@ -113,6 +113,9 @@ class Template ( object ):
         } )
 
         ns = kw.get ( 'namespace', T.namespace )
+        print ns
+        print T.vars
+        
         if vars:
             if ns:
                 T.vars [ ns ] = Namespace ( )
