@@ -92,7 +92,7 @@ class Template ( object ):
         try:
             locals.update ( T.vars [ T.vars [ '__namespace' ] ] )
         except KeyError:
-            locals.update ( T.vars._dict )
+            locals.update ( T.vars )
         return xml ( T.render_partial ( template = filename, loader = loader, vars = locals ) )
 
     def xinclude ( T, url, timeout = 300 ):
