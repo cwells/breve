@@ -111,8 +111,6 @@ class Template ( object ):
 
     def render_partial ( T, template, fragments = None, vars = None, loader = None, **kw ):
         print "DEBUG: render_partial:", template
-        if fragments:
-            print "DEBUG: fragments:", fragments.keys ( )
         
         if loader:
             T.loaders.append ( loader )
@@ -121,6 +119,9 @@ class Template ( object ):
             for f in fragments:
                 if f.name not in T.fragments:
                     T.fragments [ f.name ] = f
+
+        if fragments:
+            print "DEBUG: fragments:", T.fragments.keys ( )
 
         ns = kw.get ( 'namespace', T.namespace )
 
