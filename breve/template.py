@@ -90,9 +90,9 @@ class Template ( object ):
     def include ( T, filename, vars = None, loader = None ):
         locals = Namespace ( vars )
         try:
-            locals.update ( T.vars [ T.vars [ '__namespace' ] ] )
+            locals._dict.update ( T.vars [ T.vars [ '__namespace' ] ] )
         except KeyError:
-            locals.update ( T.vars )
+            locals._dict.update ( T.vars )
         # print "INCLUDING", filename
         # print locals.items ( )
         return xml ( T.render_partial ( template = filename, loader = loader, vars = locals ) )
@@ -116,7 +116,7 @@ class Template ( object ):
 
         ns = kw.get ( 'namespace', T.namespace )
 
-        T.vars.update ( {
+        T.vars._dict.update ( {
             'sequence': breve.render.sequence,
             'mapping': breve.render.mapping,
         } )
@@ -127,13 +127,13 @@ class Template ( object ):
             if ns:
                 if not T.vars.has_key ( ns ):
                     T.vars [ ns ] = Namespace ( )
-                T.vars [ ns ].update ( _globals )
-                T.vars [ ns ].update ( vars )
+                T.vars [ ns ]._dict.update ( _globals )
+                T.vars [ ns ]._dict.update ( vars )
             else:
-                T.vars.update ( _globals )
-                T.vars.update ( vars )
+                T.vars._dict.update ( _globals )
+                T.vars._dict.update ( vars )
         else:
-            T.vars.update ( _globals )
+            T.vars._dict.update ( _globals )
 
         filename = "%s.%s" % ( template, T.extension )
         output = u''

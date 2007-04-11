@@ -6,7 +6,7 @@ class Curval ( object ):
         self.pattern = 'item'
 
 class Namespace ( object ):
-    # __slots__ = [ '_dict' ]
+    __slots__ = [ '_dict' ]
     
     def __init__ ( self, values = None ):
         self._dict = { }
