@@ -88,9 +88,9 @@ class Template ( object ):
                     return ( u''.join ( [ flatten ( c ) for c in self.children ] ) )
                 return u''
             
-        if self.name in T.fragments:
-            print self.name, "ALREADY IN FRAGMENTS"
-            return T.fragments [ self.name ]    
+        if name in T.fragments:
+            print name, "ALREADY IN FRAGMENTS"
+            return T.fragments [ name ]    
         return override ( name )
 
     def include ( T, filename, vars = None, loader = None ):
