@@ -26,8 +26,9 @@ class Namespace ( object ):
             try:
                 return getattr ( self._dict, k )
             except:
-                print "DEBUG", k, self._dict.keys ( ), k in self._dict
-                return 'ERROR'
+                print "DEBUG: unknown identifier:", k
+                print "DEBUG: known identifiers:", self._dict.keys ( )
+                return 'Unknown identifier:%s' % k
         
 def quoteattrs ( attrs ):
     """
