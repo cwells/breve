@@ -84,13 +84,13 @@ class Template ( object ):
     def override ( T, name ):
         class override ( Tag ): 
             def __str__ ( self ):
-                # if self.name in T.fragments:
-                #     print self.name, "ALREADY IN FRAGMENTS"
-                #     return flatten ( T.fragments [ self.name ] )
-                
                 if self.children:
                     return ( u''.join ( [ flatten ( c ) for c in self.children ] ) )
                 return u''
+            
+        if self.name in T.fragments:
+            print self.name, "ALREADY IN FRAGMENTS"
+            return T.fragments [ self.name ]    
         return override ( name )
 
     def include ( T, filename, vars = None, loader = None ):
