@@ -17,7 +17,7 @@ def registry ( ):
     return __registry 
     
 def flatten ( o ):
-    print `o`
+    print "FLATTEN", `o`
     try:
         return __registry [ type ( o ) ] ( o )
     except KeyError:
