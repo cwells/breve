@@ -108,7 +108,7 @@ class Template ( object ):
 
     def render_partial ( T, template, fragments = None, vars = None, loader = None, **kw ):
         T.render_path.append ( template )
-        print "DEBUG: render_partial:", template, T.render_path
+        # print "DEBUG: render_partial:", template, T.render_path
         
         if loader:
             T.loaders.append ( loader )
@@ -163,7 +163,7 @@ class Template ( object ):
             if loader:
                 T.loaders.pop ( ) # restore the previous loader
 
-        T.render_path.pop ( )
+        # T.render_path.pop ( )
             
         if T.tidy and tidylib:
             options = dict ( input_xml = True,
