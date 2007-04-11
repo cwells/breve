@@ -91,7 +91,7 @@ class Template ( object ):
                 if self.children:
                     return ( u''.join ( [ flatten ( c ) for c in self.children ] ) )
                 return u''
-        return override
+        return override ( name )
 
     def include ( T, filename, vars = None, loader = None ):
         locals = Namespace ( vars )
