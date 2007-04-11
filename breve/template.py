@@ -111,7 +111,8 @@ class Template ( object ):
 
     def render_partial ( T, template, fragments = None, vars = None, loader = None, **kw ):
         print "DEBUG: render_partial:", template
-        print "DEBUG: fragments:", fragments.keys ( )
+        if fragments:
+            print "DEBUG: fragments:", fragments.keys ( )
         
         if loader:
             T.loaders.append ( loader )
