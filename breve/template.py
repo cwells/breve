@@ -81,17 +81,11 @@ class Template ( object ):
         T.tags.update ( conditionals )
         T.tags.update ( tags )
 
-    def override ( T, name ):
-        class override ( Tag ): 
-            def __str__ ( self ):
-                if self.children:
-                    return ( u''.join ( [ flatten ( c ) for c in self.children ] ) )
-                return u''
-            
-        if name in T.fragments:
-            print name, "ALREADY IN FRAGMENTS"
-            return T.fragments [ name ]    
-        return override ( name )
+    class override ( Tag ): 
+        def __str__ ( self ):
+            if self.children:
+                return ( u''.join ( [ flatten ( c ) for c in self.children ] ) )
+            return u''
 
     def include ( T, filename, vars = None, loader = None ):
         locals = Namespace ( vars )
