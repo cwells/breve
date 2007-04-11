@@ -99,8 +99,6 @@ class Template ( object ):
             locals._dict.update ( T.vars [ T.vars [ '__namespace' ] ] )
         except KeyError:
             locals._dict.update ( T.vars )
-        # print "INCLUDING", filename
-        # print locals.items ( )
         return xml ( T.render_partial ( template = filename, loader = loader, vars = locals ) )
 
     def xinclude ( T, url, timeout = 300 ):
@@ -112,6 +110,9 @@ class Template ( object ):
         return xml ( _cache.memoize ( url, timeout, fetch, url ) )
 
     def render_partial ( T, template, fragments = None, vars = None, loader = None, **kw ):
+        print "DEBUG: render_partial:", template
+        print "DEBUG: fragments:", fragments.keys ( )
+        
         if loader:
             T.loaders.append ( loader )
             
