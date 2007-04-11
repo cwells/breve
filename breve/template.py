@@ -45,14 +45,21 @@ class Template ( object ):
             def __str__ ( self ):
                 return T.render_partial ( template = self.name, fragments = self.children )
 
-        class slot ( object ):
-            def __init__ ( self, name ):
-                self.name = name
-
+        class override ( Tag ): 
             def __str__ ( self ):
-                return xml ( flatten (
-                    T.fragments.get ( self.name, 'slot named "%s" not filled' % self.name )
-                ) )
+                if self.children:
+                    return ( u''.join ( [ flatten ( c ) for c in self.children ] ) )
+                return u''
+
+        class slot ( Tag ):
+            def __str__ ( self ):
+                if self.name in T.fragments:
+                    return xml ( flatten (
+                        T.fragments [ self.name ]
+                    ) )
+                if self.children:
+                    return ( u''.join ( [ flatten ( c ) for c in self.children ] ) )
+                return u''
 
         def preamble ( **kw ):
             T.__dict__.update ( kw )
@@ -71,7 +78,7 @@ class Template ( object ):
                    'include': T.include,
                    'xinclude': T.xinclude,
                    'inherits': inherits,
-                   'override': T.override,
+                   'override': override,
                    'slot': slot,
                    'curval': Curval,
                    'preamble': preamble }
@@ -80,12 +87,6 @@ class Template ( object ):
         T.tags.update ( E = entities ) # fallback in case of name clashes
         T.tags.update ( conditionals )
         T.tags.update ( tags )
-
-    class override ( Tag ): 
-        def __str__ ( self ):
-            if self.children:
-                return ( u''.join ( [ flatten ( c ) for c in self.children ] ) )
-            return u''
 
     def include ( T, filename, vars = None, loader = None ):
         locals = Namespace ( vars )
