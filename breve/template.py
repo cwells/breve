@@ -71,6 +71,8 @@ class Template ( object ):
         T.extension = 'b' # default template extension
         T.doctype = doctype
         T.fragments = { }
+        T.render_path = [ ] # not needed but potentially useful
+
         T.vars = Namespace ( { 'xmlns': xmlns, } )
         T.tags = { 'cdata': cdata,
                    'xml': xml,
@@ -105,7 +107,8 @@ class Template ( object ):
         return xml ( _cache.memoize ( url, timeout, fetch, url ) )
 
     def render_partial ( T, template, fragments = None, vars = None, loader = None, **kw ):
-        print "DEBUG: render_partial:", template
+        T.render_path.append ( template )
+        print "DEBUG: render_partial:", template, T.render_path
         
         if loader:
             T.loaders.append ( loader )
@@ -114,9 +117,6 @@ class Template ( object ):
             for f in fragments:
                 if f.name not in T.fragments:
                     T.fragments [ f.name ] = f
-
-        if fragments:
-            print "DEBUG: fragments:", T.fragments.keys ( )
 
         ns = kw.get ( 'namespace', T.namespace )
 
@@ -161,6 +161,8 @@ class Template ( object ):
         else:
             if loader:
                 T.loaders.pop ( ) # restore the previous loader
+
+        T.render_path.pop ( )
             
         if T.tidy and tidylib:
             options = dict ( input_xml = True,
