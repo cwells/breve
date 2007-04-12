@@ -83,7 +83,9 @@ def flatten_checkbox ( o ):
 register_flattener ( checkbox, flatten_checkbox )
 
 class option ( Tag ):
-    pass
+    def __init__ ( self, *args, **kw ):
+        Tag.__init__ ( self, 'option' )
+        self ( self, *args, **kw )
 
 def flatten_option ( o ):
     if o.attrs.get ( 'selected', False ):
