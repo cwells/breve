@@ -40,7 +40,7 @@ tag_names = [
     'label','legend','li',
     'menu',
     'noframes','noscript',
-    'ol','optgroup','option',
+    'ol','optgroup',
     'pre',
     'q',
     's','samp','script', 'select','small','span','strike','strong','style','sub','sup',
@@ -70,7 +70,7 @@ class checkbox ( Tag ):
         Tag.__init__ ( self, 'input' )
         self ( self, *args, **kw )
         self.attrs [ 'type' ] = 'checkbox'
-        
+
 def flatten_checkbox ( o ):
     if o.attrs.get ( 'checked', False ):
         o.attrs [ 'checked' ] = 'checked'
@@ -82,6 +82,20 @@ def flatten_checkbox ( o ):
     return flatten_tag ( o )
 register_flattener ( checkbox, flatten_checkbox )
 
+class option ( Tag ):
+    pass
+
+def flatten_option ( o ):
+    if o.attrs.get ( 'selected', False ):
+        o.attrs [ 'selected' ] = 'selected'
+    else:
+        try:
+            del o.attrs [ 'selected' ]
+        except KeyError:
+            pass
+    return flatten_tag ( o )
+register_flattener ( option, flatten_option )
+        
 class lorem_ipsum ( Tag ):
     ''' silliness ensues '''
     children = [
@@ -106,6 +120,7 @@ for t in empty_tag_names:
     
 tags.update ( dict (
     checkbox = checkbox,
+    option = option,
     inlineJS = inlineJS,
     lorem_ipsum = lorem_ipsum,
 ) )
