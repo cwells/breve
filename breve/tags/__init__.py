@@ -71,10 +71,14 @@ class _invisible ( Proto ):
     Class = Invisible
 invisible = _invisible ( 'invisible' )
 
-class xml ( unicode ):
-    def __str__ ( self ):
-        return self
+class xml ( unicode ): pass
+def flatten_xml ( o ):
+    return o
 
+class comment ( unicode ): pass
+def flatten_comment ( o ):
+    return u"\n<!--\n%s\n-->\n" % o
+    
 ### standard flatteners
 def flatten_tag ( o ):
     if o.render:
@@ -104,3 +108,5 @@ register_flattener ( str, escape )
 register_flattener ( unicode, escape )
 register_flattener ( Invisible, flatten_invisible )
 register_flattener ( cdata, unicode )
+register_flattener ( comment, flatten_comment )
+register_flattener ( xml, flatten_xml )

@@ -11,7 +11,7 @@ breve - A simple s-expression style template engine inspired by Nevow's Stan.
 import os, sys
 from urllib2 import urlopen, URLError
 from breve.util import Namespace, Curval
-from breve.tags import Proto, Tag, xml, invisible, cdata, conditionals
+from breve.tags import Proto, Tag, xml, invisible, cdata, comment, conditionals
 from breve.tags.entities import entities
 from breve.flatten import flatten, register_flattener, registry
 from breve.loaders import FileLoader
@@ -76,6 +76,7 @@ class Template ( object ):
         T.vars = Namespace ( { 'xmlns': xmlns, } )
         T.tags = { 'cdata': cdata,
                    'xml': xml,
+                   'comment': comment,
                    'invisible': invisible,
                    'include': T.include,
                    'xinclude': T.xinclude,

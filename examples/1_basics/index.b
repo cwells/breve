@@ -12,6 +12,12 @@ html [
     body [
         h1 [ 'This is the basics.' ],
 
+	comment ( '''
+            This is an XML comment. It shows up in the final output. 
+            Use Python-style comments if you don't want them to show
+            up in the output.
+        ''' ),
+
         div ( style = 'width: 400px;' ) [
             p ( style = 'font-weight: bold;' ) [ 
                 'this list was generated using a Python listcomp' 
