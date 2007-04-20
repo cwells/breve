@@ -17,7 +17,7 @@ from breve.flatten import flatten, register_flattener, registry
 from breve.loaders import FileLoader
 from breve.cache import Cache
 from breve.globals import _globals
-import breve.render
+# import breve.render
 
 try:
     import tidy as tidylib
