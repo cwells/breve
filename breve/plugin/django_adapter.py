@@ -5,6 +5,9 @@ from django.http import HttpResponse
 from django.conf import settings 
 BREVE_ROOT = settings.BREVE_ROOT
 
+def flatten_string(obj):
+    return unicode(obj).encode(settings.DEFAULT_CHARSET)
+
 class _loader ( object ):
     def __init__ ( self, root, breve_opts = None ):
         self.breve_opts = breve_opts or { }
@@ -17,15 +20,15 @@ class _loader ( object ):
     
     def render ( self, vars = None ):
         self.vars = vars or { }
-        return self.template_obj.render ( template = self.template_filename,
-                                          vars = vars, **self.breve_opts )
+        return flatten_string(self.template_obj.render ( template = self.template_filename,
+                                          vars = vars, **self.breve_opts ))
 
 loader = _loader ( root = BREVE_ROOT )
 
 def render_to_response ( template, vars = None ):
     t = loader.get_template ( template )
-    return HttpResponse ( t.render ( vars ) )
+    return HttpResponse ( flatten_string(t.render ( vars )))
 
 def render_to_string ( template, vars = None ):
     t = loader.get_template ( template )
-    return t.render ( vars )
+    return flatten_string(t.render ( vars ))
