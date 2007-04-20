@@ -52,8 +52,8 @@ for root, template in [ ( '1_basics', 'index' ),
                         ( '4_flatteners', 'index' ),
                         ( '5_conditionals', 'index' ),
                         ( '6_dynamic_inheritance', 'fragment' ),
-                        ( '7_escape_artist', 'index' ),
-                        ( '10_patterns', 'index' ) ]:
+                        ( '7_escape_artist', 'index' ), ]:
+                        # ( '10_patterns', 'index' ) ]:
     print "RUNNING EXAMPLE", root, template
     print "=" * 40
     t = Template ( html.tags, root = root, doctype = html.doctype, xmlns = html.xmlns )
