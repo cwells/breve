@@ -122,8 +122,8 @@ class Template ( object ):
         ns = kw.get ( 'namespace', T.namespace )
 
         T.vars._dict.update ( {
-            'sequence': breve.render.sequence,
-            'mapping': breve.render.mapping,
+        #    'sequence': breve.render.sequence,
+        #    'mapping': breve.render.mapping,
             '__templates__': T.render_path 
         } )
         if ns:
