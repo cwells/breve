@@ -13,7 +13,7 @@ class Cache ( object ):
                 return self.ccache [ uid ][ 'bytecode' ]
         self.ccache [ uid ] = dict (
             timestamp = timestamp,
-            bytecode = compile ( loader.load ( uid ), template, 'eval' )
+            bytecode = compile ( '(' + loader.load ( uid ) + ')', template, 'eval' )
         )
         return self.ccache [ uid ] [ 'bytecode' ]
 
