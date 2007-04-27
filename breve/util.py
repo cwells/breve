@@ -35,9 +35,11 @@ def quoteattrs ( attrs ):
     
     Escape &, <, and > in a string of data, then quote it for use as
     an attribute value.  The " character will be escaped as well.
+    Also filter out None values.
     """
     quoted = [ ]
     for a, v in attrs.items ( ):
+        if v is None: continue
         v = str ( v )
         v = '"' + v.replace ( "&", "&amp;"
             ).replace ( ">", "&gt;"
