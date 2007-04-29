@@ -36,7 +36,7 @@ class BreveTemplatePlugin ( object ):
             'tidy': False
         }        
 
-        if 'std' in vars and 'tg' in vars: # turbogears-specific hacks
+        if 'std' in vars and 'config' in vars [ 'std' ]: # turbogears-specific hacks
             cfg = vars [ 'std'] [ 'config' ]
             breve_opts [ 'root' ] = cfg ( 'breve.root', breve_opts [ 'root' ] )
             breve_opts [ 'namespace' ] = cfg ( 'breve.namespace', breve_opts [ 'namespace' ] )
