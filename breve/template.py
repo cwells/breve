@@ -24,6 +24,7 @@ try:
 except ImportError:
     tidylib = None
 
+DEFAULT_ENCODING = '''<?xml version="1.0" encoding="UTF-8"?>'''
 _cache = Cache ( )
 _loader = FileLoader ( )
 
@@ -35,7 +36,7 @@ class Template ( object ):
     mashup_entities = False  # set to True for old 1.0 behaviour
     loaders = [ _loader ]
     
-    def __init__ ( T, tags, root = '.', xmlns = None, doctype = '', **kw ):
+    def __init__ ( T, tags, root = '.', xmlns = None, doctype = '', xml_encoding = DEFAULT_ENCODING, **kw ):
         '''
         Uses "T" rather than "self" to avoid confusion with
         subclasses that refer to this class via scoping (see
@@ -67,7 +68,7 @@ class Template ( object ):
 
         T.root = root
         T.xmlns = xmlns
-        T.xml_encoding = '''<?xml version="1.0" encoding="UTF-8"?>'''
+        T.xml_encoding = xml_encoding
         T.extension = 'b' # default template extension
         T.doctype = doctype
         T.fragments = { }
@@ -182,7 +183,10 @@ class Template ( object ):
         if loader:
             T.loaders.append ( loader )
         output = T.render_partial ( template, vars = vars, **kw )
-        return u'\n'.join ( [ T.xml_encoding, T.doctype, output ] )
+        if T.xml_encoding:
+            return u'\n'.join ( [ T.xml_encoding, T.doctype, output ] )
+        else:
+            return u'\n'.join ( [ T.doctype, output ] )
 
     def debug_out ( T, exc_info, filename ):
         import sys, types, pydoc                

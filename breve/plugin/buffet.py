@@ -1,6 +1,6 @@
 import os
 from breve import Template
-from breve.tags import html
+from breve.tags import html, html4
 from urllib import splitquery
 
 class BreveTemplatePlugin ( object ):
@@ -9,7 +9,7 @@ class BreveTemplatePlugin ( object ):
     Tested with TurboGears and Pylons
     """
     extension = "b"
-    tag_defs = { 'html' : html }
+    tag_defs = { 'html' : html, 'html4' : html4 }
     
     def __init__ ( self, extra_vars_func = None, options = None ):
         self.get_extra_vars = extra_vars_func
@@ -33,7 +33,8 @@ class BreveTemplatePlugin ( object ):
             'root': '.',
             'namespace': '',
             'debug': False,
-            'tidy': False
+            'tidy': False,
+            'default_format':'html'
         }        
 
         if 'std' in vars and 'config' in vars [ 'std' ]: # turbogears-specific hacks
@@ -72,10 +73,10 @@ class BreveTemplatePlugin ( object ):
             template_path = os.path.join ( *parts )
         return template_path, template_filename, args
 
-    def render ( self, info, format = "html", fragment = False, template = None ):
+    def render ( self, info, format = None, fragment = False, template = None ):
         """
         info == dict of variables to stick into the template namespace
-        format == output format if applicable
+        format == output format if applicable, None uses default_format from config
         fragment == special rules about rendering part of a page
         template == dotted.path.to.template (without .ext)
         """
@@ -91,7 +92,7 @@ class BreveTemplatePlugin ( object ):
         # self.breve_opts.update ( args )
 
         template_root = self.breve_opts [ 'root' ]
-        format = args.get ( 'format', format )
+        format = args.get ( 'format', format or self.breve_opts[ 'default_format' ] )
 
         if template_root and template_path.startswith ( template_root ):
             # this feels mildly brittle
@@ -103,9 +104,14 @@ class BreveTemplatePlugin ( object ):
             # makes it difficult to do too much
             self.tag_defs [ format ] = __import__ ( format, { }, { } )
 
-        self.breve_opts [ 'doctype' ] = self.breve_opts.get ( 'doctype', self.tag_defs [ format ].doctype )
+        #self.breve_opts [ 'doctype' ] = self.breve_opts.get ( 'doctype', self.tag_defs [ format ].doctype )
+        # if a doctype specified then use it otherwise choose the default for the format
+        # but don't use the last doctype for all subsequent doctype's
+        doctype = self.breve_opts.get ( 'doctype', self.tag_defs [ format ].doctype )
         template_obj = Template ( tags = self.tag_defs [ format ].tags,
                                   xmlns = self.tag_defs [ format ].xmlns,
+                                  xml_encoding = self.tag_defs [ format ].xml_encoding,
+                                  doctype = doctype,
                                   **self.breve_opts )
 
         if fragment:

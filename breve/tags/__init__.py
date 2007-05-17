@@ -7,12 +7,11 @@ conditionals = dict ( [
     if not k.startswith ( '_' )
 ] )
 
-class Tag ( object ):
-    __slots__ = [ 'name', 'children', 'attrs', 'render', 'data', 'args', 'pattern' ]
+class EmptyTag ( object ):
+    __slots__ = [ 'name', 'attrs', 'render', 'data', 'args', 'pattern']
     
     def __init__ ( self, name, *args, **kw ):
         self.name = name
-        self.children = [ ]
         self.attrs = kw
         self.render = None
         self.data = None
@@ -26,6 +25,19 @@ class Tag ( object ):
         self.pattern = pattern
         return self
 
+    def __str__ ( self ):
+        return flatten ( self )
+    
+    def clear ( self ):
+        return self
+
+class Tag ( EmptyTag ):
+    __slots__ = [ 'children']
+    
+    def __init__ ( self, name, *args, **kw ):
+        EmptyTag.__init__(self, name, *args, **kw)
+        self.children = [ ]
+        
     def __getitem__ ( self, k ):
         if type ( k ) in ( tuple, list ):
             self.children.extend ( k )
@@ -33,12 +45,9 @@ class Tag ( object ):
             self.children.append ( k )
         return self
 
-    def __str__ ( self ):
-        return flatten ( self )
-    
     def clear ( self ):
         self.children = [ ]
-        return self
+        return EmptyTag.clear()
 
 class Proto ( unicode ):
     __slots__ = [ ]
@@ -80,6 +89,13 @@ def flatten_comment ( o ):
     return u"\n<!--\n%s\n-->\n" % o
     
 ### standard flatteners
+def flatten_empty_tag ( o ):
+    if o.render:
+        o = o.render ( o, o.data )
+
+    attrs = u''.join ( quoteattrs ( o.attrs ) )
+    return u'<%s%s />' % ( o.name, attrs )
+
 def flatten_tag ( o ):
     if o.render:
         # o.children = [ ]
@@ -92,8 +108,7 @@ def flatten_tag ( o ):
                  u''.join ( [ flatten ( c ) for c in o.children ] ) +  
                  u'</%s>' % o.name )
     return u'<%s%s></%s>' % ( o.name, attrs, o.name )
-    # return u'<%s%s />' % ( o.name, attrs )
-
+    
 def flatten_proto ( p ):
     return u'<%s />' % p
 
@@ -104,6 +119,7 @@ register_flattener ( list, flatten_sequence )
 register_flattener ( tuple, flatten_sequence )
 register_flattener ( Proto, flatten_proto )
 register_flattener ( Tag, flatten_tag )
+register_flattener ( EmptyTag, flatten_empty_tag )
 register_flattener ( str, escape )
 register_flattener ( unicode, escape )
 register_flattener ( Invisible, flatten_invisible )

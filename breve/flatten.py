@@ -17,9 +17,10 @@ def registry ( ):
     return __registry 
     
 def flatten ( o ):
-    try:
-        return __registry [ type ( o ) ] ( o )
-    except KeyError:
+    flattener = __registry.get( type ( o ), None )
+    if flattener:
+        return flattener( o )
+    else:
         return unicode ( o )
 
 
