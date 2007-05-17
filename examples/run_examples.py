@@ -107,6 +107,8 @@ t = Template ( tags = html.tags, root = root )
 print t.render ( template = template, vars = vars )
 
 
+raise SystemExit # only testing stuff below
+
 root, template = '10_patterns', 'index'
 print "RUNNING EXAMPLE", root, template
 print "=" * 40
