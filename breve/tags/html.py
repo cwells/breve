@@ -70,7 +70,8 @@ empty_tag_names = [
 class inlineJS ( unicode ):
     def __init__ ( self, children ):
         self.children = children
-
+        self.name = 'script'
+        
 def flatten_inlineJS ( o ):
     return u'\n<script type="text/javascript">\n//<![CDATA[%s\n//]]></script>\n' % o.children
 register_flattener ( inlineJS, flatten_inlineJS )
