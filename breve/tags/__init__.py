@@ -82,7 +82,9 @@ invisible = _invisible ( 'invisible' )
 
 class xml ( unicode ): pass
 def flatten_xml ( o ):
-    return o
+    if isinstance ( o, unicode ):
+        return o
+    return unicode ( o )
 
 class comment ( unicode ): pass
 def flatten_comment ( o ):
@@ -120,7 +122,7 @@ register_flattener ( tuple, flatten_sequence )
 register_flattener ( Proto, flatten_proto )
 register_flattener ( Tag, flatten_tag )
 register_flattener ( EmptyTag, flatten_empty_tag )
-register_flattener ( str, escape )
+# register_flattener ( str, lambda s: escape ( unicode ( s ) ) )
 register_flattener ( unicode, escape )
 register_flattener ( Invisible, flatten_invisible )
 register_flattener ( cdata, unicode )
