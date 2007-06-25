@@ -26,3 +26,4 @@ def flatten ( o, encoding = 'utf-8' ):
         return escape ( unicode ( o, encoding ) )
 
 
+

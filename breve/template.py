@@ -24,7 +24,6 @@ try:
 except ImportError:
     tidylib = None
 
-DEFAULT_ENCODING = '''<?xml version="1.0" encoding="UTF-8"?>'''
 _cache = Cache ( )
 _loader = FileLoader ( )
 
@@ -35,40 +34,43 @@ class Template ( object ):
     namespace = ''
     mashup_entities = False  # set to True for old 1.0 behaviour
     loaders = [ _loader ]
+    encoding = 'utf-8'
+    xml_version = '1.0'
     
-    def __init__ ( T, tags, root = '.', xmlns = None, doctype = '', xml_encoding = DEFAULT_ENCODING, **kw ):
+    def __init__ ( T, tags, root = '.', xmlns = None, doctype = '', **kw ):
         '''
         Uses "T" rather than "self" to avoid confusion with
         subclasses that refer to this class via scoping (see
         the "inherits" class for one example).
         '''        
-        class inherits ( Tag ):
-            def __str__ ( self ):
-                return T.render_partial ( template = self.name, fragments = self.children )
-
-        class override ( Tag ): 
-            def __str__ ( self ):
-                if self.children:
-                    return ( u''.join ( [ flatten ( c ) for c in self.children ] ) )
-                return u''
-
-        class slot ( Tag ):
-            def __str__ ( self ):
-                if self.name in T.fragments:
-                    return xml ( flatten (
-                        T.fragments [ self.name ]
-                    ) )
-                if self.children:
-                    return ( u''.join ( [ flatten ( c ) for c in self.children ] ) )
-                return u''
-
+        class inherits ( Tag ): pass
+        def flatten_inherits ( o ):
+            return T.render_partial ( template = o.name, fragments = o.children )
+        register_flattener ( inherits, flatten_inherits )
+        
+        class override ( Tag ): pass
+        def flatten_override ( o ):
+            if o.children:
+                return ( u''.join ( [ flatten ( c ) for c in o.children ] ) )
+            return u''
+        register_flattener ( override, flatten_override )
+        
+        class slot ( Tag ): pass
+        def flatten_slot ( o ):
+            if o.name in T.fragments:
+                return xml ( flatten ( T.fragments [ o.name ] ) )
+            if o.children:
+                return ( u''.join ( [ flatten ( c ) for c in o.children ] ) )
+            return u''
+        register_flattener ( slot, flatten_slot )
+        
         def preamble ( **kw ):
             T.__dict__.update ( kw )
             return ''
 
         T.root = root
         T.xmlns = xmlns
-        T.xml_encoding = xml_encoding
+        T.encoding = kw.get ( 'encoding', Template.encoding )        
         T.extension = 'b' # default template extension
         T.doctype = doctype
         T.fragments = { }
@@ -110,7 +112,6 @@ class Template ( object ):
 
     def render_partial ( T, template, fragments = None, vars = None, loader = None, **kw ):
         T.render_path.append ( template )
-        # print "DEBUG: render_partial:", template, T.render_path
         
         if loader:
             T.loaders.append ( loader )
@@ -154,16 +155,18 @@ class Template ( object ):
 
         try:
             bytecode = _cache.compile ( filename, T.root, T.loaders [ -1 ] )
-            output = flatten ( eval ( bytecode, _g, { } ) )
+            output = flatten ( eval ( bytecode, _g, { } ) ).encode ( T.encoding )
+            T.xml_encoding = kw.get ( 'xml_encoding',
+                                      '''<?xml version="%s" encoding="%s"?>''' % ( T.xml_version, T.encoding ) )
         except:
             if T.debug:
                 return T.debug_out ( sys.exc_info ( )[ :-1 ], filename )
             else:
                 print "Error in template ( %s )" % template
                 raise
-        else:
-            if loader:
-                T.loaders.pop ( ) # restore the previous loader
+        # else:
+        #     if loader:
+        #         T.loaders.pop ( ) # restore the previous loader
 
         # T.render_path.pop ( )
             
@@ -174,8 +177,8 @@ class Template ( object ):
                              doctype = 'omit',
                              indent = 'auto',
                              tidy_mark = False,
-                             input_encoding = 'utf8' )
-            return unicode ( tidylib.parseString ( output.encode ( 'utf-8' ), **options ) )
+                             input_encoding = 'UTF8' )
+            return unicode ( tidylib.parseString ( output, **options ) )
         else:
             return output
 
@@ -183,6 +186,8 @@ class Template ( object ):
         if loader:
             T.loaders.append ( loader )
         output = T.render_partial ( template, vars = vars, **kw )
+        if loader:
+            T.loaders.pop ( )
         if T.xml_encoding:
             return u'\n'.join ( [ T.xml_encoding, T.doctype, output ] )
         else:

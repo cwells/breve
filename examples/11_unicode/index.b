@@ -1,7 +1,6 @@
 preamble (
-    encoding = 'ascii'
+    encoding = 'utf-8'
 ),
-
 
 html [
     head [
