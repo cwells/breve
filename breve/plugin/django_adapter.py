@@ -63,7 +63,6 @@ class TemplateAdapter ( object ):
                 _( "The template %s does not exist." ) %
                 os.path.join ( self.template.root, self.names [ 0 ] ) )
         else:
-            import os
             raise TemplateDoesNotExist ( _( "None of the following templates exists: %s." ) %
                                          ", ".join ( [ os.path.join (self.template.root, name )
                                                        for name in self.names ] ) )
