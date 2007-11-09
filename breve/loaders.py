@@ -9,4 +9,4 @@ class FileLoader ( object ):
         return uid, timestamp
     
     def load ( self, uid ):
-        return unicode ( file ( uid, 'U' ).read ( ) )
+        return unicode ( file ( uid, 'U' ).read ( ), 'utf-8' )

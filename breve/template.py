@@ -155,7 +155,7 @@ class Template ( object ):
 
         try:
             bytecode = _cache.compile ( filename, T.root, T.loaders [ -1 ] )
-            output = flatten ( eval ( bytecode, _g, { } ) ).encode ( T.encoding )
+            output = flatten ( eval ( bytecode, _g, { } ) )
             T.xml_encoding = kw.get ( 'xml_encoding',
                                       '''<?xml version="%s" encoding="%s"?>''' % ( T.xml_version, T.encoding ) )
         except:
