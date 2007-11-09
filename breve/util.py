@@ -40,7 +40,7 @@ def quoteattrs ( attrs ):
     quoted = [ ]
     for a, v in attrs.items ( ):
         if v is None: continue
-        v = unicode ( v, 'utf-8' )
+        v = str ( v )
         v = '"' + v.replace ( "&", "&amp;"
             ).replace ( ">", "&gt;"
             ).replace ( "<", "&lt;"

@@ -1,8 +1,6 @@
 #
 # registry of flatteners
 #
-from breve.util import escape
-
 __registry = { }
 
 def register_flattener ( o, f ):
@@ -18,12 +16,10 @@ def registry ( ):
     '''mostly for debugging'''
     return __registry 
     
-def flatten ( o, encoding = 'utf-8' ):
-    flattener = __registry.get ( type ( o ), None )
-    if flattener:
-        return flattener ( o )
-    else:
-        return escape ( unicode ( o, encoding ) )
-
+def flatten ( o ):
+    try:
+        return __registry [ type ( o ) ] ( o )
+    except KeyError:
+        return unicode ( o )
 
 

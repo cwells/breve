@@ -66,7 +66,7 @@ def current_indent(indent):
 # so triple quoted strings don't barf
 def escape_last_quote(s):
     if s.endswith("'"):
-        s = s[:-1] + "\'"
+        s = s[-1] + "\'"
     return s
 
 # the real thing - convert an html tag to a breve equivalent

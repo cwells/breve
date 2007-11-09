@@ -1,8 +1,7 @@
 from breve.flatten import flatten, register_flattener
-from breve.tags import Proto, EmptyTag, Tag, Namespace, cdata, xml, flatten_tag
+from breve.tags import Proto, Tag, Namespace, cdata, xml, flatten_tag
 
-xml_encoding = '''<?xml version="1.0" encoding="UTF-8"?>'''
-xmlns = 'http://www.w3.org/1999/xhtml'
+xmlns = 'xmlns="http://www.w3.org/1999/xhtml'
 doctype = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n'''
 
@@ -24,17 +23,6 @@ def flatten_htmlproto ( p ):
 
 register_flattener ( HtmlProto, flatten_htmlproto )
 
-# a class for empty (i.e. childless) elements
-class HtmlEmptyProto ( unicode ):
-    __slots__ = [ ]
-    Class = EmptyTag
-    def __call__ ( self, **kw ):
-        return self.Class ( self )(**kw )
-    
-def flatten_html_empty_proto ( p ):
-    return '<%s/>' % ( p )
-
-register_flattener ( HtmlEmptyProto, flatten_html_empty_proto )
 
 #
 # register common HTML elements
@@ -53,7 +41,7 @@ tag_names = [
     'menu',
     'noframes','noscript',
     'ol','optgroup',
-    'p', 'pre',
+    'pre',
     'q',
     's','samp','script', 'select','small','span','strike','strong','style','sub','sup',
     'table','tbody','td','textarea','tfoot','th','thead','title','tr','tt',
@@ -63,15 +51,14 @@ tag_names = [
 
 empty_tag_names = [
     'area', 'base', 'basefont', 'br', 'col', 'frame', 'hr',
-    'img', 'input', 'isindex', 'link', 'meta', 'param'
+    'img', 'input', 'isindex', 'link', 'meta', 'p', 'param'
 ]
     
     
 class inlineJS ( unicode ):
     def __init__ ( self, children ):
         self.children = children
-        self.name = 'script'
-        
+
 def flatten_inlineJS ( o ):
     return u'\n<script type="text/javascript">\n//<![CDATA[%s\n//]]></script>\n' % o.children
 register_flattener ( inlineJS, flatten_inlineJS )
@@ -131,7 +118,7 @@ for t in tag_names:
     tags [ t ] = HtmlProto ( t )
 
 for t in empty_tag_names:
-    tags [ t ] = HtmlEmptyProto ( t )
+    tags [ t ] = Proto ( t )
     
 tags.update ( dict (
     checkbox = checkbox,
