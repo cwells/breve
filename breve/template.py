@@ -107,8 +107,8 @@ class Template ( object ):
             locals._dict.update ( T.vars )
         
         # now we instantiate an entirely new template...
-        t = Template ( T.tags, T.root ) # hrm... better way to do this?
-        # t.__dict__.update ( T.__dict__ ) # is this better?  safe?  deepcopy?
+        t = Template ( T.tags, T.root, T.xmlns, T.doctype )
+        t.__dict__.update ( T.__dict__ ) # is this safe?
         return xml ( t.render_partial ( template = filename, vars = locals, loader = loader ) )
 
     def xinclude ( T, url, timeout = 300 ):
