@@ -100,12 +100,13 @@ class Template ( object ):
         return xml ( T.render_partial ( template = filename, loader = loader, vars = locals ) )
 
     def include ( T, filename, vars = None, loader = None ):
-        locals = Namespace ( vars )
+        locals = Namespace ( )
         try:
             locals._dict.update ( T.vars [ T.vars [ '__namespace' ] ] )
         except KeyError:
             locals._dict.update ( T.vars )
-        
+        if vars:
+            locals.update ( vars )
         # now we instantiate an entirely new template...
         t = Template ( T.tags, T.root, T.xmlns, T.doctype )
         t.__dict__.update ( T.__dict__ ) # is this safe?
