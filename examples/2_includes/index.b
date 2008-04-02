@@ -2,6 +2,10 @@ html [
     head [ title [ 'Simple Includes' ] ],
     body [
         h1 [ 'Simple Includes' ],
-        include ( 'include' )
+
+        ul [ [
+            li [ include ( 'include' ) ] 
+            for _i in range ( 3 )
+        ] ]
     ]
 ]

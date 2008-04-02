@@ -91,13 +91,25 @@ class Template ( object ):
         T.tags.update ( conditionals )
         T.tags.update ( tags )
 
-    def include ( T, filename, vars = None, loader = None ):
+    def _old_broken_include ( T, filename, vars = None, loader = None ):
         locals = Namespace ( vars )
         try:
             locals._dict.update ( T.vars [ T.vars [ '__namespace' ] ] )
         except KeyError:
             locals._dict.update ( T.vars )
         return xml ( T.render_partial ( template = filename, loader = loader, vars = locals ) )
+
+    def include ( T, filename, vars = None, loader = None ):
+        locals = Namespace ( vars )
+        try:
+            locals._dict.update ( T.vars [ T.vars [ '__namespace' ] ] )
+        except KeyError:
+            locals._dict.update ( T.vars )
+        
+        # now we instantiate an entirely new template...
+        t = Template ( T.tags, T.root ) # hrm... better way to do this?
+        # t.__dict__.update ( T.__dict__ ) # is this better?  safe?  deepcopy?
+        return xml ( t.render_partial ( template = filename, vars = locals, loader = loader ) )
 
     def xinclude ( T, url, timeout = 300 ):
         def fetch ( url ):
@@ -109,7 +121,6 @@ class Template ( object ):
 
     def render_partial ( T, template, fragments = None, vars = None, loader = None, **kw ):
         T.render_path.append ( template )
-        # print "DEBUG: render_partial:", template, T.render_path
         
         if loader:
             T.loaders.append ( loader )
