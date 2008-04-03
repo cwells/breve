@@ -184,7 +184,7 @@ class Template ( object ):
                              doctype = 'omit',
                              indent = 'auto',
                              tidy_mark = False,
-                             input_encoding = sys.getdefaultencoding ( ) )
+                             input_encoding = 'utf8' )
             return unicode ( tidylib.parseString ( output.encode ( 'utf-8' ), **options ) )
         else:
             return output
