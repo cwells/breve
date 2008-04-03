@@ -40,6 +40,7 @@ class TemplateAdapter ( object ):
         self.breve_opts = breve_opts
 
     def render ( self, vars = None ):
+        import os
         if vars == None:
             vars = { }
         elif isinstance ( vars, Context ):

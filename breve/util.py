@@ -1,9 +1,3 @@
-class Curval ( object ):
-    ''' marker for filling in value from sequences and mappings '''
-    def __init__ ( self, name ):
-        self.name = name
-        self.pattern = 'item'
-
 class Namespace ( object ):
     __slots__ = [ '_dict' ]
     

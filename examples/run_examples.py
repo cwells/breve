@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import sys
 try:
     from breve import Template
     from breve.tags import html
@@ -52,12 +53,25 @@ for root, template in [ ( '1_basics', 'index' ),
                         ( '4_flatteners', 'index' ),
                         ( '5_conditionals', 'index' ),
                         ( '6_dynamic_inheritance', 'fragment' ),
-                        ( '7_escape_artist', 'index' ), ]:
-                        # ( '10_patterns', 'index' ) ]:
+                        ( '7_escape_artist', 'index' ) ]:
+                        # ( '11_unicode', 'index' ) ]:
     print "RUNNING EXAMPLE", root, template
     print "=" * 40
     t = Template ( html.tags, root = root, doctype = html.doctype, xmlns = html.xmlns )
     print t.render ( template = template, vars = vars )
+    print "\n\n\n"
+
+####### unicode stuff
+for root, template in [ ( '11_unicode', 'index' ) ]:
+    print "RUNNING EXAMPLE", root, template
+    print "=" * 40
+
+    try:
+        t = Template ( html.tags, root = root, doctype = html.doctype, xmlns = html.xmlns )
+        print t.render ( template = template, vars = vars )
+    except:
+        '''This template will fail unless you're default encoding is properly set'''
+        '''Right now you're using %s''' % sys.getdefaultencoding ( )
     print "\n\n\n"
 
 ####### test custom loaders
@@ -105,64 +119,6 @@ print "=" * 40
 
 t = Template ( tags = html.tags, root = root )
 print t.render ( template = template, vars = vars )
-
-
-raise SystemExit 
-
-root, template = '10_patterns', 'index'
-print "RUNNING EXAMPLE", root, template
-print "=" * 40
-from copy import deepcopy
-def pattern ( tag, data ):
-    def generate_children ( tag, data ):
-        children = tag.children
-        nchild = len ( children ) - 1
-        tag.clear ( )        
-
-        # find header and footer
-        patterns = dict ( first = None, last = None )
-        poff = dict ( first = 0, last = -1 )
-        for p in patterns.keys ( ):
-            if children [ poff [ p ] ].pattern == p:
-                patterns [ p ] = children [ poff [ p ] ]
-                patterns [ p ].children = [ data [ poff [ p ] ] ]
-            else:
-                for c in children [ poff [ p ] ].children:
-                    if c.pattern == p:
-                        c.children = [ data [ poff [ p ] ] ]
-                        patterns [ p ] = children [ poff [ p ] ]
-                        break
-
-        if patterns [ 'first' ]:
-            yield patterns [ 'first' ]
-
-        hasfirst = bool ( patterns [ 'first' ] )
-        haslast = -bool ( patterns [ 'last' ] )
-        print "FIRST, LAST", hasfirst, haslast
-        for idx, i in enumerate ( data [ hasfirst : -1 - haslast ] ): 
-            child = deepcopy ( children [ idx % ( nchild - 1 ) + 1 ] )
-            if child.pattern != 'each':
-                for c in child.children:
-                    if c.pattern == 'each':
-                        c.children = [ i ]
-            yield child
-
-        if patterns [ 'last' ]:
-            yield patterns [ 'last' ]
-
-    return tag [ [ t for t in generate_children ( tag, data ) ] ]
-    
-vars = dict (
-    pattern = pattern,
-    mylist = [ 'Header', 'John', 'Jane', 'Jeff', 'Jill', 'Footer' ]
-)
-t = Template ( tags = html.tags, root = root )
-print t.render ( template = template, vars = vars )
-
-
-
-
-
 
     
 raise SystemExit

@@ -8,7 +8,7 @@ conditionals = dict ( [
 ] )
 
 class Tag ( object ):
-    __slots__ = [ 'name', 'children', 'attrs', 'render', 'data', 'args', 'pattern' ]
+    __slots__ = [ 'name', 'children', 'attrs', 'render', 'data', 'args' ]
     
     def __init__ ( self, name, *args, **kw ):
         self.name = name
@@ -16,14 +16,12 @@ class Tag ( object ):
         self.attrs = kw
         self.render = None
         self.data = None
-        self.pattern = None
         
-    def __call__ ( self, render = None, data = None, pattern = None, *args, **kw ):
+    def __call__ ( self, render = None, data = None, *args, **kw ):
         self.render = render
         self.data = data
         self.attrs.update ( kw )
         self.args = args
-        self.pattern = pattern
         return self
 
     def __getitem__ ( self, k ):
@@ -35,7 +33,7 @@ class Tag ( object ):
 
     def __str__ ( self ):
         return flatten ( self )
-    
+
     def clear ( self ):
         self.children = [ ]
         return self
