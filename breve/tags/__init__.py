@@ -1,4 +1,4 @@
-from copy import deepcopy
+from copy import copy, deepcopy
 from string import Template as sTemplate
 
 from breve.util import Namespace, escape, quoteattrs
@@ -19,7 +19,7 @@ class Tag ( object ):
         self.attrs = kw
         self.render = None
         self.data = None
-        self.args = None
+        self.args = args
 
     def __call__ ( self, render = None, data = None, *args, **kw ):
         self.render = render or self.render
@@ -42,21 +42,29 @@ class Tag ( object ):
         self.children = [ ]
         return self
 
+    def __copy__ ( self ):
+        t = Tag ( self.name, *self.args )
+        t.attrs = deepcopy ( self.attrs )
+        t.data = self.data
+        t.render = self.render
+        t.children = self.children
+        return t
+
     def __mul__ ( self, alist ):
         def traverse ( o, data ):
+            children =  [ ]
             for k, v in o.attrs.items ( ):
                 o.attrs [ k ] = sTemplate ( v ).safe_substitute ( data )
             for idx, c in enumerate ( o.children ):
                 if isinstance ( c, Tag ):
-                    traverse ( c, data )
+                    children.append ( traverse ( copy ( c ), data ) )
                 else:
-                    o.children [ idx ] = sTemplate ( c ).safe_substitute ( data )
+                    # o.children [ idx ] = sTemplate ( c ).safe_substitute ( data )
+                    children.append ( sTemplate ( c ).safe_substitute ( data ) )
+            o.children = children
             return o
-            
-        items = [ ]
-        for data in alist:
-            items.append ( traverse ( deepcopy ( self ), data ) )
-        return list ( items )
+
+        return [ traverse ( copy ( self ), data ) for data in alist ]
 
 
 class Proto ( unicode ):
