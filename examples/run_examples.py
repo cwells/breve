@@ -12,7 +12,7 @@ except ImportError:
     raise SystemExit
 
 
-Template.tidy = True
+# Template.tidy = True
 
 ########## test basic functionality
 from datetime import datetime

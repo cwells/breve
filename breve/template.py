@@ -17,7 +17,6 @@ from breve.flatten import flatten, register_flattener, registry
 from breve.loaders import FileLoader
 from breve.cache import Cache
 from breve.globals import _globals
-# import breve.render
 
 try:
     import tidy as tidylib
@@ -30,6 +29,7 @@ _loader = FileLoader ( )
 class Template ( object ):
 
     tidy = False
+    prettyprint = False
     debug = False
     namespace = ''
     mashup_entities = False  # set to True for old 1.0 behaviour
@@ -159,6 +159,8 @@ class Template ( object ):
         _g.update ( T.tags )
         if ns:
             _g [ ns ] = T.vars [ ns ]
+            if not T.vars.has_key ( ns ):
+                T.vars [ ns ] = Namespace ( ) 
         else:
             _g.update ( T.vars )
 
@@ -177,6 +179,10 @@ class Template ( object ):
 
         # T.render_path.pop ( )
             
+        if T.prettyprint:
+            from xml.dom.minidom import parseString
+            parseString ( output ).toprettyxml ( '  ' )
+
         if T.tidy and tidylib:
             options = dict ( input_xml = True,
                              output_xhtml = True,

@@ -1,3 +1,6 @@
+from copy import deepcopy
+from string import Template as sTemplate
+
 from breve.util import Namespace, escape, quoteattrs
 from breve.flatten import flatten, register_flattener
 import _conditionals as C
@@ -16,12 +19,13 @@ class Tag ( object ):
         self.attrs = kw
         self.render = None
         self.data = None
-        
+        self.args = None
+
     def __call__ ( self, render = None, data = None, *args, **kw ):
-        self.render = render
-        self.data = data
+        self.render = render or self.render
+        self.data = data or self.data
         self.attrs.update ( kw )
-        self.args = args
+        self.args = args or self.args
         return self
 
     def __getitem__ ( self, k ):
@@ -37,6 +41,23 @@ class Tag ( object ):
     def clear ( self ):
         self.children = [ ]
         return self
+
+    def __mul__ ( self, alist ):
+        def traverse ( o, data ):
+            for k, v in o.attrs.items ( ):
+                o.attrs [ k ] = sTemplate ( v ).safe_substitute ( data )
+            for idx, c in enumerate ( o.children ):
+                if isinstance ( c, Tag ):
+                    traverse ( c, data )
+                else:
+                    o.children [ idx ] = sTemplate ( c ).safe_substitute ( data )
+            return o
+            
+        items = [ ]
+        for data in alist:
+            items.append ( traverse ( deepcopy ( self ), data ) )
+        return list ( items )
+
 
 class Proto ( unicode ):
     __slots__ = [ ]
@@ -102,7 +123,7 @@ register_flattener ( list, flatten_sequence )
 register_flattener ( tuple, flatten_sequence )
 register_flattener ( Proto, flatten_proto )
 register_flattener ( Tag, flatten_tag )
-register_flattener ( str, escape )
+register_flattener ( str, lambda s: escape ( unicode ( s, 'utf-8' ) ) )
 register_flattener ( unicode, escape )
 register_flattener ( Invisible, flatten_invisible )
 register_flattener ( cdata, unicode )
