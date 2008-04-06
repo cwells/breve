@@ -58,8 +58,7 @@ class Tag ( object ):
             for idx, c in enumerate ( o.children ):
                 if isinstance ( c, Tag ):
                     children.append ( traverse ( copy ( c ), data ) )
-                else:
-                    # o.children [ idx ] = sTemplate ( c ).safe_substitute ( data )
+                elif isinstance ( c, str ):
                     children.append ( sTemplate ( c ).safe_substitute ( data ) )
             o.children = children
             return o
