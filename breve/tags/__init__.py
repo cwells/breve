@@ -10,6 +10,9 @@ conditionals = dict ( [
     if not k.startswith ( '_' )
 ] )
 
+def test ( condition ):
+    return condition or ''
+
 class Tag ( object ):
     __slots__ = [ 'name', 'children', 'attrs', 'render', 'data', 'args' ]
     
@@ -65,6 +68,26 @@ class Tag ( object ):
 
         return [ traverse ( copy ( self ), data ) for data in alist ]
 
+    def find_by_attribute  ( self, attr, value ):
+        def traverse ( o, attr, value ):
+            if isinstance ( o, Tag ):
+                if attr in o.attrs and o.attrs [ attr ] == value:
+                    yield o
+                for c in o.children:
+                    yield traverse ( c, attr, value )
+        return traverse ( self, attr, value )
+
+    def walk ( self, callback, tags_only = False ):
+        def traverse ( o ):
+            if isinstance ( o, Tag ):
+                if callback ( o, True ) == False:
+                    return
+                for c in o.children:
+                    traverse ( c )
+            elif not tags_only:
+                if callback ( o, False ) == False:
+                    return
+        return traverse ( self )
 
 class Proto ( unicode ):
     __slots__ = [ ]

@@ -90,14 +90,6 @@ class Template ( object ):
         T.tags.update ( conditionals )
         T.tags.update ( tags )
 
-    def _old_broken_include ( T, filename, vars = None, loader = None ):
-        locals = Namespace ( vars )
-        try:
-            locals._dict.update ( T.vars [ T.vars [ '__namespace' ] ] )
-        except KeyError:
-            locals._dict.update ( T.vars )
-        return xml ( T.render_partial ( template = filename, loader = loader, vars = locals ) )
-
     def include ( T, filename, vars = None, loader = None ):
         locals = Namespace ( )
         try:
