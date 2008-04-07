@@ -80,12 +80,13 @@ class Tag ( object ):
     def walk ( self, callback, tags_only = False ):
         def traverse ( o ):
             if isinstance ( o, Tag ):
-                if callback ( o, True ) == False:
+                if callback ( o, True ) is False:
                     return
                 for c in o.children:
-                    traverse ( c )
+                    if isinstance ( c, Tag ):
+                        traverse ( c )
             elif not tags_only:
-                if callback ( o, False ) == False:
+                if callback ( o, False ) is False:
                     return
         return traverse ( self )
 
