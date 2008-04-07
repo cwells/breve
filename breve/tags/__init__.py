@@ -83,8 +83,7 @@ class Tag ( object ):
                 if callback ( o, True ) is False:
                     return
                 for c in o.children:
-                    if isinstance ( c, Tag ):
-                        traverse ( c )
+                    traverse ( c )
             elif not tags_only:
                 if callback ( o, False ) is False:
                     return
