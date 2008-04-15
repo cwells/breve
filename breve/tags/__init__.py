@@ -22,8 +22,8 @@ class Macro ( object ):
         self.name = name
         self.function = function
 
-    def __call__ ( self, kw ):
-        return self.function ( Namespace ( kw ) )
+    def __call__ ( self, *args, **kw ):
+        return self.function ( *args, **kw )
 
 def macro ( name, function ):
     caller ( ).f_globals [ name ] = Macro ( name, function )
