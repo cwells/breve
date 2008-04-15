@@ -44,7 +44,12 @@ vars = dict (
         dict ( firstname = 'Bob', lastname = 'Ippolito', projects = [ 'mochikit', 'mochibot' ] )
     ],
     public = True,
-    published = False
+    published = False,
+    urls = [
+        dict ( url = 'http://wwww.google.com', label = 'Google' ),
+        dict ( url = 'http://www.python.org', label = 'Python' ),
+        dict ( url = 'http://breve.twisty-industries.com', label = 'Breve' )
+    ] 
 )
 
 for root, template in [ ( '1_basics', 'index' ),
@@ -53,7 +58,8 @@ for root, template in [ ( '1_basics', 'index' ),
                         ( '4_flatteners', 'index' ),
                         ( '5_conditionals', 'index' ),
                         ( '6_dynamic_inheritance', 'fragment' ),
-                        ( '7_escape_artist', 'index' ) ]:
+                        ( '7_escape_artist', 'index' ),
+                        ( '10_looping', 'index' ) ]:
                         # ( '11_unicode', 'index' ) ]:
     print "RUNNING EXAMPLE", root, template
     print "=" * 40

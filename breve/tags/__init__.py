@@ -1,3 +1,4 @@
+import sys
 from copy import copy, deepcopy
 from string import Template as sTemplate
 
@@ -12,6 +13,24 @@ conditionals = dict ( [
 
 def test ( condition ):
     return condition or ''
+
+class Macro ( object ):
+    def __init__ ( self, name, function ):
+        self.name = name
+        self.function = function
+
+    def __call__ ( self, kw ):
+        ns = Namespace ( kw )
+        return self.function ( ns )
+
+def caller ( ):
+    return sys._getframe ( 2 )
+
+def macro ( name, function ):
+    frame = caller ( )
+    frame.f_globals [ name ] = Macro ( name, function )
+    return ''
+
 
 class Tag ( object ):
     __slots__ = [ 'name', 'children', 'attrs', 'render', 'data', 'args' ]
