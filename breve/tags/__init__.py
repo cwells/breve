@@ -14,6 +14,9 @@ conditionals = dict ( [
 def test ( condition ):
     return condition or ''
 
+def caller ( ):
+    return sys._getframe ( 2 )
+
 class Macro ( object ):
     def __init__ ( self, name, function ):
         self.name = name
@@ -22,9 +25,6 @@ class Macro ( object ):
     def __call__ ( self, kw ):
         ns = Namespace ( kw )
         return self.function ( ns )
-
-def caller ( ):
-    return sys._getframe ( 2 )
 
 def macro ( name, function ):
     frame = caller ( )
