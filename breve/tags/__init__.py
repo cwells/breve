@@ -23,14 +23,15 @@ class Macro ( object ):
         self.function = function
 
     def __call__ ( self, kw ):
-        ns = Namespace ( kw )
-        return self.function ( ns )
+        return self.function ( Namespace ( kw ) )
 
 def macro ( name, function ):
-    frame = caller ( )
-    frame.f_globals [ name ] = Macro ( name, function )
+    caller ( ).f_globals [ name ] = Macro ( name, function )
     return ''
 
+def assign ( name, value ):
+    caller ( ).f_globals [ name ] = value
+    return ''
 
 class Tag ( object ):
     __slots__ = [ 'name', 'children', 'attrs', 'render', 'data', 'args' ]
