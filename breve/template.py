@@ -119,6 +119,10 @@ class Template ( object ):
 
     def render_partial ( T, template, fragments = None, vars = None, loader = None, **kw ):
         T.render_path.append ( template )
+        T.vars [ '__templates__' ] = T.render_path 
+
+        ns = kw.get ( 'namespace', T.namespace )
+        T.vars [ '__namespace' ] = ns
         
         if loader:
             T.loaders.append ( loader )
@@ -127,16 +131,6 @@ class Template ( object ):
             for f in fragments:
                 if f.name not in T.fragments:
                     T.fragments [ f.name ] = f
-
-        ns = kw.get ( 'namespace', T.namespace )
-
-        T.vars._dict.update ( {
-        #    'sequence': breve.render.sequence,
-        #    'mapping': breve.render.mapping,
-            '__templates__': T.render_path 
-        } )
-        if ns:
-            T.vars [ '__namespace' ] = ns
 
         if vars:
             if ns:
