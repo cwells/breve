@@ -1,4 +1,4 @@
-evaluate ( 'macros' ),
+include ( 'macros' ),
 
 html [
     head [ 

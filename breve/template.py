@@ -78,7 +78,6 @@ class Template ( object ):
                    'xml': xml,
                    'test': test,
                    'macro': macro,
-                   'evaluate': T.evaluate,
                    'assign': assign,
                    'comment': comment,
                    'invisible': invisible,
@@ -94,30 +93,22 @@ class Template ( object ):
         T.tags.update ( conditionals )
         T.tags.update ( tags )
 
-    def evaluate ( T, template, vars = None, loader = None ):
+    def include ( T, template, vars = None, loader = None ):
+        ''' 
+        evalutes a template fragment in the current context
         '''
-        evaluates a template fragment in the current context (scope)
-        '''
-        frame = caller ( )
-        filename = "%s.%s" % ( template, T.extension )
-        code = _cache.compile ( filename, T.root, T.loaders [ -1 ] )
-        eval ( code, frame.f_globals )
-        return ''
-
-    def include ( T, filename, vars = None, loader = None ):
-        frame = caller ( )
-        locals = Namespace ( frame.f_globals )
-        try:
-            locals._dict.update ( T.vars [ T.vars [ '__namespace' ] ] )
-        except KeyError:
-            locals._dict.update ( T.vars )
+        locals = { }
         if vars:
             locals.update ( vars )
-        # now we instantiate an entirely new template...
-        t = Template ( T.tags, T.root, T.xmlns, T.doctype )
-        t.__dict__.update ( T.__dict__ ) # is this safe?
-        return xml ( t.render_partial ( template = filename, vars = locals, loader = loader ) )
-
+        frame = caller ( )
+        filename = "%s.%s" % ( template, T.extension )
+        if loader:
+            T.loaders.append ( loader )            
+        code = _cache.compile ( filename, T.root, T.loaders [ -1 ] )
+        if loader:
+            T.loaders.pop ( )
+        return eval ( code, frame.f_globals, locals )
+        
     def xinclude ( T, url, timeout = 300 ):
         def fetch ( url ):
             try:
