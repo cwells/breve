@@ -137,7 +137,6 @@ class Template ( object ):
 
         _g = { }
         _g.update ( T.tags )
-  
         if ns:
             if not T.vars.has_key ( ns ):
                 T.vars [ ns ] = Namespace ( ) 
