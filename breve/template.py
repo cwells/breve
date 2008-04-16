@@ -9,7 +9,6 @@ breve - A simple s-expression style template engine inspired by Nevow's Stan.
 '''
 
 import os, sys
-from urllib2 import urlopen, URLError
 from breve.util import Namespace, caller
 from breve.tags import Proto, Tag, xml, invisible, cdata, comment, conditionals, test, macro, assign
 from breve.tags.entities import entities
@@ -82,7 +81,6 @@ class Template ( object ):
                    'comment': comment,
                    'invisible': invisible,
                    'include': T.include,
-                   'xinclude': T.xinclude,
                    'inherits': inherits,
                    'override': override,
                    'slot': slot,
@@ -109,14 +107,6 @@ class Template ( object ):
             T.loaders.pop ( )
         return eval ( code, frame.f_globals, locals )
         
-    def xinclude ( T, url, timeout = 300 ):
-        def fetch ( url ):
-            try:
-                return urlopen ( url ).read ( )
-            except URLError, e:
-                return "Error loading %s: %s" % ( url, e )
-        return xml ( _cache.memoize ( url, timeout, fetch, url ) )
-
     def render_partial ( T, template, fragments = None, vars = None, loader = None, **kw ):
         filename = "%s.%s" % ( template, T.extension )
         output = u''
