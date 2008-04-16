@@ -107,8 +107,6 @@ class Template ( object ):
         return eval ( code, frame.f_globals, locals )
         
     def render_partial ( T, template, fragments = None, vars = None, loader = None, **kw ):
-        print T.render_path
-
         filename = "%s.%s" % ( template, T.extension )
         output = u''
 
