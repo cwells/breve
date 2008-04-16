@@ -135,25 +135,20 @@ class Template ( object ):
                 if f.name not in T.fragments:
                     T.fragments [ f.name ] = f
 
-        if vars:
-            if ns:
-                if not T.vars.has_key ( ns ):
-                    T.vars [ ns ] = Namespace ( )
-                T.vars [ ns ]._dict.update ( _globals )
-                T.vars [ ns ]._dict.update ( vars )
-            else:
-                T.vars._dict.update ( _globals )
-                T.vars._dict.update ( vars )
-        else:
-            T.vars._dict.update ( _globals )
-
         _g = { }
         _g.update ( T.tags )
+  
         if ns:
-            _g [ ns ] = T.vars [ ns ]
             if not T.vars.has_key ( ns ):
                 T.vars [ ns ] = Namespace ( ) 
+            if vars:
+                T.vars [ ns ]._dict.update ( _globals )
+                T.vars [ ns ]._dict.update ( vars )
+            _g [ ns ] = T.vars [ ns ]
         else:
+            if vars:
+                T.vars._dict.update ( _globals )
+                T.vars._dict.update ( vars )
             _g.update ( T.vars )
 
         try:
