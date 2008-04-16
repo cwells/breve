@@ -28,7 +28,6 @@ _loader = FileLoader ( )
 class Template ( object ):
 
     tidy = False
-    prettyprint = False
     debug = False
     namespace = ''
     mashup_entities = False  # set to True for old 1.0 behaviour
@@ -155,10 +154,6 @@ class Template ( object ):
 
         # T.render_path.pop ( )
             
-        if T.prettyprint:
-            from xml.dom.minidom import parseString
-            parseString ( output ).toprettyxml ( '  ' )
-
         if T.tidy and tidylib:
             options = dict ( input_xml = True,
                              output_xhtml = True,
