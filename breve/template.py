@@ -38,7 +38,7 @@ class Template ( object ):
         Uses "T" rather than "self" to avoid confusion with
         subclasses that refer to this class via scoping (see
         the "inherits" class for one example).
-        '''        
+        '''    
         class inherits ( Tag ):
             def __str__ ( self ):
                 return T.render_partial ( template = self.name, fragments = self.children )
@@ -102,10 +102,11 @@ class Template ( object ):
         if loader:
             T.loaders.append ( loader )            
         code = _cache.compile ( filename, T.root, T.loaders [ -1 ] )
+        result = eval ( code, frame.f_globals, locals )
         if loader:
             T.loaders.pop ( )
-        return eval ( code, frame.f_globals, locals )
-        
+        return result
+
     def render_partial ( T, template, fragments = None, vars = None, loader = None, **kw ):
         filename = "%s.%s" % ( template, T.extension )
         output = u''
