@@ -1,0 +1,1 @@
+mymacro ( 'this worked from within an include' )

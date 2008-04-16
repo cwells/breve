@@ -1,3 +1,5 @@
+import sys
+
 class Namespace ( object ):
     __slots__ = [ '_dict' ]
     
@@ -51,3 +53,9 @@ def escape ( s ):
              ).replace ( "<", "&lt;" )
 
                                     
+def caller ( ):
+    """
+    get the execution frame of the caller
+    """
+    return sys._getframe ( 2 )
+

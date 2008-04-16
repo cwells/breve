@@ -59,7 +59,9 @@ for root, template in [ ( '1_basics', 'index' ),
                         ( '5_conditionals', 'index' ),
                         ( '6_dynamic_inheritance', 'fragment' ),
                         ( '7_escape_artist', 'index' ),
-                        ( '10_looping', 'index' ) ]:
+                        ( '10_looping', 'index' ),
+                        ( '12_macros', 'index' )
+                      ]:
                         # ( '11_unicode', 'index' ) ]:
     print "RUNNING EXAMPLE", root, template
     print "=" * 40

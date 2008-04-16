@@ -10,7 +10,7 @@ breve - A simple s-expression style template engine inspired by Nevow's Stan.
 
 import os, sys
 from urllib2 import urlopen, URLError
-from breve.util import Namespace
+from breve.util import Namespace, caller
 from breve.tags import Proto, Tag, xml, invisible, cdata, comment, conditionals, test, macro, assign
 from breve.tags.entities import entities
 from breve.flatten import flatten, register_flattener, registry
@@ -78,6 +78,7 @@ class Template ( object ):
                    'xml': xml,
                    'test': test,
                    'macro': macro,
+                   'evaluate': T.evaluate,
                    'assign': assign,
                    'comment': comment,
                    'invisible': invisible,
@@ -93,8 +94,19 @@ class Template ( object ):
         T.tags.update ( conditionals )
         T.tags.update ( tags )
 
+    def evaluate ( T, template, vars = None, loader = None ):
+        '''
+        evaluates a template fragment in the current context (scope)
+        '''
+        frame = caller ( )
+        filename = "%s.%s" % ( template, T.extension )
+        code = _cache.compile ( filename, T.root, T.loaders [ -1 ] )
+        eval ( code, frame.f_globals )
+        return ''
+
     def include ( T, filename, vars = None, loader = None ):
-        locals = Namespace ( )
+        frame = caller ( )
+        locals = Namespace ( frame.f_globals )
         try:
             locals._dict.update ( T.vars [ T.vars [ '__namespace' ] ] )
         except KeyError:

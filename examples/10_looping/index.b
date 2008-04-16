@@ -1,18 +1,24 @@
-macro ( 'mymacro', lambda _args: 
+macro ( 'mymacro', lambda url, label: 
     li [
-        a ( href = _args.url ) [ _args.label ]
+        a ( href = url ) [ label ]
     ]
 ),
 
 html [ 
     head [ 
-        title [ 'Looping constructs and macros' ]
+        title [ 'Looping constructs' ]
     ],
 
     body [
+        span [ 'List comprehensions' ],
+        ul [ [
+            li [ a ( href = _u [ 'url' ] ) [ _u [ 'label' ] ] ]
+            for _u in urls 
+        ] ],
+
         span [ 'Using a macro to simplify a listcomp' ],
         ul [
-            [ mymacro ( _args ) for _args in urls ]
+            [ mymacro ( **_args ) for _args in urls ]
         ],
 
         span [ 'Using tag multiplication' ],

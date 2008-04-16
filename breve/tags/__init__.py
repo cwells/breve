@@ -1,8 +1,7 @@
-import sys
 from copy import copy, deepcopy
 from string import Template as sTemplate
 
-from breve.util import Namespace, escape, quoteattrs
+from breve.util import Namespace, escape, quoteattrs, caller
 from breve.flatten import flatten, register_flattener
 import _conditionals as C
 
@@ -13,9 +12,6 @@ conditionals = dict ( [
 
 def test ( condition ):
     return condition or ''
-
-def caller ( ):
-    return sys._getframe ( 2 )
 
 class Macro ( object ):
     def __init__ ( self, name, function ):
