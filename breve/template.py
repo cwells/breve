@@ -118,6 +118,9 @@ class Template ( object ):
         return xml ( _cache.memoize ( url, timeout, fetch, url ) )
 
     def render_partial ( T, template, fragments = None, vars = None, loader = None, **kw ):
+        filename = "%s.%s" % ( template, T.extension )
+        output = u''
+
         T.render_path.append ( template )
         T.vars [ '__templates__' ] = T.render_path 
 
@@ -143,9 +146,6 @@ class Template ( object ):
                 T.vars._dict.update ( vars )
         else:
             T.vars._dict.update ( _globals )
-
-        filename = "%s.%s" % ( template, T.extension )
-        output = u''
 
         _g = { }
         _g.update ( T.tags )
