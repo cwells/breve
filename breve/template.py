@@ -101,13 +101,15 @@ class Template ( object ):
         filename = "%s.%s" % ( template, T.extension )
         if loader:
             T.loaders.append ( loader )            
-        code = _cache.compile ( filename, T.root, T.loaders [ -1 ] )
-        result = eval ( code, frame.f_globals, locals )
-        if loader:
-            T.loaders.pop ( )
+        try:
+            code = _cache.compile ( filename, T.root, T.loaders [ -1 ] )
+            result = eval ( code, frame.f_globals, locals )
+        finally:
+            if loader:
+                T.loaders.pop ( )
         return result
 
-    def render_partial ( T, template, fragments = None, vars = None, loader = None, **kw ):
+    def _evaluate ( T, template, fragments = None, vars = None, loader = None, **kw ):
         filename = "%s.%s" % ( template, T.extension )
         output = u''
 
@@ -142,18 +144,24 @@ class Template ( object ):
 
         try:
             bytecode = _cache.compile ( filename, T.root, T.loaders [ -1 ] )
-            output = flatten ( eval ( bytecode, _g, { } ) )
+            result = eval ( bytecode, _g, { } )
+        finally:
+            T.render_path.pop ( )        
+            if loader:
+                T.loaders.pop ( )
+
+        return result
+
+    def render_partial ( T, template, fragments = None, vars = None, loader = None, **kw ):
+        try:
+            result = T._evaluate ( template, fragments, vars, loader, **kw )
+            output = flatten ( result )
         except:
             if T.debug:
                 return T.debug_out ( sys.exc_info ( )[ :-1 ], filename )
             else:
                 print "Error in template ( %s )" % template
                 raise
-        else:
-            if loader:
-                T.loaders.pop ( ) # restore the previous loader
-
-        T.render_path.pop ( )
             
         if T.tidy and tidylib:
             options = dict ( input_xml = True,
@@ -171,6 +179,8 @@ class Template ( object ):
         if loader:
             T.loaders.append ( loader )
         output = T.render_partial ( template, vars = vars, **kw )
+        if loader:
+            T.loaders.pop ( )
         return u'\n'.join ( [ T.xml_encoding, T.doctype, output ] )
 
     def debug_out ( T, exc_info, filename ):

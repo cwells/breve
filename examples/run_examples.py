@@ -60,9 +60,10 @@ for root, template in [ ( '1_basics', 'index' ),
                         ( '6_dynamic_inheritance', 'fragment' ),
                         ( '7_escape_artist', 'index' ),
                         ( '10_looping', 'index' ),
-                        ( '12_macros', 'index' )
+                        ( '12_macros', 'index' ),
+                        ( '13_inheritance_via_include', 'include' )
                       ]:
-                        # ( '11_unicode', 'index' ) ]:
+    # ( '11_unicode', 'index' ) ]:
     print "RUNNING EXAMPLE", root, template
     print "=" * 40
     t = Template ( html.tags, root = root, doctype = html.doctype, xmlns = html.xmlns )

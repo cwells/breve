@@ -14,4 +14,6 @@ macro ( 'include_macro', lambda template:
 
 macro ( 'mymacro', lambda msg:
     span [ msg ]
-)
+),
+
+include ( 'more-macros' )

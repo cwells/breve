@@ -29,15 +29,6 @@ def assign ( name, value ):
     caller ( ).f_globals [ name ] = value
     return ''
 
-def evaluate ( filename ):
-    '''
-    evaluates a template fragment in the current context (scope)
-    '''
-    frame = caller ( )
-    bytecode = compile ( '(' + file ( filename ).read ( ) + ')', filename, 'eval' )
-    eval ( bytecode, frame.f_globals )
-    return ''
-
 class Tag ( object ):
     __slots__ = [ 'name', 'children', 'attrs', 'render', 'data', 'args' ]
     
