@@ -52,9 +52,7 @@ class Template ( object ):
         class slot ( Tag ):
             def __str__ ( self ):
                 if self.name in T.fragments:
-                    return xml ( flatten (
-                        T.fragments [ self.name ]
-                    ) )
+                    return xml ( flatten ( T.fragments [ self.name ] ) )
                 if self.children:
                     return ( u''.join ( [ flatten ( c ) for c in self.children ] ) )
                 return u''
