@@ -1,6 +1,6 @@
 html [
     head [
-        title [ 'Test 1' ],
+        title [ v.title ],
         script ( type = 'text/javascript', src = '/js/phony.js' ),
         inlineJS ( '''
             function foo ( ) {
@@ -28,7 +28,7 @@ html [
             ],
 
             # print a variable
-            p [ message ],
+            p [ v.message ],
             
             # entities (like &amp;)
             p [ 'Coffee', E.nbsp, E.amp, E.nbsp, 'cream', E.copy, ' 2007, Cliff Wells' ]
