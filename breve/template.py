@@ -106,7 +106,7 @@ class Template ( object ):
             if loader:
                 T.loaders.pop ( )
         return result
-
+    
     def _evaluate ( T, template, fragments = None, vars = None, loader = None, **kw ):
         filename = "%s.%s" % ( template, T.extension )
         output = u''
