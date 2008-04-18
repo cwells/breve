@@ -92,6 +92,25 @@ class TemplateTestCase ( unittest.TestCase ):
             diff ( actual, expected )
             raise
 
+    def test_loop_macros ( self ):
+        vars = dict ( 
+            message = 'hello, from breve',
+            title = my_name ( ),
+            url_data = [
+                dict ( url = 'http://www.google.com', label = 'Google' ),
+                dict ( url = 'http://www.yahoo.com', label = 'Yahoo!' ),
+                dict ( url = 'http://www.amazon.com', label = 'Amazon' )
+            ]
+        )
+        t = Template ( html, root = template_root ( ) )
+        actual = t.render ( 'index', vars, namespace = 'v' )
+        expected = expected_output ( )
+        try:
+            self.assertEqual ( actual, expected )
+        except AssertionError:
+            diff ( actual, expected )
+            raise
+
     def test_simple_inheritance ( self ):
         vars = dict ( 
             message = 'hello, from breve',
