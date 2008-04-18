@@ -1,0 +1,51 @@
+#!/usr/bin/env python
+
+'''
+A simple WSGI webserver for testing Breve templates.
+'''
+
+ADDRESS = '127.0.0.1'
+PORT = 9999
+TEMPLATE_ROOT = 'templates'
+DOCUMENT_ROOT = 'static'
+
+
+import sys
+from wsgiref.simple_server import make_server
+import cgitb; cgitb.enable ( )
+
+from fileserver import WSGIFileServerApplication
+
+from breve import Template
+from breve.tags.html import tags as html
+
+
+fileserver = WSGIFileServerApplication ( DOCUMENT_ROOT, '/' )
+
+def breve_app ( environ, start_response ):
+    uri = environ [ 'PATH_INFO' ].lstrip ( '/' )
+
+    t = Template ( html, root = TEMPLATE_ROOT )
+    try:
+        result = t.render ( uri ).encode ( 'utf-8' )
+
+    except OSError:
+        # punt to static fileserver
+        return fileserver ( environ, start_response )
+
+    except:
+        status = '500 Internal Server Error'
+        result = cgitb.html ( sys.exc_info() )
+
+    else:
+        status = '200 OK'
+
+    response_headers = [ ( 'Content-type', 'text/html' ) ]
+    start_response ( status, response_headers )
+    
+    return [ result ]
+
+if __name__ == '__main__':    
+    httpd = make_server ( ADDRESS, PORT, breve_app )
+    print "Serving on %s:%s..." % ( ADDRESS, PORT )
+    httpd.serve_forever ( )
