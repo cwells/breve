@@ -39,7 +39,7 @@ tag_names = [
     'kbd',
     'label','legend','li',
     'menu',
-    'noframes','noscript',
+    'nobr', 'noframes','noscript',
     'ol','optgroup',
     'pre',
     'q',
