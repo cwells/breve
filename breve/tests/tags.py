@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+ 
 import doctest, unittest
 
 from breve.tags.html import tags as T
@@ -17,6 +19,21 @@ class SerializationTestCase ( unittest.TestCase ):
         self.assertEqual ( 
             output,
             u'<html><head><title>test_tag_serialization</title></head><body><div>okay</div></body></html>'
+        )
+
+    def test_unicode ( self ):
+        template = T.html [
+            T.head [ T.title [ my_name ( ) ] ],
+            T.body [
+                'Brev\xc3\xa9 converts plain strings', T.br,
+                u'Brev\xe9 handles unicode strings', T.br,
+                T.div [ "äåå? ▸ ", T.em [ "я не понимаю" ], "▸ 3 km²" ]
+            ]
+        ] 
+        output = flatten ( template )
+        self.assertEqual ( 
+            output,
+            u'<html><head><title>test_unicode</title></head><body>Brevé converts plain strings<br />Brevé handles unicode strings<br /><div>äåå? ▸ <em>я не понимаю</em>▸ 3 km²</div></body></html>'
         )
 
     def test_tag_multiplication ( self ):
