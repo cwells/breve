@@ -131,14 +131,12 @@ class Template ( object ):
             if not T.vars.has_key ( ns ):
                 T.vars [ ns ] = Namespace ( ) 
             if vars:
-                T.vars [ ns ]._dict.update ( _globals )
                 T.vars [ ns ]._dict.update ( vars )
-            _g [ ns ] = T.vars [ ns ]
         else:
             if vars:
-                T.vars._dict.update ( _globals )
                 T.vars._dict.update ( vars )
-            _g.update ( T.vars )
+        T.vars._dict.update ( _globals )
+        _g.update ( T.vars )
 
         try:
             bytecode = _cache.compile ( filename, T.root, T.loaders [ -1 ] )

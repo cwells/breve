@@ -111,6 +111,20 @@ class TemplateTestCase ( unittest.TestCase ):
             diff ( actual, expected )
             raise
 
+    def test_macro_includes ( self ):
+        vars = dict ( 
+            message = 'hello, from breve',
+            title = my_name ( )
+        )
+        t = Template ( html, root = template_root ( ) )
+        actual = t.render ( 'index', vars, namespace = 'v' )
+        expected = expected_output ( )
+        try:
+            self.assertEqual ( actual, expected )
+        except AssertionError:
+            diff ( actual, expected )
+            raise
+
     def test_simple_inheritance ( self ):
         vars = dict ( 
             message = 'hello, from breve',
@@ -141,7 +155,24 @@ class TemplateTestCase ( unittest.TestCase ):
             diff ( actual, expected )
             raise
 
+    def test_register_global ( self ):
+        from breve import register_global
 
+        vars = dict ( 
+            message = 'hello, from breve',
+            title = my_name ( )
+        )
+        register_global ( 'global_message', 'This is a global variable' )
+
+        test_name = my_name ( )
+        t = Template ( html, root = template_root ( ) )
+        actual = t.render ( 'index', vars, namespace = 'v' )
+        expected = expected_output ( )
+        try:
+            self.assertEqual ( actual, expected )
+        except AssertionError:
+            diff ( actual, expected )
+            raise
 
 def suite ( ):
     suite = unittest.TestSuite ( )
