@@ -197,6 +197,38 @@ class TemplateTestCase ( unittest.TestCase ):
         except AssertionError:
             diff ( actual, expected )
             raise
+
+    def test_custom_renderer ( self ):
+        from breve import register_global
+        from datetime import datetime
+        
+        T = html
+
+        def render_row ( tag, data ):
+            tag.clear ( )
+            return tag [
+                [ T.td [ _i ] for _i in data ]
+            ]
+        register_global ( 'render_row', render_row )
+
+        vars = dict ( 
+            message = 'hello, from breve',
+            title = my_name ( ),
+            my_data = [
+                range ( 5 ),
+                range ( 5, 10 ),
+                range ( 10, 15 )
+            ]
+        )
+        test_name = my_name ( )
+        t = Template ( html, root = template_root ( ) )
+        actual = t.render ( 'index', vars, namespace = 'v' )
+        expected = expected_output ( )
+        try:
+            self.assertEqual ( actual, expected )
+        except AssertionError:
+            diff ( actual, expected )
+            raise
     
 
 def suite ( ):
