@@ -1,3 +1,0 @@
-span [
-    v.message
-]
