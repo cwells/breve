@@ -259,6 +259,47 @@ class TemplateTestCase ( unittest.TestCase ):
             diff ( actual, expected )
             raise
 
+    def test_custom_loader_stack ( self ):
+        class PathLoader ( object ):
+            __slots__ = [ 'paths' ]
+
+            def __init__ ( self, *paths ):
+                self.paths = paths
+
+            def stat ( self, template, root ):
+                for p in self.paths:
+                    f = os.path.join ( root, p, template )
+                    if os.path.isfile ( f ):
+                        timestamp = long ( os.stat ( f ).st_mtime )
+                        uid = f
+                        return uid, timestamp
+                raise OSError, 'No such file or directory %s' % template
+
+            def load ( self, uid ):
+                return file ( uid, 'U' ).read ( )
+
+        loader = PathLoader ( 
+            template_root ( ), 
+            os.path.join ( template_root ( ), 'path1' ), 
+            os.path.join ( template_root ( ), 'path2' ), 
+            os.path.join ( template_root ( ), 'path3' ), 
+        )
+        register_global ( 'path_loader', loader )
+        
+        vars = dict ( 
+            title = my_name ( ),
+            message = 'hello, world'
+        )
+        test_name = my_name ( )
+        t = Template ( html, root = template_root ( ) ) 
+        actual = t.render ( 'index', vars, namespace = 'v' )
+        expected = expected_output ( )
+        try:
+            self.assertEqual ( actual, expected )
+        except AssertionError:
+            diff ( actual, expected )
+            raise
+
 def suite ( ):
     suite = unittest.TestSuite ( )
     suite.addTest ( unittest.makeSuite ( TemplateTestCase, 'test' ) )
