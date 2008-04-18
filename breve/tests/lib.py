@@ -25,8 +25,11 @@ def my_name ( ):
 def callers_name ( ):
     return sys._getframe ( 2 ).f_code.co_name
 
+def caller ( ):
+    return sys._getframe ( 2 )
+
 def test_root ( ):
-    cwd = os.path.split ( __file__ ) [ 0 ]
+    cwd = os.path.abspath ( os.path.dirname ( __file__ ) )
     return cwd
 
 def template_root ( ):

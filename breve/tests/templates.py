@@ -261,9 +261,7 @@ class TemplateTestCase ( unittest.TestCase ):
 
 def suite ( ):
     suite = unittest.TestSuite ( )
-
     suite.addTest ( unittest.makeSuite ( TemplateTestCase, 'test' ) )
-
     return suite
 
 if __name__ == '__main__':
