@@ -5,6 +5,7 @@ from breve.tags import macro
 from breve.flatten import flatten 
 from breve.tests.lib import my_name
 
+
 class SerializationTestCase ( unittest.TestCase ):
 
     def test_tag_serialization ( self ):
