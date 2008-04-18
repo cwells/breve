@@ -4,7 +4,7 @@ import doctest, unittest
 from breve.tags.html import tags as html
 from breve.flatten import flatten 
 from breve import Template
-from breve.tests.lib import *
+from breve.tests.lib import diff, template_root, my_name, expected_output
 
 class TemplateTestCase ( unittest.TestCase ):
     
