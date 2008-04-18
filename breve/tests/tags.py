@@ -42,9 +42,9 @@ class SerializationTestCase ( unittest.TestCase ):
 
     def test_tag_multiplication_with_macro ( self ):
         url_data = [
-            dict ( url = 'http://www.google.com', label = 'Google' ),
-            dict ( url = 'http://www.yahoo.com', label = 'Yahoo!' ),
-            dict ( url = 'http://www.amazon.com', label = 'Amazon' )
+            { 'url': 'http://www.google.com', 'label': 'Google', 'class': 'link' },
+            { 'url': 'http://www.yahoo.com', 'label': 'Yahoo!', 'class': 'link' },
+            { 'url': 'http://www.amazon.com', 'label': 'Amazon', 'class': 'link' }
         ]
 
         template = ( 
@@ -54,14 +54,14 @@ class SerializationTestCase ( unittest.TestCase ):
             T.html [
                 T.head [ T.title [ my_name ( ) ] ],
                 T.body [
-                    T.ul [ T.li [ test_macro ( ) ] * url_data ]
+                    T.ul [ T.li ( class_="$class") [ test_macro ( ) ] * url_data ]
                 ]
             ]
         )
         output = flatten ( template )
         self.assertEqual ( 
             output,
-            u'<html><head><title>test_tag_multiplication_with_macro</title></head><body><ul><li><a href="http://www.google.com">Google</a></li><li><a href="http://www.yahoo.com">Yahoo!</a></li><li><a href="http://www.amazon.com">Amazon</a></li></ul></body></html>'
+            u'<html><head><title>test_tag_multiplication_with_macro</title></head><body><ul><li class="link"><a href="http://www.google.com">Google</a></li><li class="link"><a href="http://www.yahoo.com">Yahoo!</a></li><li class="link"><a href="http://www.amazon.com">Amazon</a></li></ul></body></html>'
         )
 
 class DOMTestCase ( unittest.TestCase ):
