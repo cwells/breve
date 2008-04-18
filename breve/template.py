@@ -156,7 +156,7 @@ class Template ( object ):
             if T.debug:
                 return T.debug_out ( sys.exc_info ( )[ :-1 ], filename )
             else:
-                print "Error in template ( %s )" % template
+                # print "Error in template ( %s )" % template
                 raise
             
         if T.tidy and tidylib:
