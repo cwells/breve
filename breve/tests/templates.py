@@ -174,6 +174,31 @@ class TemplateTestCase ( unittest.TestCase ):
             diff ( actual, expected )
             raise
 
+    def test_register_flattener ( self ):
+        from breve import register_flattener, register_global, escape
+        from datetime import datetime
+
+        def flatten_date ( o ):
+            return escape ( o.strftime ( '%Y/%m/%d' ) )
+        register_flattener ( datetime, flatten_date )
+        register_global ( 'flatten_date', flatten_date )
+
+        vars = dict ( 
+            message = 'hello, from breve',
+            title = my_name ( ),
+            today = datetime.today ( )
+        )
+        test_name = my_name ( )
+        t = Template ( html, root = template_root ( ) )
+        actual = t.render ( 'index', vars, namespace = 'v' )
+        expected = expected_output ( )
+        try:
+            self.assertEqual ( actual, expected )
+        except AssertionError:
+            diff ( actual, expected )
+            raise
+    
+
 def suite ( ):
     suite = unittest.TestSuite ( )
 

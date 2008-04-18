@@ -125,6 +125,7 @@ class Template ( object ):
                 if f.name not in T.fragments:
                     T.fragments [ f.name ] = f
 
+        T.vars._dict.update ( _globals )
         _g = { }
         _g.update ( T.tags )
         if ns:
@@ -135,7 +136,6 @@ class Template ( object ):
         else:
             if vars:
                 T.vars._dict.update ( vars )
-        T.vars._dict.update ( _globals )
         _g.update ( T.vars )
 
         try:
