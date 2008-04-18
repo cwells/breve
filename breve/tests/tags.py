@@ -1,6 +1,7 @@
 import doctest, unittest
 
 from breve.tags.html import tags as T
+from breve.tags import macro
 from breve.flatten import flatten 
 from breve.tests.lib import my_name
 
@@ -18,12 +19,10 @@ class SerializationTestCase ( unittest.TestCase ):
                 ]
             ]
         ]
-
         output = flatten ( template )
-
         self.assertEqual ( 
-            u'<html><head><title>test_tag_serialization</title></head><body><div>okay</div></body></html>',
-            output 
+            output,
+            u'<html><head><title>test_tag_serialization</title></head><body><div>okay</div></body></html>'
         )
 
     def test_tag_multiplication ( self ):
@@ -41,12 +40,39 @@ class SerializationTestCase ( unittest.TestCase ):
                 ]
             ]
         ]
-        
         output = flatten ( template )
-
         self.assertEqual ( 
-            u'<html><head><title>test_tag_multiplication</title></head><body><ul><li><a href="http://www.google.com">Google</a></li><li><a href="http://www.yahoo.com">Yahoo!</a></li><li><a href="http://www.amazon.com">Amazon</a></li></ul></body></html>',
-            output 
+            output,
+            u'<html><head><title>test_tag_multiplication</title></head><body><ul><li><a href="http://www.google.com">Google</a></li><li><a href="http://www.yahoo.com">Yahoo!</a></li><li><a href="http://www.amazon.com">Amazon</a></li></ul></body></html>'
+        )
+
+    def test_tag_multiplication_with_macro ( self ):
+        url_data = [
+            dict ( url = 'http://www.google.com', label = 'Google' ),
+            dict ( url = 'http://www.yahoo.com', label = 'Yahoo!' ),
+            dict ( url = 'http://www.amazon.com', label = 'Amazon' )
+        ]
+
+        template = ( 
+            macro ( 'test_macro', lambda s: 
+                T.span [ s ]
+            ),
+
+            T.html [
+                T.head [ T.title [ my_name ( ) ] ],
+                T.body [
+                    T.ul [
+                        T.li [ 
+                            T.a ( href="$url" ) [ test_macro ( "$label" ) ] 
+                        ] * url_data
+                    ]
+                ]
+            ]
+        )
+        output = flatten ( template )
+        self.assertEqual ( 
+            output,
+            u'<html><head><title>test_tag_multiplication_with_macro</title></head><body><ul><li><a href="http://www.google.com"><span>Google</span></a></li><li><a href="http://www.yahoo.com"><span>Yahoo!</span></a></li><li><a href="http://www.amazon.com"><span>Amazon</span></a></li></ul></body></html>'
         )
 
 class DOMTestCase ( unittest.TestCase ):
