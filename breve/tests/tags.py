@@ -54,8 +54,8 @@ class SerializationTestCase ( unittest.TestCase ):
         ]
 
         template = ( 
-            macro ( 'test_macro', lambda s: 
-                T.span [ s ]
+            macro ( 'test_macro', lambda: 
+                T.a ( href = "$url" ) [ "$label" ]
             ),
 
             T.html [
@@ -63,7 +63,7 @@ class SerializationTestCase ( unittest.TestCase ):
                 T.body [
                     T.ul [
                         T.li [ 
-                            T.a ( href="$url" ) [ test_macro ( "$label" ) ] 
+                            test_macro ( )
                         ] * url_data
                     ]
                 ]
@@ -72,7 +72,7 @@ class SerializationTestCase ( unittest.TestCase ):
         output = flatten ( template )
         self.assertEqual ( 
             output,
-            u'<html><head><title>test_tag_multiplication_with_macro</title></head><body><ul><li><a href="http://www.google.com"><span>Google</span></a></li><li><a href="http://www.yahoo.com"><span>Yahoo!</span></a></li><li><a href="http://www.amazon.com"><span>Amazon</span></a></li></ul></body></html>'
+            u'<html><head><title>test_tag_multiplication_with_macro</title></head><body><ul><li><a href="http://www.google.com">Google</a></li><li><a href="http://www.yahoo.com">Yahoo!</a></li><li><a href="http://www.amazon.com">Amazon</a></li></ul></body></html>'
         )
 
 class DOMTestCase ( unittest.TestCase ):
