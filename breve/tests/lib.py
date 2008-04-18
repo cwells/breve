@@ -25,8 +25,12 @@ def my_name ( ):
 def callers_name ( ):
     return sys._getframe ( 2 ).f_code.co_name
 
+def test_root ( ):
+    cwd = os.path.split ( __file__ ) [ 0 ]
+    return cwd
+
 def template_root ( ):
-    return os.path.join ( 'templates', callers_name ( ) )
+    return os.path.join ( test_root ( ), 'templates', callers_name ( ) )
 
 def expected_output ( ):
-    return file ( 'output/%s.html' % callers_name ( ) ).read ( ).strip ( )
+    return file ( os.path.join ( test_root ( ), 'output', '%s.html' % callers_name ( ) ) ).read ( ).strip ( )
