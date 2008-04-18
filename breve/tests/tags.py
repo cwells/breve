@@ -48,13 +48,15 @@ class SerializationTestCase ( unittest.TestCase ):
         ]
 
         template = ( 
-            macro ( 'test_macro', lambda: 
-                T.a ( href = "$url" ) [ "$label" ]
+            macro ( 'test_macro', lambda url: 
+                T.a ( href = url ) [ "$label" ]
             ),
             T.html [
                 T.head [ T.title [ my_name ( ) ] ],
                 T.body [
-                    T.ul [ T.li ( class_="$class") [ test_macro ( ) ] * url_data ]
+                    T.ul [ 
+                        T.li ( class_="$class") [ test_macro ( "$url" ) ] * url_data 
+                    ]
                 ]
             ]
         )
@@ -68,7 +70,7 @@ class DOMTestCase ( unittest.TestCase ):
 
     def test_dom_traversal ( self ):
         template = T.html [
-            T.head [ T.title [ 'basic serialization' ] ],
+            T.head [ T.title [ my_name ( ) ] ],
             T.body [ T.div [ 'okay' ] ]
         ]
 
@@ -82,7 +84,7 @@ class DOMTestCase ( unittest.TestCase ):
         template.walk ( callback )
         output = ''.join ( traversal )
         self.assertEqual ( 
-            u'htmlheadtitlebasic serializationbodydivokay',
+            u'htmlheadtitle%sbodydivokay' % my_name ( ),
             output
         )
         
