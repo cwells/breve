@@ -3,7 +3,8 @@
 import doctest, unittest
 
 from breve.tags.html import tags as T
-from breve.tags import macro
+from breve.tags.entities import entities as E
+from breve.tags import macro, xml
 from breve.flatten import flatten 
 from breve.util import Namespace
 from breve.tests.lib import my_name
@@ -36,6 +37,23 @@ class SerializationTestCase ( unittest.TestCase ):
             output,
             u'<html><head><title>test_unicode</title></head><body>Brevé converts plain strings<br />Brevé handles unicode strings<br /><div>äåå? ▸ <em>я не понимаю</em>▸ 3 km²</div></body></html>'
         )
+
+    def test_escaping ( self ):
+        template = T.html [
+            T.body [
+                T.div ( style = 'width: 400px;<should be &escaped&>' ) [
+                    T.p ( class_ = 'foo' ) [ '&&&' ],
+                    T.p [ 'Coffee', E.nbsp, E.amp, E.nbsp, 'cream' ],
+                    xml ( '''<div>this should be <u>unescaped</u> &amp; unaltered.</div>''' )
+                ]
+            ]
+        ]
+        output = flatten ( template )
+        self.assertEqual (
+            output,
+            u'<html><body><div style="width: 400px;&lt;should be &amp;escaped&amp;&gt;"><p class="foo">&amp;&amp;&amp;</p><p>Coffee&#160;&#38;&#160;cream</p><div>this should be <u>unescaped</u> &amp; unaltered.</div></div></body></html>'
+        )
+
 
     def test_tag_multiplication ( self ):
         url_data = [

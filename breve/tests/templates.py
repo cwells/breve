@@ -180,7 +180,7 @@ class TemplateTestCase ( unittest.TestCase ):
 
         vars = dict ( 
             title = my_name ( ),
-            today = datetime.today ( )
+            today = datetime ( 2008, 4, 17 )
         )
         test_name = my_name ( )
         t = Template ( html, root = template_root ( ) )
