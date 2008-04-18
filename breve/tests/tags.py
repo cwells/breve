@@ -2,13 +2,14 @@ import doctest, unittest
 
 from breve.tags.html import tags as T
 from breve.flatten import flatten 
+from breve.tests.lib import my_name
 
 class SerializationTestCase ( unittest.TestCase ):
 
     def test_tag_serialization ( self ):
         template = T.html [
             T.head [ 
-                T.title [ 'basic serialization' ]
+                T.title [ my_name ( ) ]
             ],
             
             T.body [
@@ -21,7 +22,30 @@ class SerializationTestCase ( unittest.TestCase ):
         output = flatten ( template )
 
         self.assertEqual ( 
-            u'''<html><head><title>basic serialization</title></head><body><div>okay</div></body></html>''',
+            u'<html><head><title>test_tag_serialization</title></head><body><div>okay</div></body></html>',
+            output 
+        )
+
+    def test_tag_multiplication ( self ):
+        url_data = [
+            dict ( url = 'http://www.google.com', label = 'Google' ),
+            dict ( url = 'http://www.yahoo.com', label = 'Yahoo!' ),
+            dict ( url = 'http://www.amazon.com', label = 'Amazon' )
+        ]
+
+        template = T.html [
+            T.head [ T.title [ my_name ( ) ] ],
+            T.body [
+                T.ul [
+                    T.li [ T.a ( href="$url" ) [ "$label" ] ] * url_data
+                ]
+            ]
+        ]
+        
+        output = flatten ( template )
+
+        self.assertEqual ( 
+            u'<html><head><title>test_tag_multiplication</title></head><body><ul><li><a href="http://www.google.com">Google</a></li><li><a href="http://www.yahoo.com">Yahoo!</a></li><li><a href="http://www.amazon.com">Amazon</a></li></ul></body></html>',
             output 
         )
 
