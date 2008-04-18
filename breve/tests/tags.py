@@ -10,15 +10,8 @@ class SerializationTestCase ( unittest.TestCase ):
 
     def test_tag_serialization ( self ):
         template = T.html [
-            T.head [ 
-                T.title [ my_name ( ) ]
-            ],
-            
-            T.body [
-                T.div [
-                    'okay'
-                ]
-            ]
+            T.head [ T.title [ my_name ( ) ] ],
+            T.body [ T.div [ 'okay' ] ]
         ]
         output = flatten ( template )
         self.assertEqual ( 
@@ -62,11 +55,7 @@ class SerializationTestCase ( unittest.TestCase ):
             T.html [
                 T.head [ T.title [ my_name ( ) ] ],
                 T.body [
-                    T.ul [
-                        T.li [ 
-                            test_macro ( )
-                        ] * url_data
-                    ]
+                    T.ul [ T.li [ test_macro ( ) ] * url_data ]
                 ]
             ]
         )
@@ -80,15 +69,8 @@ class DOMTestCase ( unittest.TestCase ):
 
     def test_dom_traversal ( self ):
         template = T.html [
-            T.head [ 
-                T.title [ 'basic serialization' ]
-            ],
-            
-            T.body [
-                T.div [
-                    'okay'
-                ]
-            ]
+            T.head [ T.title [ 'basic serialization' ] ],
+            T.body [ T.div [ 'okay' ] ]
         ]
 
         traversal = [ ]
