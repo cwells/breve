@@ -1,9 +1,10 @@
 import os, sys
 import doctest, unittest
+from datetime import datetime
 
 from breve.tags.html import tags as html
 from breve.flatten import flatten 
-from breve import Template
+from breve import Template, register_flattener, register_global, escape
 from breve.tests.lib import diff, template_root, my_name, expected_output
 
 class TemplateTestCase ( unittest.TestCase ):
@@ -156,8 +157,6 @@ class TemplateTestCase ( unittest.TestCase ):
             raise
 
     def test_register_global ( self ):
-        from breve import register_global
-
         vars = dict ( 
             title = my_name ( )
         )
@@ -174,9 +173,6 @@ class TemplateTestCase ( unittest.TestCase ):
             raise
 
     def test_register_flattener ( self ):
-        from breve import register_flattener, register_global, escape
-        from datetime import datetime
-
         def flatten_date ( o ):
             return escape ( o.strftime ( '%Y/%m/%d' ) )
         register_flattener ( datetime, flatten_date )
@@ -197,8 +193,6 @@ class TemplateTestCase ( unittest.TestCase ):
             raise
 
     def test_custom_renderer ( self ):
-        from breve import register_global
-
         def render_row ( tag, data ):
             T = html
             tag.clear ( )
