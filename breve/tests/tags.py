@@ -5,6 +5,7 @@ import doctest, unittest
 from breve.tags.html import tags as T
 from breve.tags import macro
 from breve.flatten import flatten 
+from breve.util import Namespace
 from breve.tests.lib import my_name
 
 
@@ -101,16 +102,45 @@ class DOMTestCase ( unittest.TestCase ):
         template.walk ( callback )
         output = ''.join ( traversal )
         self.assertEqual ( 
+            output,
             u'htmlheadtitle%sbodydivokay' % my_name ( ),
-            output
         )
         
+
+class CustomTagsTestCase ( unittest.TestCase ):
+
+    def test_custom_tags ( self ):
+        from breve.tests.sitemap import tags, xmlns
+        T = Namespace ( tags )
+
+        # test data
+        loc = 'http://www.example.com/',
+        lastmod = '2008-01-01',
+        changefreq = 'monthly',
+        priority = 0.8 
+
+        template = T.urlset ( xmlns = xmlns ) [
+            T.url [
+                T.loc [ loc ],
+                T.lastmod [ lastmod ],
+                T.changefreq [ changefreq ],
+                T.priority [ priority ]
+            ]
+        ]
+        output = flatten ( template )
+
+        self.assertEqual ( 
+            output,
+            u'<urlset xmlns="http://www.google.com/schemas/sitemap/0.84/sitemap.xsd"><url><loc>http://www.example.com/</loc><lastmod>2008-01-01</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url></urlset>'
+        )
+
 
 def suite ( ):
     suite = unittest.TestSuite ( )
 
     suite.addTest ( unittest.makeSuite ( SerializationTestCase, 'test' ) )
     suite.addTest ( unittest.makeSuite ( DOMTestCase, 'test' ) )
+    suite.addTest ( unittest.makeSuite ( CustomTagsTestCase, 'test' ) )
 
     return suite
 
