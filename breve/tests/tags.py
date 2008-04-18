@@ -51,7 +51,6 @@ class SerializationTestCase ( unittest.TestCase ):
             macro ( 'test_macro', lambda: 
                 T.a ( href = "$url" ) [ "$label" ]
             ),
-
             T.html [
                 T.head [ T.title [ my_name ( ) ] ],
                 T.body [
