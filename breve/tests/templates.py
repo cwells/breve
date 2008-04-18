@@ -159,7 +159,6 @@ class TemplateTestCase ( unittest.TestCase ):
         from breve import register_global
 
         vars = dict ( 
-            message = 'hello, from breve',
             title = my_name ( )
         )
         register_global ( 'global_message', 'This is a global variable' )
@@ -184,7 +183,6 @@ class TemplateTestCase ( unittest.TestCase ):
         register_global ( 'flatten_date', flatten_date )
 
         vars = dict ( 
-            message = 'hello, from breve',
             title = my_name ( ),
             today = datetime.today ( )
         )
@@ -200,11 +198,9 @@ class TemplateTestCase ( unittest.TestCase ):
 
     def test_custom_renderer ( self ):
         from breve import register_global
-        from datetime import datetime
-        
-        T = html
 
         def render_row ( tag, data ):
+            T = html
             tag.clear ( )
             return tag [
                 [ T.td [ _i ] for _i in data ]
@@ -212,7 +208,6 @@ class TemplateTestCase ( unittest.TestCase ):
         register_global ( 'render_row', render_row )
 
         vars = dict ( 
-            message = 'hello, from breve',
             title = my_name ( ),
             my_data = [
                 range ( 5 ),
