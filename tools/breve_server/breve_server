@@ -4,13 +4,8 @@
 A simple WSGI webserver for testing Breve templates.
 '''
 
-ADDRESS = '127.0.0.1'
-PORT = 9999
-TEMPLATE_ROOT = 'templates'
-DOCUMENT_ROOT = 'static'
-INDEX = 'index'
-
 import sys
+from optparse import OptionParser
 from wsgiref.simple_server import make_server
 import cgitb; cgitb.enable ( )
 
@@ -22,15 +17,17 @@ from breve.tags.html import tags as html
 
 class BreveApp ( object ):
 
-    def __init__ ( self ):
-        self.fileserver = WSGIFileServerApplication ( DOCUMENT_ROOT, '/' )
+    def __init__ ( self, options, args ):
+        self.fileserver = WSGIFileServerApplication ( options.document_root, '/' )
+        self.template_root = options.template_root
+        self.index_file = options.index
 
     def __call__ ( self, environ, start_response ):
         uri = environ [ 'PATH_INFO' ].lstrip ( '/' )
         if not uri:
-            uri = 'index'
+            uri = options.index
 
-        t = Template ( html, root = TEMPLATE_ROOT )
+        t = Template ( html, root = self.template_root )
         try:
             result = t.render ( uri ).encode ( 'utf-8' )
 
@@ -48,11 +45,25 @@ class BreveApp ( object ):
         response_headers = [ ( 'Content-type', 'text/html' ) ]
         start_response ( status, response_headers )
 
-        return [ result ]
+        return result
 
 
 
 if __name__ == '__main__':    
-    httpd = make_server ( ADDRESS, PORT, BreveApp ( ) )
-    print "Serving on %s:%s..." % ( ADDRESS, PORT )
+
+    parser = OptionParser ( )
+    parser.add_option ( "-p", "--port", dest="port", default=9999,
+                        help="listen on port", metavar="PORT")
+    parser.add_option( "-b", "--bind", dest="interface", default='127.0.0.1',
+                       help="listen on interface", metavar="ADDRESS" )
+    parser.add_option( "-t", "--templates", dest="template_root", default='.',
+                       help="location of templates", metavar="PATH" )
+    parser.add_option( "-d", "--docroot", dest="document_root", default='.',
+                       help="location of static files", metavar="PATH" )
+    parser.add_option( "-i", "--index", dest="index", default='index',
+                       help="default template to serve", metavar="NAME" )
+    options, args = parser.parse_args ( )
+
+    httpd = make_server ( options.interface, int ( options.port ), BreveApp ( options, args ) )
+    print "Serving on %s:%s..." % ( options.interface, options.port )
     httpd.serve_forever ( )
