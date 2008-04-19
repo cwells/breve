@@ -194,4 +194,9 @@ if __name__ == '__main__':
 
     httpd = make_server ( options.interface, int ( options.port ), BreveApp ( options, args ) )
     print "Serving on %s:%s..." % ( options.interface, options.port )
-    httpd.serve_forever ( )
+    
+    try:
+        httpd.serve_forever ( )
+    except KeyboardInterrupt:
+        print "Halting by user intervention"
+        raise SystemExit
