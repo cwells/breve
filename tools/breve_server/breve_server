@@ -15,7 +15,7 @@ import logging
 
 from breve import Template, Namespace
 from breve.tags.html import tags as html
-
+from breve.loaders import FileLoader
 
 logger = logging.getLogger ( __name__ )
 
@@ -136,12 +136,18 @@ class BreveApp ( object ):
     def __init__ ( self, options, args ):
         self.fileserver = WSGIFileServerApplication ( options.document_root, '/' )
         self.options = options
-        Template.namespace = options.namespace 
+        self.loader = FileLoader ( )
 
     def __call__ ( self, environ, start_response ):
         uri = environ [ 'PATH_INFO' ].lstrip ( '/' )
         if not uri:
             uri = self.options.index
+            
+        template = "%s.%s" % ( uri, Template.extension )
+        try:
+            self.loader.stat ( template, self.options.template_root )
+        except OSError:
+            return self.fileserver ( environ, start_response )
 
         vars = { }
         if self.options.variables:
@@ -153,20 +159,15 @@ class BreveApp ( object ):
                 if not k.startswith ( '__' ):
                     vars [ k ] = module.__dict__ [ k ]
             
-        t = Template ( html, 
-                       root = self.options.template_root, 
-                       namespace = self.options.namespace )
+        t = Template ( html, root = self.options.template_root, 
+                       namespace = self.options.namespace,
+                       debug = self.options.debug,
+                       tidy = self.options.tidy )
         try:
             result = t.render ( uri, vars ).encode ( 'utf-8' )
-
-        except OSError:
-            # punt to static fileserver
-            return self.fileserver ( environ, start_response )
-
         except:
             status = '500 Internal Server Error'
             result = cgitb.html ( sys.exc_info() )
-
         else:
             status = '200 OK'
 
@@ -187,6 +188,8 @@ if __name__ == '__main__':
     parser.add_option ( "-i", "--index", dest="index", default='index', help="default template to serve", metavar="NAME" )
     parser.add_option ( "-n", "--namespace", dest="namespace", default='', help="namespace to use for variables", metavar="NAME" )
     parser.add_option ( "-v", "--vars", dest="variables", help="Python module of template variables", metavar="PATH" )
+    parser.add_option ( "-D", "--debug", dest="debug", action="store_true", help="Enable Template debug mode", default=False )
+    parser.add_option ( "-T", "--tidy", dest="tidy", action="store_true", help="Enable Tidy mode (requires tidy)", default=False )
     options, args = parser.parse_args ( )
 
     httpd = make_server ( options.interface, int ( options.port ), BreveApp ( options, args ) )
