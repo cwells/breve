@@ -47,6 +47,9 @@ class Template ( object ):
         T.extension = kw.get ( 'extension', T.extension )
         T.mashup_entities = ( 'mashup_entities', T.mashup_entities )
 
+
+        print kw
+
         class inherits ( Tag ):
             def __str__ ( self ):
                 return T.render_partial ( template = self.name, fragments = self.children )
@@ -90,8 +93,8 @@ class Template ( object ):
                    'override': override,
                    'slot': slot,
                    'preamble': preamble }
-        # if T.mashup_entities:
-        #    T.tags.update ( entities )
+        if T.mashup_entities:
+            T.tags.update ( entities )
         T.tags.update ( E = entities ) # fallback in case of name clashes
         T.tags.update ( conditionals )
         T.tags.update ( tags )
