@@ -17,26 +17,26 @@ from breve import Template, Namespace
 from breve.tags.html import tags as html
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger ( __name__ )
 
-def reconstruct_url(environ):
+def reconstruct_url ( environ ):
     # From WSGI spec, PEP 333
     from urllib import quote
-    url = environ['wsgi.url_scheme']+'://'
-    if environ.get('HTTP_HOST'): url += environ['HTTP_HOST']
+    url = environ [ 'wsgi.url_scheme' ] + '://'
+    if environ.get ( 'HTTP_HOST' ): url += environ [ 'HTTP_HOST' ]
     else:
-        url += environ['SERVER_NAME']
-        if environ['wsgi.url_scheme'] == 'https':
-            if environ['SERVER_PORT'] != '443':
-               url += ':' + environ['SERVER_PORT']
+        url += environ [ 'SERVER_NAME' ] 
+        if environ [ 'wsgi.url_scheme' ]  == 'https':
+            if environ [ 'SERVER_PORT' ]  != '443':
+               url += ':' + environ [ 'SERVER_PORT' ] 
         else:
-            if environ['SERVER_PORT'] != '80':
-               url += ':' + environ['SERVER_PORT']
-    url += quote(environ.get('SCRIPT_NAME',''))
-    url += quote(environ.get('PATH_INFO','')).replace(url.replace(':', '%3A'), '')
-    if environ.get('QUERY_STRING'):
-        url += '?' + environ['QUERY_STRING']
-    environ['reconstructed_url'] = url
+            if environ [ 'SERVER_PORT' ]  != '80':
+               url += ':' + environ [ 'SERVER_PORT' ] 
+    url += quote ( environ.get ( 'SCRIPT_NAME',''))
+    url += quote ( environ.get ( 'PATH_INFO','')).replace ( url.replace ( ':', '%3A'), '')
+    if environ.get ( 'QUERY_STRING'):
+        url += '?' + environ [ 'QUERY_STRING' ] 
+    environ [ 'reconstructed_url' ]  = url
     return url
 
 
@@ -57,77 +57,76 @@ class WSGIFileServerApplication ( object ):
     #   See the License for the specific language governing permissions and
     #   limitations under the License.
     
-    def __init__(self, root_path, mount_point=None):
-        self.path = os.path.abspath(os.path.expanduser(root_path))
+    def __init__ ( self, root_path, mount_point=None ) :
+        self.path = os.path.abspath ( os.path.expanduser ( root_path) ) 
         self.mount_point = mount_point
         
-    def handler(self, environ, start_response):
+    def handler ( self, environ, start_response ) :
         """Application to serve out windmill provided"""
-        url = urlparse(reconstruct_url(environ))
+        url = urlparse ( reconstruct_url ( environ )  ) 
         
         if self.mount_point is not None:
-            split_url = url.path.split(self.mount_point, 1)
-            serve_file = split_url[1]
+            split_url = url.path.split ( self.mount_point, 1 ) 
+            serve_file = split_url [ 1 ] 
         else:
             serve_file = url.path
         
-        serve_file = serve_file.replace('%20', ' ')
+        serve_file = serve_file.replace ( '%20', ' ' ) 
         
-        def do_get():
-            if serve_file.endswith('/') or os.path.isdir(os.path.join(self.path, serve_file)):
-                if os.path.isdir(os.path.join(self.path, serve_file)):
-                    start_response('200 OK', [('Cache-Control','no-cache'), ('Pragma','no-cache'),
-                                              ('Content-Type', 'text/html; charset=utf-8')])
+        def do_get ( ):
+            if serve_file.endswith ( '/' )  or os.path.isdir ( os.path.join ( self.path, serve_file ) ):
+                if os.path.isdir ( os.path.join ( self.path, serve_file ) ):
+                    start_response ( '200 OK',  [ ( 'Cache-Control', 'no-cache' ) , ( 'Pragma','no-cache' ) ,
+                                                  ( 'Content-Type', 'text/html; charset=utf-8' ) ] )
                     return [ '<html>' + 
-                              '<br>'.join( ['<a href="%s/%s">%s</a>' % (serve_file.replace(filename, ''), filename, filename) 
-                                          for filename in os.listdir(os.path.join(self.path, serve_file))])
-                             + '</html>'   ]
+                             '<br>'.join (  [ '<a href="%s/%s">%s</a>' % ( serve_file.replace ( filename, '' ), filename, filename )  
+                                              for filename in os.listdir ( os.path.join ( self.path, serve_file ) ) ] )
+                             + '</html>' ]
                 else:
-                    logger.error('failed to list directory %s/%s' % (self.path, serve_file))
-                    start_response('404 Not found', [('Content-Type', 'text/plain')])
-                    return ['404 Not Found']
+                    logger.error ( 'failed to list directory %s/%s' %  ( self.path, serve_file ) )
+                    start_response ( '404 Not found', [ ( 'Content-Type', 'text/plain') ] )
+                    return ['404 Not Found' ] 
             
             try:
                 if os.name == 'nt' or sys.platform == 'cygwin':
-                    f = open(os.path.join(self.path, serve_file), 'rb')
+                    f = open ( os.path.join ( self.path, serve_file ), 'rb' ) 
                 else:
-                    f = open(os.path.join(self.path, serve_file), 'r')
-                logger.debug('opened file %s' % serve_file)
+                    f = open ( os.path.join ( self.path, serve_file ), 'r' ) 
+                logger.debug ( 'opened file %s' % serve_file ) 
             except IOError:
-                logger.error('failed to open file %s/%s' % (self.path, serve_file))
-                start_response('404 Not found', [('Content-Type', 'text/plain')])
-                return ['404 Not Found']
+                logger.error ( 'failed to open file %s/%s' %  ( self.path, serve_file ) )
+                start_response ( '404 Not found', [ ( 'Content-Type', 'text/plain') ] )
+                return [ '404 Not Found' ] 
 
-            start_response('200 OK', [('Cache-Control','no-cache'), ('Pragma','no-cache'),
-                                      ('Content-Type', self.guess_content_type(environ['PATH_INFO']))])
-            return [f.read()]
+            start_response ( '200 OK', [ ( 'Cache-Control', 'no-cache' ),  ( 'Pragma','no-cache' ),
+                                         ( 'Content-Type', self.guess_content_type ( environ['PATH_INFO' ] ) ) ] )
+            return [ f.read ( ) ] 
             
-        def do_put():
+        def do_put ( ):
             #Write file
             try:
-                f = open(os.path.join(self.path, serve_file), 'w')
-                logger.debug('opened file for writing %s' % serve_file)
+                f = open ( os.path.join ( self.path, serve_file ) , 'w' ) 
+                logger.debug ( 'opened file for writing %s' % serve_file ) 
             except:
-                logger.error('failed to open file for writiing %s/%s' % (self.path, serve_file))
-                start_response('403 Forbidden', [('Content-Type', 'text/plain')])
-                return ['403 Forbidden']
+                logger.error ( 'failed to open file for writiing %s/%s' %  ( self.path, serve_file ) )
+                start_response ( '403 Forbidden', [ ( 'Content-Type', 'text/plain' ) ] )
+                return ['403 Forbidden' ] 
             
-            f.write(environ['wsgi.input'].read())
+            f.write ( environ [ 'wsgi.input' ] .read ( ) )
             
-        def do_mkcollection():
+        def do_mkcollection ( ):
             pass
             
-        http_method_map = {'GET':do_get, 'PUT':do_put, 'MKCOLLECTION':do_mkcollection}
-        return http_method_map[environ['REQUEST_METHOD']]()
+        http_method_map = { 'GET': do_get, 'PUT': do_put, 'MKCOLLECTION': do_mkcollection }
+        return http_method_map[environ['REQUEST_METHOD' ]  ]  ( )
             
-
-    def guess_content_type(self, path_info):
+    def guess_content_type ( self, path_info ) :
         """Make a best guess at the content type"""
         _type, _enc = guess_type ( path_info )
         return _type
             
-    def __call__(self, environ, start_response):
-        return self.handler(environ, start_response)
+    def __call__ ( self, environ, start_response ) :
+        return self.handler ( environ, start_response ) 
 
 
 class BreveApp ( object ):
