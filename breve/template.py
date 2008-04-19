@@ -2,7 +2,7 @@
 
 import os, sys
 from breve.util import Namespace, caller
-from breve.tags import Proto, Tag, xml, invisible, cdata, comment, conditionals, test, macro, assign
+from breve.tags import Proto, Tag, xml, invisible, cdata, comment, conditionals, test, macro, assign, let
 from breve.tags.entities import entities
 from breve.flatten import flatten, register_flattener, registry
 from breve.loaders import FileLoader
@@ -68,6 +68,7 @@ class Template ( object ):
         T.tags = { 'cdata': cdata,
                    'xml': xml,
                    'test': test,
+                   'let': let,
                    'macro': macro,
                    'assign': assign,
                    'comment': comment,
