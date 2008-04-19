@@ -31,7 +31,7 @@ def assign ( name, value ):
 
 def let ( **kw ):
     caller ( ).f_globals.update ( kw )
-    return ' '
+    return ''
 
 class Tag ( object ):
     __slots__ = [ 'name', 'children', 'attrs', 'render', 'data', 'args' ]
