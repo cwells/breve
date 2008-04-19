@@ -197,27 +197,25 @@ class DOMTestCase ( unittest.TestCase ):
 
         template = ( 
             assign ( 'selectors', [ ] ),
-            macro ( 'walk_classes', lambda tag, is_tag:
-                selectors.extend ( [ "%s.%s { }" % ( tag.name, _v ) 
-                                     for _k, _v in tag.attrs.items ( )
-                                     if _k in ( '_class', 'class_', '_class_' ) ] )
+            macro ( 'css_sep', lambda attr:
+                '.' if attr == 'class' else '#'
             ),
-            macro ( 'walk_ids', lambda tag, is_tag:
-                selectors.extend ( [ "%s#%s { }" % ( tag.name, _v ) 
-                                     for _k, _v in tag.attrs.items ( )
-                                     if _k in ( 'id', 'id_', '_id', '_id_' ) ] )
+            macro ( 'get_selectors', lambda tag, is_tag:
+                selectors.extend ( [
+                    "%s%s%s { }" % ( tag.name, css_sep ( _k.strip ( '_' ) ), _v )
+                    for _k, _v in tag.attrs.items ( )
+                    if _k.strip ( '_' ) in ( 'id', 'class' )
+                ] )
             ),
             macro ( 'extract_css', lambda tag:
-                ( tag.walk ( walk_classes, True ) 
-                  and tag.walk ( walk_ids, True ) 
-                  and tag )
+                tag.walk ( get_selectors, True ) and tag
             ),
             macro ( 'css_results', lambda selectors:
                 T.pre [ '\n'.join ( selectors ) ]
             ),
 
             T.html [
-                T.head [ T.title [ my_name ( ) ] ],
+                T.head [ T.title [ 'macro madness' ] ],
                 T.body [ extract_css (
                     T.div ( class_ = 'text', id = 'main-content' ) [
                         T.img ( src = '/images/breve-logo.png', alt = 'breve logo' ),
@@ -226,14 +224,13 @@ class DOMTestCase ( unittest.TestCase ):
                     ]
                 ), css_results ( selectors ) ]
             ]
+
         )
         output = flatten ( template )
 
         self.assertEqual ( 
             output,
-            u'''<html><head><title>test_dom_traversal_from_macro</title></head><body><div class="text" id="main-content"><img src="/images/breve-logo.png" alt="breve logo"></img><br /><span class="bold">Hello from Breve!</span></div><pre>div.text { }
-span.bold { }
-div#main-content { }</pre></body></html>'''
+            u'''<html><head><title>macro madness</title></head><body><div class="text" id="main-content"><img src="/images/breve-logo.png" alt="breve logo"></img><br /><span class="bold">Hello from Breve!</span></div><pre>div.text { }\ndiv#main-content { }\nspan.bold { }</pre></body></html>'''
         )
 
 class CustomTagsTestCase ( unittest.TestCase ):
