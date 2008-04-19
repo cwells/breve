@@ -104,6 +104,68 @@ class SerializationTestCase ( unittest.TestCase ):
             u'<html><head><title>test_tag_multiplication</title></head><body><ul><li><a href="http://www.google.com">Google</a></li><li><a href="http://www.yahoo.com">Yahoo!</a></li><li><a href="http://www.amazon.com">Amazon</a></li></ul></body></html>'
         )
 
+class MacrosTestCase ( unittest.TestCase ):
+    def test_macros ( self ):
+        '''test macros'''
+
+        url_data = [
+            { 'url': 'http://www.google.com', 'label': 'Google' },
+            { 'url': 'http://www.yahoo.com', 'label': 'Yahoo!' },
+            { 'url': 'http://www.amazon.com', 'label': 'Amazon' }
+        ]
+
+        template = ( 
+            macro ( 'test_macro', lambda url, label: 
+                T.a ( href = url ) [ label ]
+            ),
+            T.html [
+                T.head [ T.title [ my_name ( ) ] ],
+                T.body [
+                    T.ul [ 
+                        [ T.li [ test_macro ( **_item ) ]
+                          for _item in url_data ]
+                    ]
+                ]
+            ]
+        )
+        output = flatten ( template )
+        self.assertEqual (
+            output,
+            u'<html><head><title>test_macros</title></head><body><ul><li><a href="http://www.google.com">Google</a></li><li><a href="http://www.yahoo.com">Yahoo!</a></li><li><a href="http://www.amazon.com">Amazon</a></li></ul></body></html>'
+        )
+
+    def test_nested_macros ( self ):
+        '''test nested macros'''
+
+        url_data = [
+            { 'url': 'http://www.google.com', 'label': 'Google' },
+            { 'url': 'http://www.yahoo.com', 'label': 'Yahoo!' },
+            { 'url': 'http://www.amazon.com', 'label': 'Amazon' }
+        ]
+
+        template = ( 
+            macro ( 'list_macro', lambda url, label: (
+                macro ( 'link_macro', lambda _u, _l:
+                    T.a ( href = _u ) [ _l ]
+                ),
+                T.li [ link_macro ( url, label ) ]
+            ) ),
+            T.html [
+                T.head [ T.title [ my_name ( ) ] ],
+                T.body [
+                    T.ul [ 
+                        [ list_macro ( **_item )
+                          for _item in url_data ]
+                    ]
+                ]
+            ]
+        )
+        output = flatten ( template )
+        self.assertEqual (
+            output,
+            u'<html><head><title>test_nested_macros</title></head><body><ul><li><a href="http://www.google.com">Google</a></li><li><a href="http://www.yahoo.com">Yahoo!</a></li><li><a href="http://www.amazon.com">Amazon</a></li></ul></body></html>'
+        )
+
     def test_tag_multiplication_with_macro ( self ):
         '''tag multiplication including macro'''
 
@@ -267,6 +329,7 @@ def suite ( ):
     suite = unittest.TestSuite ( )
 
     suite.addTest ( unittest.makeSuite ( SerializationTestCase, 'test' ) )
+    suite.addTest ( unittest.makeSuite ( MacrosTestCase, 'test' ) )
     suite.addTest ( unittest.makeSuite ( DOMTestCase, 'test' ) )
     suite.addTest ( unittest.makeSuite ( CustomTagsTestCase, 'test' ) )
 
