@@ -31,7 +31,7 @@ class Template ( object ):
         subclasses that refer to this class via scoping (see
         the "inherits" class for one example).
         '''  
-        for _a in ( 'tidy', 'debug', 'namespace', 'mashup_entities' ):
+        for _a in ( 'tidy', 'debug', 'mashup_entities' ):
             if kw.get ( _a, None ):
                 setattr ( T, _a, kw.get ( _a, getattr ( T, _a ) ) )
   
