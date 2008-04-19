@@ -1,16 +1,8 @@
 #! /usr/bin/python
-'''
-breve - A simple s-expression style template engine inspired by Nevow's Stan.
-
-        Stan was too heavily tied to Nevow and Twisted (which in turn added too
-        many heavy dependencies) to allow Stan to be used as a standalone template
-        engine in other frameworks. Plus there were some concepts (inheritance) that
-        required too much hacking in Stan.
-'''
 
 import os, sys
 from breve.util import Namespace, caller
-from breve.tags import Proto, Tag, xml, invisible, cdata, comment, conditionals, test, macro, assign, let
+from breve.tags import Proto, Tag, xml, invisible, cdata, comment, conditionals, test, macro, assign
 from breve.tags.entities import entities
 from breve.flatten import flatten, register_flattener, registry
 from breve.loaders import FileLoader
@@ -30,7 +22,6 @@ class Template ( object ):
     tidy = False
     debug = False
     namespace = ''
-    extension = 'b'
     mashup_entities = False  # set to True for old 1.0 behaviour
     loaders = [ _loader ]
     
@@ -39,14 +30,10 @@ class Template ( object ):
         Uses "T" rather than "self" to avoid confusion with
         subclasses that refer to this class via scoping (see
         the "inherits" class for one example).
-        '''
-
-        T.tidy = kw.get ( 'tidy', T.tidy )
-        T.debug = kw.get ( 'debug', T.debug )
-        T.namespace = kw.get ( 'namespace', T.namespace )
-        T.extension = kw.get ( 'extension', T.extension )
-        T.mashup_entities = kw.get ( 'mashup_entities', T.mashup_entities )
-
+        '''  
+        for _a in ( 'tidy', 'debug', 'namespace', 'mashup_entities' ):
+            getattr ( T, _a ) = kw.get ( 'tidy', getattr ( T, _a ) )
+  
         class inherits ( Tag ):
             def __str__ ( self ):
                 return T.render_partial ( template = self.name, fragments = self.children )
@@ -72,6 +59,7 @@ class Template ( object ):
         T.root = root
         T.xmlns = xmlns
         T.xml_encoding = '''<?xml version="1.0" encoding="UTF-8"?>'''
+        T.extension = 'b' # default template extension
         T.doctype = doctype
         T.fragments = { }
         T.render_path = [ ] # not needed but potentially useful
@@ -82,7 +70,6 @@ class Template ( object ):
                    'test': test,
                    'macro': macro,
                    'assign': assign,
-                   'let': let,
                    'comment': comment,
                    'invisible': invisible,
                    'include': T.include,
@@ -116,17 +103,14 @@ class Template ( object ):
         return result
     
     def _evaluate ( T, template, fragments = None, vars = None, loader = None, **kw ):
-        tidy = kw.get ( 'tidy', T.tidy )
-        debug = kw.get ( 'debug', T.debug )
-        namespace = kw.get ( 'namespace', T.namespace )
-        mashup_entities = ( 'mashup_entities', T.mashup_entities )
-
         filename = "%s.%s" % ( template, T.extension )
         output = u''
 
         T.render_path.append ( template )
         T.vars [ '__templates__' ] = T.render_path 
-        T.vars [ '__namespace' ] = namespace
+
+        ns = kw.get ( 'namespace', T.namespace )
+        T.vars [ '__namespace' ] = ns
         
         if loader:
             T.loaders.append ( loader )
@@ -139,11 +123,11 @@ class Template ( object ):
         T.vars._dict.update ( _globals )
         _g = { }
         _g.update ( T.tags )
-        if namespace:
-            if not T.vars.has_key ( namespace ):
-                T.vars [ namespace ] = Namespace ( ) 
+        if ns:
+            if not T.vars.has_key ( ns ):
+                T.vars [ ns ] = Namespace ( ) 
             if vars:
-                T.vars [ namespace ]._dict.update ( vars )
+                T.vars [ ns ]._dict.update ( vars )
         else:
             if vars:
                 T.vars._dict.update ( vars )

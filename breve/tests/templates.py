@@ -328,7 +328,7 @@ class TemplateTestCase ( unittest.TestCase ):
             self.assertEqual ( actual, expected )
         except AssertionError:
             diff ( actual, expected )
-            raise        
+            raise
 
 def suite ( ):
     suite = unittest.TestSuite ( )

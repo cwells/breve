@@ -29,10 +29,6 @@ def assign ( name, value ):
     caller ( ).f_globals [ name ] = value
     return ''
 
-def let ( **kw ):
-    caller ( ).f_globals.update ( kw )
-    return ''
-
 class Tag ( object ):
     __slots__ = [ 'name', 'children', 'attrs', 'render', 'data', 'args' ]
     
