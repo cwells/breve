@@ -91,7 +91,6 @@ class Template ( object ):
                    'slot': slot,
                    'preamble': preamble }
         if T.mashup_entities:
-            print T.mashup_entities, type ( T.mashup_entities )
             T.tags.update ( entities )
         T.tags.update ( E = entities ) # fallback in case of name clashes
         T.tags.update ( conditionals )
