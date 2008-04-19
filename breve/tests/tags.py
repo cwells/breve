@@ -260,7 +260,7 @@ class DOMTestCase ( unittest.TestCase ):
         template = ( 
             assign ( 'selectors', [ ] ),
             macro ( 'css_sep', lambda attr:
-                '.' if attr == 'class' else '#'
+                attr == 'class' and '.' or '#'
             ),
             macro ( 'get_selectors', lambda tag, is_tag:
                 selectors.extend ( [
