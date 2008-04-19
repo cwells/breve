@@ -32,7 +32,7 @@ class Template ( object ):
         the "inherits" class for one example).
         '''  
         for _a in ( 'tidy', 'debug', 'namespace', 'mashup_entities' ):
-            getattr ( T, _a ) = kw.get ( 'tidy', getattr ( T, _a ) )
+            setattr ( T, _a, kw.get ( 'tidy', getattr ( T, _a ) ) )
   
         class inherits ( Tag ):
             def __str__ ( self ):
