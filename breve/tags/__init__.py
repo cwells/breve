@@ -97,13 +97,15 @@ class Tag ( object ):
         def traverse ( o ):
             if isinstance ( o, Tag ):
                 if callback ( o, True ) is False:
-                    return
+                    return False
                 for c in o.children:
-                    traverse ( c )
+                    if traverse ( c ) is False:
+                        return False
             elif not tags_only:
                 if callback ( o, False ) is False:
-                    return
-        return traverse ( self )
+                    return False
+        traverse ( self )
+        return self
 
 class Proto ( unicode ):
     __slots__ = [ ]
