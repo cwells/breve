@@ -90,8 +90,8 @@ class Template ( object ):
                    'override': override,
                    'slot': slot,
                    'preamble': preamble }
-        if T.mashup_entities:
-            T.tags.update ( entities )
+        # if T.mashup_entities:
+        #    T.tags.update ( entities )
         T.tags.update ( E = entities ) # fallback in case of name clashes
         T.tags.update ( conditionals )
         T.tags.update ( tags )
