@@ -25,7 +25,7 @@ class BreveApp ( object ):
     def __call__ ( self, environ, start_response ):
         uri = environ [ 'PATH_INFO' ].lstrip ( '/' )
         if not uri:
-            uri = options.index
+            uri = self.index_file
 
         t = Template ( html, root = self.template_root )
         try:
