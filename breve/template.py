@@ -154,7 +154,7 @@ class Template ( object ):
             output = flatten ( result )
         except:
             if T.debug:
-                return T.debug_out ( sys.exc_info ( )[ :-1 ], filename )
+                return T.debug_out ( sys.exc_info ( )[ :-1 ], template )
             else:
                 # print "Error in template ( %s )" % template
                 raise
