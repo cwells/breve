@@ -163,8 +163,8 @@ class Template ( object ):
         if T.tidy and tidylib:
             options = dict ( input_xml = True,
                              output_xhtml = True,
-                             # add_xml_decl = False,
-                             # doctype = 'omit',
+                             add_xml_decl = False,
+                             doctype = 'omit',
                              indent = 'auto',
                              tidy_mark = False,
                              input_encoding = 'utf8' )
