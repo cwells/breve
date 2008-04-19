@@ -24,16 +24,15 @@ class Template ( object ):
     namespace = ''
     mashup_entities = False  # set to True for old 1.0 behaviour
     loaders = [ _loader ]
-    
+      
     def __init__ ( T, tags, root = '.', xmlns = None, doctype = '', **kw ):
         '''
         Uses "T" rather than "self" to avoid confusion with
         subclasses that refer to this class via scoping (see
         the "inherits" class for one example).
         '''  
-        for _a in ( 'tidy', 'debug', 'namespace', 'mashup_entities' ):
-            setattr ( T, _a, kw.get ( _a, getattr ( T, _a ) ) )
-  
+        T._update_params ( kw )
+
         class inherits ( Tag ):
             def __str__ ( self ):
                 return T.render_partial ( template = self.name, fragments = self.children )
@@ -84,6 +83,10 @@ class Template ( object ):
         T.tags.update ( conditionals )
         T.tags.update ( tags )
 
+    def _update_params ( T, params ):
+        for _a in ( 'tidy', 'debug', 'namespace', 'mashup_entities' ):
+            setattr ( T, _a, kw.get ( _a, getattr ( T, _a ) ) )
+
     def include ( T, template, vars = None, loader = None ):
         ''' 
         evalutes a template fragment in the current context
@@ -107,11 +110,13 @@ class Template ( object ):
         filename = "%s.%s" % ( template, T.extension )
         output = u''
 
+        T._update_params ( kw )
+
         T.render_path.append ( template )
         T.vars [ '__templates__' ] = T.render_path 
 
-        ns = kw.get ( 'namespace', T.namespace )
-        T.vars [ '__namespace' ] = ns
+        # namespace = kw.get ( 'namespace', T.namespace )
+        T.vars [ '__namespace' ] = namespace
         
         if loader:
             T.loaders.append ( loader )
@@ -124,11 +129,11 @@ class Template ( object ):
         T.vars._dict.update ( _globals )
         _g = { }
         _g.update ( T.tags )
-        if ns:
-            if not T.vars.has_key ( ns ):
-                T.vars [ ns ] = Namespace ( ) 
+        if namespace:
+            if not T.vars.has_key ( namespace ):
+                T.vars [ namespace ] = Namespace ( ) 
             if vars:
-                T.vars [ ns ]._dict.update ( vars )
+                T.vars [ namespace ]._dict.update ( vars )
         else:
             if vars:
                 T.vars._dict.update ( vars )
@@ -158,8 +163,8 @@ class Template ( object ):
         if T.tidy and tidylib:
             options = dict ( input_xml = True,
                              output_xhtml = True,
-                             add_xml_decl = False,
-                             doctype = 'omit',
+                             # add_xml_decl = False,
+                             # doctype = 'omit',
                              indent = 'auto',
                              tidy_mark = False,
                              input_encoding = 'utf8' )
