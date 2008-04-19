@@ -76,12 +76,14 @@ class WSGIFileServerApplication ( object ):
         def do_get ( ):
             if serve_file.endswith ( '/' )  or os.path.isdir ( os.path.join ( self.path, serve_file ) ):
                 if os.path.isdir ( os.path.join ( self.path, serve_file ) ):
-                    start_response ( '200 OK',  [ ( 'Cache-Control', 'no-cache' ) , ( 'Pragma','no-cache' ) ,
-                                                  ( 'Content-Type', 'text/html; charset=utf-8' ) ] )
-                    return [ '<html>' + 
-                             '<br>'.join (  [ '<a href="%s/%s">%s</a>' % ( serve_file.replace ( filename, '' ), filename, filename )  
-                                              for filename in os.listdir ( os.path.join ( self.path, serve_file ) ) ] )
-                             + '</html>' ]
+                    start_response ( '200 OK', [ ( 'Cache-Control', 'no-cache' ), ( 'Pragma','no-cache' ) ,
+                                                 ( 'Content-Type', 'text/html; charset=utf-8' ) ] )
+                    return [ 
+                        '<html>' + 
+                        '<br>'.join ( [ '<a href="%s/%s">%s</a>' % ( serve_file.replace ( filename, '' ), filename, filename )  
+                                        for filename in os.listdir ( os.path.join ( self.path, serve_file ) ) ] )
+                        + '</html>' 
+                    ]
                 else:
                     logger.error ( 'failed to list directory %s/%s' %  ( self.path, serve_file ) )
                     start_response ( '404 Not found', [ ( 'Content-Type', 'text/plain') ] )
@@ -143,7 +145,10 @@ class BreveApp ( object ):
 
         vars = { }
         if self.options.variables:
-            module = __import__ ( self.options.variables, fromlist = '*' )
+            pythonpath, modname = os.path.split ( self.options.variables )
+            sys.path.insert ( 0, pythonpath )
+            mod, ext = os.path.splitext ( modname )
+            module = __import__ ( mod, fromlist = '*' )
             for k in dir ( module ):
                 if not k.startswith ( '__' ):
                     vars [ k ] = module.__dict__ [ k ]
