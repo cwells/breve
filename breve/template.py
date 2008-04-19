@@ -115,7 +115,7 @@ class Template ( object ):
         T.render_path.append ( template )
         T.vars [ '__templates__' ] = T.render_path 
 
-        # namespace = kw.get ( 'namespace', T.namespace )
+        namespace = kw.get ( 'namespace', T.namespace )
         T.vars [ '__namespace' ] = namespace
         
         if loader:
