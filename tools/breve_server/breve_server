@@ -186,7 +186,7 @@ if __name__ == '__main__':
     parser.add_option ( "-d", "--docroot", dest="document_root", default='.', help="location of static files", metavar="PATH" )
     parser.add_option ( "-i", "--index", dest="index", default='index', help="default template to serve", metavar="NAME" )
     parser.add_option ( "-n", "--namespace", dest="namespace", default='', help="namespace to use for variables", metavar="NAME" )
-    parser.add_option ( "-v", "--vars", dest="variables", help="Python module of template variables", metavar="MODULE" )
+    parser.add_option ( "-v", "--vars", dest="variables", help="Python module of template variables", metavar="PATH" )
     options, args = parser.parse_args ( )
 
     httpd = make_server ( options.interface, int ( options.port ), BreveApp ( options, args ) )
