@@ -1,6 +1,6 @@
 html [
     head [ 
-        title [ 'Simple Breve Test' ],
+        title [ 'Simple Breve Server Test' ],
 	link ( href="/css/style.css", type="text/css", rel="stylesheet" )
     ],
     body [
