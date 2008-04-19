@@ -8,7 +8,7 @@ html [
         div ( class_='text', id='main-content' ) [ 
             img ( src='/images/breve-logo.png', alt='breve logo' ), 
             br,
-	    span ( class_='bold' ) [ '''Hello from Breve!''' ] 
+	    span ( class_='bold' ) [ v.message ] 
         ]
     ]
 ]
