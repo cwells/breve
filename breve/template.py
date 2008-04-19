@@ -45,7 +45,7 @@ class Template ( object ):
         T.debug = kw.get ( 'debug', T.debug )
         T.namespace = kw.get ( 'namespace', T.namespace )
         T.extension = kw.get ( 'extension', T.extension )
-        T.mashup_entities = ( 'mashup_entities', T.mashup_entities )
+        T.mashup_entities = kw.get ( 'mashup_entities', T.mashup_entities )
 
         class inherits ( Tag ):
             def __str__ ( self ):
