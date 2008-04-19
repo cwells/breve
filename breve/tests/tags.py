@@ -4,7 +4,7 @@ import doctest, unittest
 
 from breve.tags.html import tags as T
 from breve.tags.entities import entities as E
-from breve.tags import macro, xml, test
+from breve.tags import macro, assign, xml, test
 from breve.flatten import flatten 
 from breve.util import Namespace
 from breve.tests.lib import my_name
@@ -13,6 +13,8 @@ from breve.tests.lib import my_name
 class SerializationTestCase ( unittest.TestCase ):
 
     def test_tag_serialization ( self ):
+        '''basic tag flattening'''
+
         template = T.html [
             T.head [ T.title [ my_name ( ) ] ],
             T.body [ T.div [ 'okay' ] ]
@@ -24,6 +26,8 @@ class SerializationTestCase ( unittest.TestCase ):
         )
 
     def test_unicode ( self ):
+        '''unicode and string coercion'''
+
         template = T.html [
             T.head [ T.title [ my_name ( ) ] ],
             T.body [
@@ -39,6 +43,8 @@ class SerializationTestCase ( unittest.TestCase ):
         )
 
     def test_test ( self ):
+        '''test() function'''
+
         template = T.html [
             T.head [ T.title [ my_name ( ) ] ],
             T.body [
@@ -57,6 +63,8 @@ class SerializationTestCase ( unittest.TestCase ):
         )
 
     def test_escaping ( self ):
+        '''escaping, xml() directive'''
+
         template = T.html [
             T.head [ T.title [ my_name ( ) ] ],
             T.body [
@@ -74,6 +82,8 @@ class SerializationTestCase ( unittest.TestCase ):
         )
 
     def test_tag_multiplication ( self ):
+        '''tag multiplication'''
+
         url_data = [
             dict ( url = 'http://www.google.com', label = 'Google' ),
             dict ( url = 'http://www.yahoo.com', label = 'Yahoo!' ),
@@ -95,6 +105,8 @@ class SerializationTestCase ( unittest.TestCase ):
         )
 
     def test_tag_multiplication_with_macro ( self ):
+        '''tag multiplication including macro'''
+
         url_data = [
             { 'url': 'http://www.google.com', 'label': 'Google', 'class': 'link' },
             { 'url': 'http://www.yahoo.com', 'label': 'Yahoo!', 'class': 'link' },
@@ -120,9 +132,47 @@ class SerializationTestCase ( unittest.TestCase ):
             u'<html><head><title>test_tag_multiplication_with_macro</title></head><body><ul><li class="link"><a href="http://www.google.com">Google</a></li><li class="link"><a href="http://www.yahoo.com">Yahoo!</a></li><li class="link"><a href="http://www.amazon.com">Amazon</a></li></ul></body></html>'
         )
 
+    def test_assign ( self ):
+        '''assign directive'''
+
+        template = ( 
+            assign ( 'msg', 'okay' ),
+            T.html [
+                T.head [ T.title [ my_name ( ) ] ],
+                T.body [ T.div [ msg ] ]
+            ]
+        )
+        output = flatten ( template )
+        self.assertEqual (
+            output,
+            u'<html><head><title>test_assign</title></head><body><div>okay</div></body></html>'
+        )
+
+    def test_assign_with_macro ( self ):
+        '''assign directive with macro'''
+
+        template = ( 
+            assign ( 'msg', 'okay' ),
+            macro ( 'display_msg', lambda _m:
+                T.span [ _m ]
+            ),
+            T.html [
+                T.head [ T.title [ my_name ( ) ] ],
+                T.body [ T.div [ display_msg ( msg ) ] ]
+            ]
+        )
+        output = flatten ( template )
+        self.assertEqual (
+            output,
+            u'<html><head><title>test_assign_with_macro</title></head><body><div><span>okay</span></div></body></html>'
+        )
+
+
 class DOMTestCase ( unittest.TestCase ):
 
     def test_dom_traversal ( self ):
+        '''tag.walk() DOM traversal'''
+
         template = T.html [
             T.head [ T.title [ my_name ( ) ] ],
             T.body [ T.div [ 'okay' ] ]
@@ -142,10 +192,55 @@ class DOMTestCase ( unittest.TestCase ):
             u'htmlheadtitle%sbodydivokay' % my_name ( ),
         )
         
+    def test_dom_traversal_from_macro ( self ):
+        '''macro abuse: self-traversing template'''
+
+        template = ( 
+            assign ( 'selectors', [ ] ),
+            macro ( 'walk_classes', lambda tag, is_tag:
+                selectors.extend ( [ "%s.%s { }" % ( tag.name, _v ) 
+                                     for _k, _v in tag.attrs.items ( )
+                                     if _k in ( '_class', 'class_', '_class_' ) ] )
+            ),
+            macro ( 'walk_ids', lambda tag, is_tag:
+                selectors.extend ( [ "%s#%s { }" % ( tag.name, _v ) 
+                                     for _k, _v in tag.attrs.items ( )
+                                     if _k in ( 'id', 'id_', '_id', '_id_' ) ] )
+            ),
+            macro ( 'extract_css', lambda tag:
+                ( tag.walk ( walk_classes, True ) 
+                  and tag.walk ( walk_ids, True ) 
+                  and tag )
+            ),
+            macro ( 'css_results', lambda selectors:
+                T.pre [ '\n'.join ( selectors ) ]
+            ),
+
+            T.html [
+                T.head [ T.title [ my_name ( ) ] ],
+                T.body [ extract_css (
+                    T.div ( class_ = 'text', id = 'main-content' ) [
+                        T.img ( src = '/images/breve-logo.png', alt = 'breve logo' ),
+                        T.br,
+                        T.span ( class_='bold' ) [ '''Hello from Breve!''' ]
+                    ]
+                ), css_results ( selectors ) ]
+            ]
+        )
+        output = flatten ( template )
+
+        self.assertEqual ( 
+            output,
+            u'''<html><head><title>test_dom_traversal_from_macro</title></head><body><div class="text" id="main-content"><img src="/images/breve-logo.png" alt="breve logo"></img><br /><span class="bold">Hello from Breve!</span></div><pre>div.text { }
+span.bold { }
+div#main-content { }</pre></body></html>'''
+        )
 
 class CustomTagsTestCase ( unittest.TestCase ):
 
     def test_custom_tags ( self ):
+        '''custom tags'''
+
         from breve.tests.sitemap import tags, xmlns
         T = Namespace ( tags )
 

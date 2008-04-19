@@ -10,6 +10,8 @@ from breve.tests.lib import diff, template_root, my_name, expected_output
 class TemplateTestCase ( unittest.TestCase ):
     
     def test_simple_template ( self ):
+        '''simple template'''
+
         vars = dict ( 
             message = 'hello, from breve',
             title = my_name ( )
@@ -24,6 +26,8 @@ class TemplateTestCase ( unittest.TestCase ):
             raise
 
     def test_include ( self ):
+        '''include() directive'''
+
         vars = dict ( 
             message = 'hello, from breve',
             title = my_name ( )
@@ -38,6 +42,8 @@ class TemplateTestCase ( unittest.TestCase ):
             raise
 
     def test_nested_include ( self ):
+        '''nested include() directives'''
+
         vars = dict ( 
             message = 'hello, from breve',
             title = my_name ( )
@@ -52,6 +58,8 @@ class TemplateTestCase ( unittest.TestCase ):
             raise
 
     def test_loop_include ( self ):
+        '''looping over include() with listcomp'''
+
         vars = dict ( 
             message = 'hello, from breve',
             title = my_name ( )
@@ -66,6 +74,8 @@ class TemplateTestCase ( unittest.TestCase ):
             raise
 
     def test_include_macros ( self ):
+        '''define macros via include() directive'''
+
         vars = dict ( 
             message = 'hello, from breve',
             title = my_name ( )
@@ -80,6 +90,8 @@ class TemplateTestCase ( unittest.TestCase ):
             raise
 
     def test_nested_include_macros ( self ):
+        '''define macros inside nested include() directives'''
+
         vars = dict ( 
             message = 'hello, from breve',
             title = my_name ( )
@@ -94,6 +106,8 @@ class TemplateTestCase ( unittest.TestCase ):
             raise
 
     def test_loop_macros ( self ):
+        '''loop using macro'''
+
         vars = dict ( 
             message = 'hello, from breve',
             title = my_name ( ),
@@ -113,6 +127,8 @@ class TemplateTestCase ( unittest.TestCase ):
             raise
 
     def test_macro_includes ( self ):
+        '''include() directive inside macro'''
+
         vars = dict ( 
             message = 'hello, from breve',
             title = my_name ( )
@@ -127,6 +143,8 @@ class TemplateTestCase ( unittest.TestCase ):
             raise
 
     def test_simple_inheritance ( self ):
+        '''simple inheritance'''
+
         vars = dict ( 
             message = 'hello, from breve',
             title = my_name ( )
@@ -142,6 +160,8 @@ class TemplateTestCase ( unittest.TestCase ):
             raise
 
     def test_nested_inheritance ( self ):
+        '''nested inheritance'''
+
         vars = dict ( 
             message = 'hello, from breve',
             title = my_name ( )
@@ -157,6 +177,8 @@ class TemplateTestCase ( unittest.TestCase ):
             raise
 
     def test_register_global ( self ):
+        '''register_global() function'''
+
         vars = dict ( 
             title = my_name ( )
         )
@@ -173,6 +195,8 @@ class TemplateTestCase ( unittest.TestCase ):
             raise
 
     def test_register_flattener ( self ):
+        '''register_flattener() function'''
+
         def flatten_date ( o ):
             return escape ( o.strftime ( '%Y/%m/%d' ) )
         register_flattener ( datetime, flatten_date )
@@ -193,6 +217,8 @@ class TemplateTestCase ( unittest.TestCase ):
             raise
 
     def test_custom_renderer ( self ):
+        '''custom renderer'''
+
         def render_row ( tag, data ):
             T = html
             tag.clear ( )
@@ -220,6 +246,8 @@ class TemplateTestCase ( unittest.TestCase ):
             raise
     
     def test_custom_loader ( self ):
+        '''custom loader'''
+
         class PathLoader ( object ):
             __slots__ = [ 'paths' ]
 
@@ -260,6 +288,8 @@ class TemplateTestCase ( unittest.TestCase ):
             raise
 
     def test_custom_loader_stack ( self ):
+        '''custom loader stack'''
+
         class PathLoader ( object ):
             __slots__ = [ 'paths' ]
 
