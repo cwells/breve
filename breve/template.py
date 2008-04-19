@@ -31,7 +31,7 @@ class Template ( object ):
         subclasses that refer to this class via scoping (see
         the "inherits" class for one example).
         '''  
-        T._update_params ( kw )
+        T._update_params ( **kw )
 
         class inherits ( Tag ):
             def __str__ ( self ):
@@ -83,7 +83,7 @@ class Template ( object ):
         T.tags.update ( conditionals )
         T.tags.update ( tags )
 
-    def _update_params ( T, params ):
+    def _update_params ( T, **kw ):
         for _a in ( 'tidy', 'debug', 'namespace', 'mashup_entities' ):
             setattr ( T, _a, kw.get ( _a, getattr ( T, _a ) ) )
 
@@ -110,7 +110,7 @@ class Template ( object ):
         filename = "%s.%s" % ( template, T.extension )
         output = u''
 
-        T._update_params ( kw )
+        T._update_params ( **kw )
 
         T.render_path.append ( template )
         T.vars [ '__templates__' ] = T.render_path 
