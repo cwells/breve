@@ -116,9 +116,7 @@ class Template ( object ):
 
         T.render_path.append ( template )
         T.vars [ '__templates__' ] = T.render_path 
-
-        namespace = kw.get ( 'namespace', T.namespace )
-        T.vars [ '__namespace' ] = namespace
+        T.vars [ '__namespace' ] = T.namespace
         
         if loader:
             T.loaders.append ( loader )
@@ -131,11 +129,11 @@ class Template ( object ):
         T.vars._dict.update ( _globals )
         _g = { }
         _g.update ( T.tags )
-        if namespace:
-            if not T.vars.has_key ( namespace ):
-                T.vars [ namespace ] = Namespace ( ) 
+        if T.namespace:
+            if not T.vars.has_key ( T.namespace ):
+                T.vars [ T.namespace ] = Namespace ( ) 
             if vars:
-                T.vars [ namespace ]._dict.update ( vars )
+                T.vars [ T.namespace ]._dict.update ( vars )
         else:
             if vars:
                 T.vars._dict.update ( vars )

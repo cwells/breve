@@ -50,6 +50,6 @@ setup (
         [python.templating.engines]
         breve = breve.plugin.buffet:BreveTemplatePlugin
     ''',
-    test_suite = 'breve.tests.suite'
+    test_suite = 'breve.tests.testsuite'
 )
     

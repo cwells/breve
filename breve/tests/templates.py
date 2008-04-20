@@ -8,6 +8,37 @@ from breve import Template, register_flattener, register_global, escape
 from breve.tests.lib import diff, template_root, my_name, expected_output
 
 class TemplateTestCase ( unittest.TestCase ):
+    def test_instantiation_parameters ( self ):
+        '''test instantiation parameters'''
+        # change the defaults to something else
+        args = { 
+            'tidy': True, 
+            'debug': True, 
+            'namespace': 'v', 
+            'mashup_entities': True, 
+            'extension': '.breve'
+        }
+        t = Template ( html, root = template_root ( ), **args )
+        for k, v in args.items ( ):
+            self.failUnless ( getattr ( t, k ) == v )
+
+    def test_render_parameters ( self ):
+        '''test render-time parameters'''
+        
+        vars = dict ( 
+            message = 'hello, from breve',
+            title = my_name ( )
+        )
+        args = { 
+            'tidy': True, 
+            'debug': True, 
+            'namespace': 'v', 
+            'extension': '.breve'
+        }
+        t = Template ( html, root = template_root ( ) )
+        t.render ( 'index', vars, **args )
+        for k, v in args.items ( ):
+            self.failUnless ( getattr ( t, k ) == v )
     
     def test_simple_template ( self ):
         '''simple template'''

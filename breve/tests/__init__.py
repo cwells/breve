@@ -1,6 +1,6 @@
 import unittest
 
-def suite ( ):
+def testsuite ( ):
     from breve.tests import tags, templates, tools
 
     suite = unittest.TestSuite ( )
@@ -12,3 +12,4 @@ def suite ( ):
 
 if __name__ == '__main__':
     unittest.main ( defaultTest = 'suite' )
+
