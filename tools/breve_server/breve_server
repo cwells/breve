@@ -170,7 +170,7 @@ class BreveApp ( object ):
             result = cgitb.html ( sys.exc_info() )
         else:
             status = '200 OK'
-
+        
         response_headers = [ ( 'Content-type', 'text/html' ) ]
         start_response ( status, response_headers )
 

@@ -15,7 +15,10 @@ def unregister_flattener ( o ):
 def registry ( ):
     '''mostly for debugging'''
     return __registry 
-    
+
+def get_registered_flattener ( o ):
+    return __registry [ o ]
+
 def flatten ( o ):
     try:
         return __registry [ type ( o ) ] ( o )
@@ -23,3 +26,4 @@ def flatten ( o ):
         return unicode ( o )
 
 
+    

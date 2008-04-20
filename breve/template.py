@@ -1,6 +1,8 @@
 #! /usr/bin/python
 
 import os, sys
+import pprint
+
 from breve.util import Namespace, caller
 from breve.tags import Proto, Tag, xml, invisible, cdata, comment, conditionals, test, macro, assign, let
 from breve.tags.entities import entities
@@ -22,6 +24,7 @@ class Template ( object ):
     tidy = False
     debug = False
     namespace = ''
+    extension = 'b'
     mashup_entities = False  # set to True for old 1.0 behaviour
     loaders = [ _loader ]
       
@@ -58,7 +61,6 @@ class Template ( object ):
         T.root = root
         T.xmlns = xmlns
         T.xml_encoding = '''<?xml version="1.0" encoding="UTF-8"?>'''
-        T.extension = 'b' # default template extension
         T.doctype = doctype
         T.fragments = { }
         T.render_path = [ ] # not needed but potentially useful
@@ -84,7 +86,7 @@ class Template ( object ):
         T.tags.update ( tags )
 
     def _update_params ( T, **kw ):
-        for _a in ( 'tidy', 'debug', 'namespace', 'mashup_entities' ):
+        for _a in ( 'tidy', 'debug', 'namespace', 'mashup_entities', 'extension' ):
             setattr ( T, _a, kw.get ( _a, getattr ( T, _a ) ) )
 
     def include ( T, template, vars = None, loader = None ):
