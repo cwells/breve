@@ -30,7 +30,7 @@ def assign ( name, value ):
     return ''
 
 def let ( **kw ):
-    caller ( ).f_globals.update ( kw )
+    caller ( ).f_locals.update ( kw )
     return ''
 
 class Tag ( object ):

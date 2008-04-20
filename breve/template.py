@@ -9,7 +9,7 @@ from breve.tags.entities import entities
 from breve.flatten import flatten, register_flattener, registry
 from breve.loaders import FileLoader
 from breve.cache import Cache
-from breve.globals import _globals
+from breve.globals import get_globals, push, pop
 
 try:
     import tidy as tidylib
@@ -69,6 +69,8 @@ class Template ( object ):
         T.tags = { 'cdata': cdata,
                    'xml': xml,
                    'test': test,
+                   'push': push,
+                   'pop': pop,
                    'let': let,
                    'macro': macro,
                    'assign': assign,
@@ -126,7 +128,7 @@ class Template ( object ):
                 if f.name not in T.fragments:
                     T.fragments [ f.name ] = f
 
-        T.vars._dict.update ( _globals )
+        T.vars._dict.update ( get_globals ( ) )
         _g = { }
         _g.update ( T.tags )
         if T.namespace:

@@ -5,6 +5,7 @@ from datetime import datetime
 from breve.tags.html import tags as html
 from breve.flatten import flatten 
 from breve import Template, register_flattener, register_global, escape
+from breve.globals import push, pop, get_stacks
 from breve.tests.lib import diff, template_root, my_name, expected_output
 
 class TemplateTestCase ( unittest.TestCase ):
@@ -104,6 +105,67 @@ class TemplateTestCase ( unittest.TestCase ):
             diff ( actual, expected )
             raise
 
+    def test_let_directive ( self ):
+        '''test let directive'''
+        
+        vars = dict ( 
+            message = 'hello, from breve',
+            title = my_name ( )
+        )
+        t = Template ( html, root = template_root ( ) )
+        actual = t.render ( 'index', vars, namespace = 'v' )
+        expected = expected_output ( )
+        try:
+            self.assertEqual ( actual, expected )
+        except AssertionError:
+            diff ( actual, expected )
+            raise
+        
+    def test_let_directive_scope ( self ):
+        '''test let directive's scope'''
+        
+        vars = dict ( 
+            message = 'hello, from breve',
+            title = my_name ( ),
+            do_fail = False
+        )
+
+        # don't fail - use variable in scope
+        t = Template ( html, root = template_root ( ) )
+        actual = t.render ( 'index', vars, namespace = 'v' )
+        expected = expected_output ( )
+        try:
+            self.assertEqual ( actual, expected )
+        except AssertionError:
+            diff ( actual, expected )
+            raise
+
+        # do fail - try to use the variable out of scope
+        vars [ 'do_fail' ] = True
+        t = Template ( html, root = template_root ( ) )
+        self.failUnlessRaises (
+            NameError,
+            t.render, 'index', vars, namespace = 'v'
+        )
+
+    def test_assign_scope ( self ):
+        '''test assign directive's scope'''
+
+        vars = dict (
+            message = 'hello, from breve',
+            title = my_name ( )
+        )
+
+        # don't fail - use variable in scope                                                                                             
+        t = Template ( html, root = template_root ( ) )
+        actual = t.render ( 'index', vars, namespace = 'v' )
+        expected = expected_output ( )
+        try:
+            self.assertEqual ( actual, expected )
+        except AssertionError:
+            diff ( actual, expected )
+            raise
+        
     def test_include_macros ( self ):
         '''define macros via include() directive'''
 
@@ -225,6 +287,34 @@ class TemplateTestCase ( unittest.TestCase ):
             diff ( actual, expected )
             raise
 
+    def test_stacks ( self ):
+        '''test stacks (push/pop)'''
+        
+        push ( a = 1, b = 2 )
+        self.failUnless ( 
+            pop ( 'a' ) == 1 and pop ( 'b' ) == 2
+        )
+
+    def test_stacks_template ( self ):
+        '''test stacks in template'''
+        
+        vars = dict ( 
+            title = my_name ( ),
+            message = 'hello, from breve'
+        )
+        t = Template ( html, root = template_root ( ) )
+        actual = t.render ( 'index', vars, namespace = 'v' )
+        expected = expected_output ( )
+
+        try:
+            self.assertEqual ( actual, expected )
+        except AssertionError:
+            diff ( actual, expected )
+            raise
+
+        # stack should be empty when we finish
+        self.failUnless ( not get_stacks ( ) )
+        
     def test_register_flattener ( self ):
         '''register_flattener() function'''
 

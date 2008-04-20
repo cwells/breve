@@ -51,7 +51,6 @@ def escape ( s ):
     return s.replace ( "&", "&amp;"
              ).replace ( ">", "&gt;"
              ).replace ( "<", "&lt;" )
-
                                     
 def caller ( ):
     """
