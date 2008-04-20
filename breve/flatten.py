@@ -25,5 +25,4 @@ def flatten ( o ):
     except KeyError:
         return unicode ( o )
 
-
     
