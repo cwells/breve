@@ -21,9 +21,10 @@ class Namespace ( object ):
             try:
                 return getattr ( self._dict, k )
             except:
-                print "DEBUG: unknown identifier:", k
-                print "DEBUG: known identifiers:", self._dict.keys ( )
-                return 'Unknown identifier:%s' % k
+                raise
+                # print "DEBUG: unknown identifier:", k
+                # print "DEBUG: known identifiers:", self._dict.keys ( )
+                # return 'Unknown identifier:%s' % k
         
 def quoteattrs ( attrs ):
     """
@@ -36,12 +37,12 @@ def quoteattrs ( attrs ):
     quoted = [ ]
     for a, v in attrs.items ( ):
         if v is None: continue
-        v = str ( v )
-        v = '"' + v.replace ( "&", "&amp;"
-            ).replace ( ">", "&gt;"
-            ).replace ( "<", "&lt;"
-            ).replace ( '"', "&quot;" ) + '"'
-        quoted.append ( ' %s=%s' % ( a.strip ( '_' ), v ) )
+        v = str ( v ).encode ( 'utf-8' )
+        v = u'"' + v.replace ( u"&", u"&amp;"
+            ).replace ( u">", u"&gt;"
+            ).replace ( u"<", u"&lt;"
+            ).replace ( u'"', u"&quot;" ) + u'"'
+        quoted.append ( u' %s=%s' % ( a.strip ( u'_' ), v ) )
     return quoted
 
 def escape ( s ):
@@ -58,3 +59,38 @@ def caller ( ):
     """
     return sys._getframe ( 2 )
 
+from xml.parsers.expat import ParserCreate
+class PrettyPrinter ( object ):
+    '''not happy with this - should happen at the flattener level'''
+    def __init__ ( self, indent = 2 ):
+        self.indent = indent 
+        self.current_indent = -indent
+        self.output = [ ]
+
+    def start_element ( self, name, attrs ):
+        self.current_indent += self.indent
+        padding = ' ' * self.current_indent
+        if attrs:
+            self.output.append ( 
+                padding + 
+                "<%s%s>" % ( name, ''.join ( quoteattrs ( attrs ) )  ) 
+            )
+        else:
+            self.output.append ( padding + "<%s>" % name )
+
+    def end_element ( self, name ):
+        padding = ' ' * self.current_indent
+        self.output.append ( padding + "</%s>" % name )
+        self.current_indent -= self.indent
+            
+    def char_data ( self, data ):
+        padding = ' ' * ( self.current_indent + self.indent )
+        self.output.append ( padding + data )
+
+    def parse ( self, xmldata ):
+        p = ParserCreate ( 'utf-8' )
+        p.StartElementHandler = self.start_element
+        p.EndElementHandler = self.end_element
+        p.CharacterDataHandler = self.char_data
+        p.Parse ( xmldata )
+        return '\n'.join ( self.output )

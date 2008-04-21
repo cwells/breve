@@ -3,7 +3,7 @@
 import os, sys
 import pprint
 
-from breve.util import Namespace, caller
+from breve.util import Namespace, caller, PrettyPrinter
 from breve.tags import Proto, Tag, xml, invisible, cdata, comment, conditionals, test, macro, assign, let
 from breve.tags.entities import entities
 from breve.flatten import flatten, register_flattener, registry
@@ -38,12 +38,16 @@ class Template ( object ):
 
         class inherits ( Tag ):
             def __str__ ( self ):
-                return T.render_partial ( template = self.name, fragments = self.children )
+                return T.render_partial ( 
+                    template = self.name, 
+                    fragments = [ c for c in self.children 
+                                  if isinstance ( c, override ) ]
+                )
 
         class override ( Tag ): 
             def __str__ ( self ):
                 if self.children:
-                    return ( u''.join ( [ flatten ( c ) for c in self.children ] ) )
+                    return u''.join ( [ flatten ( c ) for c in self.children ] )
                 return u''
 
         class slot ( Tag ):
@@ -51,7 +55,7 @@ class Template ( object ):
                 if self.name in T.fragments:
                     return xml ( flatten ( T.fragments [ self.name ] ) )
                 if self.children:
-                    return ( u''.join ( [ flatten ( c ) for c in self.children ] ) )
+                    return u''.join ( [ flatten ( c ) for c in self.children ] )
                 return u''
 
         def preamble ( **kw ):
@@ -161,7 +165,7 @@ class Template ( object ):
             else:
                 # print "Error in template ( %s )" % template
                 raise
-            
+
         if T.tidy and tidylib:
             options = dict ( input_xml = True,
                              output_xhtml = True,
@@ -172,6 +176,8 @@ class Template ( object ):
                              input_encoding = 'utf8' )
             return unicode ( tidylib.parseString ( output.encode ( 'utf-8' ), **options ) )
         else:
+            # p = PrettyPrinter ( )
+            # return p.parse ( output )
             return output
 
     def render ( T, template, vars = None, loader = None, **kw ):

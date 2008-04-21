@@ -17,6 +17,10 @@ class Cache ( object ):
         )
         return self.ccache [ uid ] [ 'bytecode' ]
 
+    def get_fragment ( self, template, fragment, root ):
+        uid, timestamp = loader.stat ( template, root )
+        return self.ccache [ uid ][ 'bytecode' ]
+
     def memoize ( self, id, timeout, f, *args, **kw ):
         t = time ( )
         if id not in self.scache:

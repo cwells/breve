@@ -259,7 +259,6 @@ class TemplateTestCase ( unittest.TestCase ):
             message = 'hello, from breve',
             title = my_name ( )
         )
-        test_name = my_name ( )
         t = Template ( html, root = template_root ( ) )
         actual = t.render ( 'index', vars, namespace = 'v' )
         expected = expected_output ( )
@@ -268,6 +267,26 @@ class TemplateTestCase ( unittest.TestCase ):
         except AssertionError:
             diff ( actual, expected )
             raise
+
+    def test_macros_inside_inherits ( self ):
+        '''test macros inside inherits(): scope issues'''
+
+        # note: I'm not convinced this is the desired behaviour, but
+        # it's *compatible* behaviour. 
+        
+        vars = dict (
+            title = my_name ( ),
+            message = 'Hello, from breve'
+        )
+        t = Template ( html, root = template_root ( ) )
+        actual = t.render ( 'index', vars, namespace = 'v' )
+        expected = expected_output ( )
+        try:
+            self.assertEqual ( actual, expected )
+        except AssertionError:
+            diff ( actual, expected )
+            raise
+
 
     def test_register_global ( self ):
         '''register_global() function'''
@@ -451,9 +470,30 @@ class TemplateTestCase ( unittest.TestCase ):
             diff ( actual, expected )
             raise
 
+class TemplateMemoryTestCase ( unittest.TestCase ):
+
+    def test_let_memory_freed ( self ):
+        '''test that let() objects are freed'''
+        import gc
+        vars = dict (
+            title = my_name ( ),
+            message = "memory test",
+            biglist = [ 'hello' ] * 1000
+        )
+        collection_count = gc.get_count ( )
+
+        t = Template ( html, root = template_root ( ) )
+        actual = t.render ( 'index', vars, namespace = 'v' )
+
+        del vars
+        gc.collect ( )
+        self.assertEqual ( gc.get_count ( ), ( 0, 0, 0 ) )
+
+
 def suite ( ):
     suite = unittest.TestSuite ( )
     suite.addTest ( unittest.makeSuite ( TemplateTestCase, 'test' ) )
+    suite.addTest ( unittest.makeSuite ( TemplateMemoryTestCase, 'test' ) )
     return suite
 
 if __name__ == '__main__':

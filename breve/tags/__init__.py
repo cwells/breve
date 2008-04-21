@@ -21,15 +21,22 @@ class Macro ( object ):
     def __call__ ( self, *args, **kw ):
         return self.function ( *args, **kw )
 
+    def __str__ ( self ):
+        return ''
+
 def macro ( name, function ):
-    caller ( ).f_globals [ name ] = Macro ( name, function )
-    return ''
+    '''create a named reference to an anonymous function in the global namespace'''
+    m = Macro ( name, function )
+    caller ( ).f_globals [ name ] = m
+    return m
 
 def assign ( name, value ):
+    '''create a named reference to an object in the global namespace'''
     caller ( ).f_globals [ name ] = value
     return ''
 
 def let ( **kw ):
+    '''create named references to objects in the current context's local namespace'''
     caller ( ).f_locals.update ( kw )
     return ''
 
@@ -155,6 +162,8 @@ def flatten_tag ( o ):
     if o.render:
         # o.children = [ ]
         o = o.render ( o, o.data )
+        if not isinstance ( o, Tag ):
+            return flatten ( o )
 
     attrs = u''.join ( quoteattrs ( o.attrs ) )
 
