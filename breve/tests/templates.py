@@ -474,6 +474,9 @@ class TemplateMemoryTestCase ( unittest.TestCase ):
 
     def test_let_memory_freed ( self ):
         '''test that let() objects are freed'''
+
+        # is this even meaningful?
+
         import gc
         vars = dict (
             title = my_name ( ),
