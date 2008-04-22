@@ -375,7 +375,6 @@ class TemplateTestCase ( unittest.TestCase ):
                 range ( 10, 15 )
             ]
         )
-        test_name = my_name ( )
         t = Template ( html, root = template_root ( ) )
         actual = t.render ( 'index', vars, namespace = 'v' )
         expected = expected_output ( )
@@ -385,6 +384,27 @@ class TemplateTestCase ( unittest.TestCase ):
             diff ( actual, expected )
             raise
     
+    def test_custom_renderer_notag ( self ):
+        '''custom renderer returning non-Tag type'''
+
+        def render_text ( tag, data ):
+            tag.clear ( )
+            return data
+        register_global ( 'render_text', render_text )
+
+        vars = dict ( 
+            title = my_name ( ),
+            message = 'hello, world'
+        )
+        t = Template ( html, root = template_root ( ) )
+        actual = t.render ( 'index', vars, namespace = 'v' )
+        expected = expected_output ( )
+        try:
+            self.assertEqual ( actual, expected )
+        except AssertionError:
+            diff ( actual, expected )
+            raise
+
     def test_custom_loader ( self ):
         '''custom loader'''
 
