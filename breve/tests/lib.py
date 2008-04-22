@@ -29,8 +29,7 @@ def caller ( ):
     return sys._getframe ( 2 )
 
 def test_root ( ):
-    cwd = os.path.abspath ( os.path.dirname ( __file__ ) )
-    return cwd
+    return os.path.abspath ( os.path.dirname ( __file__ ) )
 
 def template_root ( ):
     return os.path.join ( test_root ( ), 'templates', callers_name ( ) )

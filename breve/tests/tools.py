@@ -1,5 +1,12 @@
+# -*- coding: utf-8 -*-
+
 import sys, os
 import doctest, unittest
+
+if __name__ == '__main__':
+    # force import from source directory rather than site-packages
+    sys.path.insert ( 0, os.path.abspath ( '../..' ) )
+    import breve
 
 from breve.tags.html import tags
 from breve.tags.entities import entities
