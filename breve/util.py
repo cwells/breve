@@ -36,8 +36,11 @@ def quoteattrs ( attrs ):
     """
     quoted = [ ]
     for a, v in attrs.items ( ):
+
         if v is None: continue
-        v = str ( v ).encode ( 'utf-8' )
+        if isinstance ( v, str ):
+            v = unicode ( v, 'utf-8' )
+
         v = u'"' + v.replace ( u"&", u"&amp;"
             ).replace ( u">", u"&gt;"
             ).replace ( u"<", u"&lt;"

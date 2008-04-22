@@ -42,6 +42,23 @@ class SerializationTestCase ( unittest.TestCase ):
             u'<html><head><title>test_unicode</title></head><body>Brevé converts plain strings<br />Brevé handles unicode strings<br /><div>äåå? ▸ <em>я не понимаю</em>▸ 3 km²</div></body></html>'
         )
 
+    def test_unicode_attributes ( self ):
+        '''unicode and string coercion in attributes'''
+
+        template = T.html [
+            T.head [ T.title [ my_name ( ) ] ],
+            T.body [
+                T.span ( id='удерживать' ) [ "Coerce byte string to Unicode" ],
+                T.span ( id='не оставляющий сомнений' ) [ "Explicit Unicode object" ]
+            ]
+        ]
+        output = flatten ( template )
+
+        self.assertEqual ( 
+            output,
+            u'<html><head><title>test_unicode_attributes</title></head><body><span id="удерживать">Coerce byte string to Unicode</span><span id="не оставляющий сомнений">Explicit Unicode object</span></body></html>'
+        )
+
     def test_test ( self ):
         '''test() function'''
 
