@@ -158,21 +158,23 @@ def flatten_comment ( o ):
     return u"\n<!--\n%s\n-->\n" % o
     
 ### standard flatteners
+def flattened_tags ( o ):
+    '''generator'''
+    def flattened ( o ):
+        if o.render:
+            o = o.render ( o, o.data )
+            if not isinstance ( o, Tag ):
+                yield flatten ( o )
+                raise StopIteration
+
+        yield u'<%s%s>' % ( o.name, u''.join ( quoteattrs ( o.attrs ) ) )
+        yield flatten ( o.children )
+        yield u'</%s>' % o.name
+        raise StopIteration 
+    return flattened ( o )
+
 def flatten_tag ( o ):
-    if o.render:
-        # o.children = [ ]
-        o = o.render ( o, o.data )
-        if not isinstance ( o, Tag ):
-            return flatten ( o )
-
-    attrs = u''.join ( quoteattrs ( o.attrs ) )
-
-    if o.children:
-        return ( u'<%s%s>' % ( o.name, attrs ) +
-                 u''.join ( [ flatten ( c ) for c in o.children ] ) +  
-                 u'</%s>' % o.name )
-    return u'<%s%s></%s>' % ( o.name, attrs, o.name )
-    # return u'<%s%s />' % ( o.name, attrs )
+    return  ''.join ( flattened_tags ( o ) )
 
 def flatten_proto ( p ):
     return u'<%s />' % p

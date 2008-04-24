@@ -28,7 +28,8 @@ class SerializationTestCase ( unittest.TestCase ):
         output = flatten ( template )
         self.assertEqual ( 
             output,
-            u'<html><head><title>test_tag_serialization</title></head><body><div>okay</div></body></html>'
+            ( u'<html><head><title>test_tag_serialization</title></head>'
+              u'<body><div>okay</div></body></html>' )
         )
 
     def test_unicode ( self ):
@@ -45,7 +46,10 @@ class SerializationTestCase ( unittest.TestCase ):
         output = flatten ( template )
         self.assertEqual ( 
             output,
-            u'<html><head><title>test_unicode</title></head><body>Brevé converts plain strings<br />Brevé handles unicode strings<br /><div>äåå? ▸ <em>я не понимаю</em>▸ 3 km²</div></body></html>'
+            ( u'<html><head><title>test_unicode</title></head>'
+              u'<body>Brevé converts plain strings<br />'
+              u'Brevé handles unicode strings<br />'
+              u'<div>äåå? ▸ <em>я не понимаю</em>▸ 3 km²</div></body></html>' )
         )
 
     def test_unicode_attributes ( self ):
@@ -62,7 +66,9 @@ class SerializationTestCase ( unittest.TestCase ):
 
         self.assertEqual ( 
             output,
-            u'<html><head><title>test_unicode_attributes</title></head><body><span id="удерживать">Coerce byte string to Unicode</span><span id="не оставляющий сомнений">Explicit Unicode object</span></body></html>'
+            ( u'<html><head><title>test_unicode_attributes</title></head><body>'
+              u'<span id="удерживать">Coerce byte string to Unicode</span>'
+              u'<span id="не оставляющий сомнений">Explicit Unicode object</span></body></html>' )
         )
 
     def test_test ( self ):
@@ -82,7 +88,8 @@ class SerializationTestCase ( unittest.TestCase ):
         output = flatten ( template )
         self.assertEqual (
             output,
-            u'<html><head><title>test_test</title></head><body><span>This is displayed</span></body></html>'
+            ( u'<html><head><title>test_test</title></head>'
+              u'<body><span>This is displayed</span></body></html>' )
         )
 
     def test_escaping ( self ):
@@ -101,7 +108,10 @@ class SerializationTestCase ( unittest.TestCase ):
         output = flatten ( template )
         self.assertEqual (
             output,
-            u'<html><head><title>test_escaping</title></head><body><div style="width: 400px;&lt;should be &amp;escaped&amp;&gt;"><p class="foo">&amp;&amp;&amp;</p><p>Coffee&#160;&#38;&#160;cream</p><div>this should be <u>unescaped</u> &amp; unaltered.</div></div></body></html>'
+            ( u'<html><head><title>test_escaping</title></head>'
+              u'<body><div style="width: 400px;&lt;should be &amp;escaped&amp;&gt;">'
+              u'<p class="foo">&amp;&amp;&amp;</p><p>Coffee&#160;&#38;&#160;cream</p>'
+              u'<div>this should be <u>unescaped</u> &amp; unaltered.</div></div></body></html>' )
         )
 
     def test_tag_multiplication ( self ):
@@ -124,7 +134,10 @@ class SerializationTestCase ( unittest.TestCase ):
         output = flatten ( template )
         self.assertEqual ( 
             output,
-            u'<html><head><title>test_tag_multiplication</title></head><body><ul><li><a href="http://www.google.com">Google</a></li><li><a href="http://www.yahoo.com">Yahoo!</a></li><li><a href="http://www.amazon.com">Amazon</a></li></ul></body></html>'
+            ( u'<html><head><title>test_tag_multiplication</title></head>'
+              u'<body><ul><li><a href="http://www.google.com">Google</a></li>'
+              u'<li><a href="http://www.yahoo.com">Yahoo!</a></li>'
+              u'<li><a href="http://www.amazon.com">Amazon</a></li></ul></body></html>' )
         )
 
 class MacrosTestCase ( unittest.TestCase ):
@@ -154,7 +167,10 @@ class MacrosTestCase ( unittest.TestCase ):
         output = flatten ( template )
         self.assertEqual (
             output,
-            u'<html><head><title>test_macros</title></head><body><ul><li><a href="http://www.google.com">Google</a></li><li><a href="http://www.yahoo.com">Yahoo!</a></li><li><a href="http://www.amazon.com">Amazon</a></li></ul></body></html>'
+            ( u'<html><head><title>test_macros</title></head>'
+              u'<body><ul><li><a href="http://www.google.com">Google</a></li>'
+              u'<li><a href="http://www.yahoo.com">Yahoo!</a></li>'
+              u'<li><a href="http://www.amazon.com">Amazon</a></li></ul></body></html>' )
         )
 
     def test_nested_macros ( self ):
@@ -186,7 +202,10 @@ class MacrosTestCase ( unittest.TestCase ):
         output = flatten ( template )
         self.assertEqual (
             output,
-            u'<html><head><title>test_nested_macros</title></head><body><ul><li><a href="http://www.google.com">Google</a></li><li><a href="http://www.yahoo.com">Yahoo!</a></li><li><a href="http://www.amazon.com">Amazon</a></li></ul></body></html>'
+            ( u'<html><head><title>test_nested_macros</title></head>'
+              u'<body><ul><li><a href="http://www.google.com">Google</a></li>'
+              u'<li><a href="http://www.yahoo.com">Yahoo!</a></li>'
+              u'<li><a href="http://www.amazon.com">Amazon</a></li></ul></body></html>' )
         )
 
     def test_tag_multiplication_with_macro ( self ):
@@ -214,7 +233,10 @@ class MacrosTestCase ( unittest.TestCase ):
         output = flatten ( template )
         self.assertEqual ( 
             output,
-            u'<html><head><title>test_tag_multiplication_with_macro</title></head><body><ul><li class="link"><a href="http://www.google.com">Google</a></li><li class="link"><a href="http://www.yahoo.com">Yahoo!</a></li><li class="link"><a href="http://www.amazon.com">Amazon</a></li></ul></body></html>'
+            ( u'<html><head><title>test_tag_multiplication_with_macro</title></head>'
+              u'<body><ul><li class="link"><a href="http://www.google.com">Google</a></li>'
+              u'<li class="link"><a href="http://www.yahoo.com">Yahoo!</a></li>'
+              u'<li class="link"><a href="http://www.amazon.com">Amazon</a></li></ul></body></html>' )
         )
 
     def test_let ( self ):
@@ -264,7 +286,8 @@ class MacrosTestCase ( unittest.TestCase ):
         output = flatten ( template )
         self.assertEqual (
             output,
-            u'<html><head><title>test_assign_with_macro</title></head><body><div><span>okay</span></div></body></html>'
+            ( u'<html><head><title>test_assign_with_macro</title></head>'
+              u'<body><div><span>okay</span></div></body></html>' )
         )
 
 
@@ -330,7 +353,12 @@ class DOMTestCase ( unittest.TestCase ):
 
         self.assertEqual ( 
             output,
-            u'''<html><head><title>macro madness</title></head><body><div class="text" id="main-content"><img src="/images/breve-logo.png" alt="breve logo"></img><br /><span class="bold">Hello from Breve!</span></div><pre>div.text { }\ndiv#main-content { }\nspan.bold { }</pre></body></html>'''
+            ( u'<html><head><title>macro madness</title></head>'
+              u'<body><div class="text" id="main-content">'
+              u'<img src="/images/breve-logo.png" alt="breve logo"></img>'
+              u'<br /><span class="bold">Hello from Breve!</span></div>'
+              u'<pre>div.text { }\ndiv#main-content { }\nspan.bold { }</pre>'
+              u'</body></html>' )
         )
 
 class CustomTagsTestCase ( unittest.TestCase ):
@@ -359,7 +387,9 @@ class CustomTagsTestCase ( unittest.TestCase ):
 
         self.assertEqual ( 
             output,
-            u'<urlset xmlns="http://www.google.com/schemas/sitemap/0.84/sitemap.xsd"><url><loc>http://www.example.com/</loc><lastmod>2008-01-01</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url></urlset>'
+            ( u'<urlset xmlns="http://www.google.com/schemas/sitemap/0.84/sitemap.xsd">'
+              u'<url><loc>http://www.example.com/</loc><lastmod>2008-01-01</lastmod>'
+              u'<changefreq>monthly</changefreq><priority>0.8</priority></url></urlset>' )
         )
 
 

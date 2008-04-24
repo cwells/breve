@@ -177,7 +177,6 @@ class BreveApp ( object ):
         return result
 
 
-
 if __name__ == '__main__':    
 
     parser = OptionParser ( )
