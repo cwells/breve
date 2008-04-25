@@ -2,6 +2,7 @@
 
 import os, sys
 import pprint
+import cgitb
 
 from breve.util import Namespace, caller, PrettyPrinter
 from breve.tags import Proto, Tag, xml, invisible, cdata, comment, conditionals, test, macro, assign, let, AutoTag
@@ -20,7 +21,7 @@ _cache = Cache ( )
 _loader = FileLoader ( )
 
 class Template ( object ):
-
+    cgitb = True
     tidy = False
     debug = False
     namespace = ''
@@ -30,7 +31,7 @@ class Template ( object ):
     loaders = [ _loader ]
 
     def _update_params ( T, **kw ):
-        for _a in ( 'tidy', 'debug', 'namespace', 'mashup_entities', 'extension', 'autotags' ):
+        for _a in ( 'tidy', 'debug', 'namespace', 'mashup_entities', 'extension', 'autotags', 'cgitb' ):
             setattr ( T, _a, kw.get ( _a, getattr ( T, _a ) ) )
       
     def __init__ ( T, tags, root = '.', xmlns = None, doctype = '', **kw ):
@@ -192,7 +193,9 @@ class Template ( object ):
         return u'\n'.join ( [ T.xml_encoding, T.doctype, output ] )
 
     def debug_out ( T, exc_info, filename ):
-        import sys, types, pydoc                
+        import cgitb; cgitb.enable ( )
+        raise
+
         ( etype, evalue )= exc_info
 
         exception = [
