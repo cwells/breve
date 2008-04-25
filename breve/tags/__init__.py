@@ -159,7 +159,7 @@ def flatten_comment ( o ):
     
 ### standard flatteners
 def flattened_tags ( o ):
-    '''generator'''
+    '''generator that yields flattened tags'''
     def flattened ( o ):
         if o.render:
             o = o.render ( o, o.data )
@@ -182,6 +182,12 @@ def flatten_proto ( p ):
 def flatten_sequence ( o ):
     return u''.join ( [ flatten ( i ) for i in o ] )
 
+def flatten_callable ( o ):
+    return flatten ( o ( ) )
+
+def flatten_macro ( o ):
+    return u''
+
 register_flattener ( list, flatten_sequence )
 register_flattener ( tuple, flatten_sequence )
 register_flattener ( Proto, flatten_proto )
@@ -192,3 +198,5 @@ register_flattener ( Invisible, flatten_invisible )
 register_flattener ( cdata, unicode )
 register_flattener ( comment, flatten_comment )
 register_flattener ( xml, flatten_xml )
+register_flattener ( type ( lambda: None ), flatten_callable )
+register_flattener ( Macro, flatten_macro )

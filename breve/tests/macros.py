@@ -140,6 +140,48 @@ class MacrosTestCase ( unittest.TestCase ):
               u'</li></ul></li></ul></body></html>' )
         )
 
+    def test_toc_macro ( self ):
+        '''test table-of-contents macro'''
+
+        template = (
+            assign ( 'TOC', [ ] ),
+            macro ( 'TableOfContents', lambda matchtags, tag: (
+                macro ( 'toc_search', lambda tag, is_tag:
+                    tag.name in matchtags and (
+                        TOC.append ( T.a ( href='#toc-%s' % tag.children [ 0 ] ) [ tag.children [ 0 ] ] ),
+                        tag.attrs.update ( { 'class': 'chapter-%s' % tag.name } ),
+                        tag.children.insert ( 0, T.a ( name='toc-%s' % tag.children [ 0 ] ) [ tag.name ] )
+                    ) or True
+                ),
+                tag.walk ( toc_search, True )
+            ) ),
+
+            T.html [
+                T.head [ T.title [ my_name ( ) ] ],
+                T.body [ 
+                    T.div ( id='TableOfContents' ) [ 
+                        'Table of Contents', 
+                        lambda: T.ul [ [ T.li [ _t ] for _t in TOC ] ]
+                    ],
+                    TableOfContents ( ( 'h1', 'h2', 'h3' ), T.div [
+                        T.h1 [ 'Chapter 1' ],
+                        T.div [ 'chapter 1 content' ],
+                        T.h1 [ 'Chapter 2' ],
+                        T.div [ 
+                            'chapter 2 content',
+                            T.h2 [ 'Chapter 2 subsection' ],
+                            T.div [
+                                'chapter 2 subsection content' 
+                            ]
+                        ]
+                    ] )
+                ]
+            ]
+        )
+
+        actual = flatten ( template )
+        # print actual
+
 
 def suite ( ):
     suite = unittest.TestSuite ( )
