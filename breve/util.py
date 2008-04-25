@@ -62,7 +62,6 @@ def caller ( ):
     """
     return sys._getframe ( 2 )
 
-from xml.parsers.expat import ParserCreate
 class PrettyPrinter ( object ):
     '''not happy with this - should happen at the flattener level'''
     def __init__ ( self, indent = 2 ):
@@ -91,6 +90,8 @@ class PrettyPrinter ( object ):
         self.output.append ( padding + data )
 
     def parse ( self, xmldata ):
+        from xml.parsers.expat import ParserCreate
+
         p = ParserCreate ( 'utf-8' )
         p.StartElementHandler = self.start_element
         p.EndElementHandler = self.end_element

@@ -162,7 +162,8 @@ class BreveApp ( object ):
         t = Template ( html, root = self.options.template_root, 
                        namespace = self.options.namespace,
                        debug = self.options.debug,
-                       tidy = self.options.tidy )
+                       tidy = self.options.tidy,
+                       autotags = self.options.autotags )
         try:
             result = t.render ( uri, vars ).encode ( 'utf-8' )
         except:
@@ -187,6 +188,7 @@ if __name__ == '__main__':
     parser.add_option ( "-i", "--index", dest="index", default='index', help="default template to serve", metavar="NAME" )
     parser.add_option ( "-n", "--namespace", dest="namespace", default='', help="namespace to use for variables", metavar="NAME" )
     parser.add_option ( "-v", "--vars", dest="variables", help="Python module of template variables", metavar="PATH" )
+    parser.add_option ( "-a", "--autotags", dest="autotags", help="enable AutoTag features", metavar="NAME" )
     parser.add_option ( "-D", "--debug", dest="debug", action="store_true", help="Enable Template debug mode", default=False )
     parser.add_option ( "-T", "--tidy", dest="tidy", action="store_true", help="Enable Tidy mode (requires tidy)", default=False )
     options, args = parser.parse_args ( )
