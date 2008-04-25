@@ -4,7 +4,7 @@ import os, sys
 import pprint
 
 from breve.util import Namespace, caller, PrettyPrinter
-from breve.tags import Proto, Tag, xml, invisible, cdata, comment, conditionals, test, macro, assign, let
+from breve.tags import Proto, Tag, xml, invisible, cdata, comment, conditionals, test, macro, assign, let, AutoTag
 from breve.tags.entities import entities
 from breve.flatten import flatten, register_flattener, registry
 from breve.loaders import FileLoader
@@ -26,7 +26,12 @@ class Template ( object ):
     namespace = ''
     extension = 'b'
     mashup_entities = False  # set to True for old 1.0 behaviour
+    autotags = None
     loaders = [ _loader ]
+
+    def _update_params ( T, **kw ):
+        for _a in ( 'tidy', 'debug', 'namespace', 'mashup_entities', 'extension', 'autotags' ):
+            setattr ( T, _a, kw.get ( _a, getattr ( T, _a ) ) )
       
     def __init__ ( T, tags, root = '.', xmlns = None, doctype = '', **kw ):
         '''
@@ -90,10 +95,8 @@ class Template ( object ):
         T.tags.update ( E = entities ) # fallback in case of name clashes
         T.tags.update ( conditionals )
         T.tags.update ( tags )
-
-    def _update_params ( T, **kw ):
-        for _a in ( 'tidy', 'debug', 'namespace', 'mashup_entities', 'extension' ):
-            setattr ( T, _a, kw.get ( _a, getattr ( T, _a ) ) )
+        if T.autotags:
+            T.tags [ T.autotags ] = AutoTag ( ) 
 
     def include ( T, template, vars = None, loader = None ):
         ''' 

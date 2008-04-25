@@ -8,7 +8,7 @@ if __name__ == '__main__':
     sys.path.insert ( 0, os.path.abspath ( '../..' ) )
     import breve
 
-from breve.tags import Tag
+from breve.tags import Tag, AutoTag
 from breve.tags.html import tags
 from breve.tags.entities import entities as E
 from breve.tags import macro, assign, xml, test, let
@@ -449,14 +449,9 @@ class CustomTagsTestCase ( unittest.TestCase ):
         )
 
     def test_auto_tags ( self ):
-        '''test auto tag creation'''
-
-        class AutoTag ( object ):
-            def __getattr__ ( self, name ):
-                return Tag ( name )
+        '''test AutoTag class'''
 
         T = AutoTag ( )
-
         template = (
             T.foo ( attr='foo' ) [
                 T.bar ( attr='bar' ),

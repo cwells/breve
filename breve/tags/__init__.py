@@ -40,6 +40,12 @@ def let ( **kw ):
     caller ( ).f_locals.update ( kw )
     return ''
 
+class AutoTag ( object ):
+    '''dynamically create tags'''
+    def __getattr__ ( self, name ):
+        return Tag ( name )
+
+
 class Tag ( object ):
     __slots__ = [ 'name', 'children', 'attrs', 'render', 'data', 'args' ]
     
@@ -168,7 +174,8 @@ def flattened_tags ( o ):
                 raise StopIteration
 
         yield u'<%s%s>' % ( o.name, u''.join ( quoteattrs ( o.attrs ) ) )
-        yield flatten ( o.children )
+        for c in o.children:
+            yield flatten ( c )
         yield u'</%s>' % o.name
         raise StopIteration 
     return flattened ( o )
