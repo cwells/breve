@@ -8,6 +8,11 @@ from django.utils.translation import gettext_lazy as _
 from django.conf import settings 
 BREVE_ROOT = settings.BREVE_ROOT
 
+try:
+    BREVE_OPTS = settings.BREVE_OPTS
+except AttributeError:
+    BREVE_OPTS = {}
+
 def flatten_string ( obj ):
     return unicode ( obj ).encode ( settings.DEFAULT_CHARSET )
 
@@ -35,7 +40,7 @@ class TemplateAdapter ( object ):
     django.template.TemplateDoesNotExist.
     """
     def __init__ ( self, names, root = BREVE_ROOT, breve_opts = { } ):
-        self.template = Template ( tags = html.tags, root = root )
+        self.template = Template ( tags = html.tags, root = root, **breve_opts )
         self.names = names
         self.breve_opts = breve_opts
 
@@ -69,11 +74,11 @@ class TemplateAdapter ( object ):
                                                        for name in self.names ] ) )
 
 
-loader = _loader ( root = BREVE_ROOT )
+loader = _loader ( root = BREVE_ROOT, breve_opts = BREVE_OPTS )
 
-def render_to_response ( template, vars = None ):
-    t = loader.get_template ( template )
-    return HttpResponse ( flatten_string ( t.render ( vars ) ) )
+def render_to_response(template, vars=None, **kwargs):
+    t = loader.get_template(template)
+    return HttpResponse(t.render(vars), **kwargs)
 
 def render_to_string ( template, vars = None ):
     t = loader.get_template ( template )
