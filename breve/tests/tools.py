@@ -12,12 +12,13 @@ from breve.tags.html import tags
 from breve.tags.entities import entities
 from breve.flatten import flatten
 from breve.tools.soup2breve import convert_file, meta_handler
-from breve.tests.lib import diff, test_root
+from breve.tests.lib import diff, test_root, template_root, my_name, expected_output
 
 class Soup2BreveTestCase ( unittest.TestCase ):
     
     def test_soup2breve ( self ):
         ''' round-trip some html '''
+
         breve_source = ''.join ( 
             convert_file ( 
                 os.path.join ( test_root ( ), 'html/index.html' ), 
@@ -40,10 +41,31 @@ class Soup2BreveTestCase ( unittest.TestCase ):
             diff ( actual, expected )
             raise
 
+from breve.plugin.helpers import render_decorator
+
+class PluginHelpersTestCase ( unittest.TestCase ):
+    
+    def test_render_decorator ( self ):
+        '''test helpers.render_decorator'''
+
+        @render_decorator ( 'index', root = template_root ( ), namespace = 'v' )
+        def render_test ( ):
+            return dict ( title='test decorator', message='hello, world' )
+
+        actual = render_test ( )    
+        expected = expected_output ( )
+
+        self.assertEqual ( actual, expected )
+
+
+
+
+
 def suite ( ):
     suite = unittest.TestSuite ( )
 
     suite.addTest ( unittest.makeSuite ( Soup2BreveTestCase, 'test' ) )
+    suite.addTest ( unittest.makeSuite ( PluginHelpersTestCase, 'test' ) )
 
     return suite
 
