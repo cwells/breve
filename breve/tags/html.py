@@ -3,7 +3,7 @@ from breve.tags import Proto, Tag, Namespace, cdata, xml, flatten_tag
 
 xmlns = "http://www.w3.org/1999/xhtml"
 doctype = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
-              http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n'''
+              "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n'''
 
 #
 # Despite what one might think, empty elements aren't really
