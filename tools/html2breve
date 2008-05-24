@@ -1,219 +1,129 @@
-#!/usr/bin/env python
-# -*- coding: UTF-8 -*-
-from __future__ import division
-
+#!/usr/bin/python
 
 from HTMLParser import HTMLParser
 import sys
 
-class Html2Breve(HTMLParser):
-	depth = 0
-	indent = '\t'
-	injs = False
-	jsdepth = 0
-	out = sys.stdout
-	prev = None
-	needscomma = (None, 'data', 'entity')
-	started = False
-	
-	def fmt_attrs(self, attrs):
-		if attrs:
-			attrs = '(%s)' % ', '.join(['%s_="%s"' % (a, v)
-											  for(a, v) in attrs ])
-		return attrs or ''
-	
-	# tags that behave like C functions
-	div_tags = ['div', 'table', 'ol', 'ul'] + ['head', 'body']
-	# tags that are preceded by a line feed
-	big_tags = ['h1', 'h2', 'h3', 'h4', 'h5', 'meta', 'p', 'link', 'li' ] + div_tags
-	
-	
-	def is_big(self, tag):
-		return tag in self.big_tags
-	def is_div(self, tag):
-		return tag in self.div_tags
-	
-	def handle_starttag(self, tag, attrs, empty=False):
-		if tag == 'script':
-			self.handle_startjs(tag, attrs)
-		else:
-			padding = "\n" + self.indent*self.depth
-			if self.is_big(tag) and not empty:
-				self.depth += 1
-			self.out.write(	'%(comma)s%(lf)s%(tag)s%(attrs)s' % {
-					'comma': ['', ', '][self.depth > 0 and self.prev in self.needscomma and self.started],
-					'lf': ['', padding][self.is_big(tag)],
-					'tag': tag,
-					'attrs': self.fmt_attrs(attrs)
-				}
-			)
-			if not empty:
-				opening = '['
-				if self.is_div(tag):
-					opening = padding + opening + '\n'
-				self.out.write(opening)
-		if not empty:
-			self.prev = tag
-		else:
-			self.prev = None
-		self.started = True
-	
-	def handle_startendtag(self, tag, attrs):
-		return self.handle_starttag(tag, attrs, empty=True)
-	
-	def handle_endtag(self, tag):
-		if tag == 'script':
-			self.handle_endjs(tag)
-		else:
-			if self.is_big(tag):
-				self.depth -= 1
-			closure = ']'
-			if self.is_div(tag):
-				closure = '\n' + self.indent*self.depth + closure
-			self.out.write(closure)
-		self.prev = None
+class Html2Breve ( HTMLParser ):
+    __depth = 0
+    __indent = 4
+    __injs = False
+    __jsdepth = 0
+    __out = sys.stdout
+    __prev = None
+    __needscomma = ( None, 'data', 'entity' )
+    
+    def fmt_attrs ( self, attrs ):
+        if attrs:
+            attrs = ' ( %s )' % ', '.join ( [ '%s_ = "%s"' % ( a, v )
+                                              for ( a, v ) in attrs ] )
+        return attrs or ''
+    
+    def handle_starttag ( self, tag, attrs ):
+        if tag == 'script':
+            self.handle_startjs ( tag, attrs )
+        else:
+            self.__out.write (  '%s\n%s%s%s [' % (
+                    [ '', ',' ][ self.__depth > 0
+                                 and self.__prev in self.__needscomma ],
+                    ' ' * self.__depth,
+                    tag,
+                    self.fmt_attrs ( attrs )
+                )
+            )
+            self.__depth += self.__indent
+        self.__prev = tag
+        
+    def handle_endtag ( self, tag ):
+        if tag == 'script':
+            self.handle_endjs ( tag )
+        else:
+            self.__depth -= self.__indent
+            self.__out.write ( '\n%s]' % (
+                    # [ '', '#,#' ][ self.__prev is not None ],
+                    ' ' * self.__depth,
+                    # [ '\n', ',' ] [ self.__depth > 0 ]
+                )
+            )
+        self.__prev = None
 
-## 	def handle_startendtag(self, tag, attrs):
-## 		self.out.write(	'%s%s%s%s' % (
-## 				[ '', ', ' ][ self.depth > 0
-## 							 and self.prev in self.needscomma ],
-## 				'' ,
-## 				tag,
-## 				self.fmt_attrs(attrs)
-## 			)
-## 		)
-## 		self.prev = None
+    def handle_startendtag ( self, tag, attrs ):
+        self.__out.write (  '%s\n%s%s%s' % (
+                [ '', ',' ][ self.__depth > 0
+                             and self.__prev in self.__needscomma ],
+                ' ' * self.__depth,
+                tag,
+                self.fmt_attrs ( attrs )
+            )
+        )
+        self.__prev = None
 
-	def handle_data(self, data):
-		data = data.strip("\n")
-		if not data or data.isspace():
-			return
+    def handle_data ( self, data ):
+        data = data.strip ( )
+        if not data:
+            return
 
-		if self.injs:
-			if data.startswith('}'):
-				self.jsdepth -= 1
-				
-## 			self.out.write(	'\n%s%s' % (' ' * (self.depth + self.jsdepth), data))
-			self.out.write('%s' % data)
-			
-			if data.startswith('{'):
-				self.jsdepth += 1
-		else:
-			bquote = equote = '"'
-			if '\n' in data:
-				data = data.replace('\n', ' ')
-			if '"' in data:
-				data = data.replace('"', '”')
-## 				bquote = '"""'
-## 				equote = '"""'
-## 				data = data.replace('\n', '\n' + ' ' * self.depth) 
+        if self.__injs:
+            if data.startswith ( '}' ):
+                self.__jsdepth -= self.__indent
+                
+            self.__out.write (  '\n%s%s' % ( ' ' * ( self.__depth + self.__jsdepth ), data ) )
+            
+            if data.startswith ( '{' ):
+                self.__jsdepth += self.__indent
+        else:
+            bquote = equote = '"'
+            if '\n' in data:
+                bquote = "'''\n%s" % ( ' ' * self.__depth )
+                equote = "\n%s'''" % ( ' ' * self.__depth )
+                data = data.replace ( '\n', '\n' + ' ' * self.__depth ) 
 
-			self.out.write(	'%s%s%s%s%s' % (
-					[ '', ',' ][ self.prev in self.needscomma ],
-					'',
-					bquote,
-					data,
-					equote
-				)
-		  )
-		self.prev = 'data'
+            self.__out.write (  '%s\n%s%s%s%s' % (
+                    [ '', ',' ][ self.__prev in self.__needscomma ],
+                    ' ' * self.__depth,
+                    bquote,
+                    data,
+                    equote
+                )
+           )
+        self.__prev = 'data'
 
-	def handle_startjs(self, tag, attrs):
-		self.injs = True
-		self.jsdepth = 1
-		self.out.write(	"\n%sinlineJS('''" % (self.indent * self.depth))
-		self.prev = tag
+    def handle_startjs ( self, tag, attrs ):
+        self.__injs = True
+        self.__jsdepth = self.__indent
+        self.__out.write (  "\n%sinlineJS ( '''" % ( ' ' * self.__depth ) )
+        self.__prev = tag
 
-	def handle_endjs(self, tag):
-		self.injs = False
-		self.jsdepth = 0
-		self.out.write(	"%s''')," % (self.indent * self.depth))
-		self.prev = tag
+    def handle_endjs ( self, tag ):
+        self.__injs = False
+        self.__jsdepth = 0
+        self.__out.write (  "%s''' )," % ( ' ' * self.__depth ) )
+        self.__prev = tag
 
-	entity_dict = {'lt': '<', 'gt':'>'}
-	def handle_entityref(self, name):
-		if name in self.entity_dict:
-			name = '"%s"' % self.entity_dict[name]
-		sys.stdout.write('%s\n%s%s' % (
-				(
-					[ '', ',' ][ self.depth > 0
-								 and self.prev in self.needscomma ],
-					' ',
-					name
-				)
-			)
-		)
-		self.prev = 'entity'
+    def handle_entityref ( self, name ):
+        sys.stdout.write ( '%s\n%s%s' % (
+                (
+                    [ '', ',' ][ self.__depth > 0
+                                 and self.__prev in self.__needscomma ],
+                    ' ' * self.__depth,
+                    name
+                )
+            )
+        )
+        self.__prev = 'entity'
 
-def usage():
-	print '''
-		Usage:
-			%s <htmlfile>
-	''' % sys.argv [ 0 ]
-
-def get_file(arg=None):
-	if arg is None:
-		arg = sys.argv[1]
-	try:
-		source = file(arg, 'rU')
-	except:
-		import urllib
-		try:
-			source = urllib.urlopen(arg)
-		except:
-			raise Exception("Neither a file nor an url.")
-	return source
-
-
-def convert(source, target=None):
-	if target is None:
-		target = sys.stdout
-	html = '\n'.join([l for l in source.readlines()])
-	p = Html2Breve()
-	p.out = target
-	p.feed(html)
-	sys.stdout.write("\n")
-	p.close()
-
-
-def test():
-	import breve
-	import breve.tags.html
-
-	# creation of a temporary html file
-	from tempfile import mkstemp, gettempdir
-	fd, b_name = mkstemp(suffix=".b", text=True)
-	tmp_b = open(b_name, "w")
-	from os.path import basename, splitext, dirname
-	from os import system
-	try:
-		convert(get_file(), tmp_b)
-	except:
-		tmp_b.close()
-		raise
-	else:
-		tmp_b.close()
-		tt = breve.Template (breve.tags.html.tags, root = dirname(b_name), doctype = breve.tags.html.doctype, xmlns = breve.tags.html.xmlns, input_encoding='utf8', output_xhtml=False)
-		try:
-			breve_contents = tt.render(template=splitext(basename(b_name))[0])
-		except:
-			system('/usr/bin/open -a TextMate %s' % b_name)
-			raise
-		else:
-			fd, html_name = mkstemp(suffix=".html", text=True)
-			tmp_html = open(html_name, "w")
-			tmp_html.write(breve_contents.encode('utf8'))		
-			tmp_html.close()
-			system('/usr/bin/open -a FireFox %s' % html_name)
-
-def run():
-	source = get_file()
-	convert(source)
-	source.close()
-
+def usage ( ):
+    print '''
+        Usage:
+            %s <htmlfile>
+    ''' % sys.argv [ 0 ]
+    
 if __name__ == '__main__':
-	if len(sys.argv) < 2:
-		usage()
-		raise SystemExit
-	run()
-## 	test()
+    if len ( sys.argv ) < 2:
+        usage ( )
+        raise SystemExit
+    
+    p = Html2Breve ( )
+    html = '\n'.join ( [ l.strip ( )
+                         for l in file ( sys.argv [ 1 ], 'rU' ).readlines ( ) ] )
+    p.feed ( html )
+    p.close ( )
