@@ -159,7 +159,8 @@ class BreveApp ( object ):
                 if not k.startswith ( '__' ):
                     vars [ k ] = module.__dict__ [ k ]
             
-        t = Template ( html, root = self.options.template_root, 
+        t = Template ( html, 
+                       root = self.options.template_root, 
                        namespace = self.options.namespace,
                        debug = self.options.debug,
                        tidy = self.options.tidy,
@@ -168,7 +169,7 @@ class BreveApp ( object ):
             result = t.render ( uri, vars ).encode ( 'utf-8' )
         except:
             status = '500 Internal Server Error'
-            result = cgitb.html ( sys.exc_info() )
+            result = cgitb.html ( sys.exc_info ( ) )
         else:
             status = '200 OK'
         

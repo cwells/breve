@@ -34,7 +34,7 @@ class Template ( object ):
         for _a in ( 'tidy', 'debug', 'namespace', 'mashup_entities', 'extension', 'autotags', 'cgitb' ):
             setattr ( T, _a, kw.get ( _a, getattr ( T, _a ) ) )
       
-    def __init__ ( T, tags, root = '.', xmlns = None, doctype = '', **kw ):
+    def __init__ ( T, tags, root = '.', xmlns = None, doctype = None, **kw ):
         '''
         Uses "T" rather than "self" to avoid confusion with
         subclasses that refer to this class via scoping (see
@@ -71,7 +71,7 @@ class Template ( object ):
         T.root = root
         T.xmlns = xmlns
         T.xml_encoding = '''<?xml version="1.0" encoding="UTF-8"?>'''
-        T.doctype = doctype
+        T.doctype = ( doctype is not None ) or tags.doctype
         T.fragments = { }
         T.render_path = [ ] # not needed but potentially useful
 
