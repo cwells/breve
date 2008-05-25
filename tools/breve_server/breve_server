@@ -160,6 +160,8 @@ class BreveApp ( object ):
                     vars [ k ] = module.__dict__ [ k ]
             
         t = Template ( html, 
+                       xmlnamespace = html.xmlnamespace,
+                       doctype = html.doctype,
                        root = self.options.template_root, 
                        namespace = self.options.namespace,
                        debug = self.options.debug,
