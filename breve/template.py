@@ -71,7 +71,7 @@ class Template ( object ):
         T.root = root
         T.xmlns = xmlns
         T.xml_encoding = '''<?xml version="1.0" encoding="UTF-8"?>'''
-        T.doctype = ( doctype is not None ) or tags.doctype
+        T.doctype = doctype
         T.fragments = { }
         T.render_path = [ ] # not needed but potentially useful
 
