@@ -75,7 +75,7 @@ class Template ( object ):
         T.fragments = { }
         T.render_path = [ ] # not needed but potentially useful
 
-        T.vars = Namespace ( { 'xmlns': xmlns, } )
+        T.vars = Namespace ( { 'xmlns': xmlns } )
         T.tags = { 'cdata': cdata,
                    'xml': xml,
                    'test': test,
@@ -190,7 +190,7 @@ class Template ( object ):
         output = T.render_partial ( template, vars = vars, **kw )
         if loader:
             T.loaders.pop ( )
-        return u'\n'.join ( [ T.xml_encoding, T.doctype, output ] )
+        return u'\n'.join ( [ T.xml_encoding or '', T.doctype or '', output ] )
 
     def debug_out ( T, exc_info, filename ):
         import cgitb; cgitb.enable ( )
