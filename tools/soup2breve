@@ -7,11 +7,11 @@ Requires BeautifulSoup - http://www.crummy.com/software/BeautifulSoup/
 '''
 
 import sys
-from breve.tools.soup2breve import convert_file, usage
+from breve.tools.soup2breve import convert_file, usage, meta_handler
 
 if len ( sys.argv ) < 2:
     usage ( )
     raise SystemExit
 
-result = soup2breve.convert_file ( sys.argv [ 1 ], dict ( meta=meta_handler ) )
+result = convert_file ( sys.argv [ 1 ], dict ( meta=meta_handler ) )
 print ''.join ( result )
