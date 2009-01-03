@@ -65,11 +65,14 @@ register_flattener ( inlineJS, flatten_inlineJS )
 
 
 # convenience tags
-class checkbox ( Tag ):
+class Checkbox ( Tag ):
     def __init__ ( self, *args, **kw ):
         Tag.__init__ ( self, 'input' )
-        self ( self, *args, **kw )
+        # self ( self, *args, **kw )
         self.attrs [ 'type' ] = 'checkbox'
+class CheckboxProto ( Proto ):
+    Class = Checkbox
+checkbox = CheckboxProto ( 'input' )
 
 def flatten_checkbox ( o ):
     if o.attrs.get ( 'checked', False ):
@@ -80,12 +83,12 @@ def flatten_checkbox ( o ):
         except KeyError:
             pass
     return flatten_tag ( o )
-register_flattener ( checkbox, flatten_checkbox )
+register_flattener ( Checkbox, flatten_checkbox )
 
-class option ( Tag ):
-    def __init__ ( self, *args, **kw ):
-        Tag.__init__ ( self, 'option' )
-        self ( self, *args, **kw )
+class Option ( Tag ): pass
+class OptionProto ( Proto ):
+    Class = Option
+option = OptionProto ( 'option' )
 
 def flatten_option ( o ):
     if o.attrs.get ( 'selected', False ):
@@ -96,7 +99,7 @@ def flatten_option ( o ):
         except KeyError:
             pass
     return flatten_tag ( o )
-register_flattener ( option, flatten_option )
+register_flattener ( Option, flatten_option )
         
 class lorem_ipsum ( Tag ):
     ''' silliness ensues '''

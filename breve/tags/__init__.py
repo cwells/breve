@@ -127,6 +127,9 @@ class Tag ( object ):
 class Proto ( unicode ):
     __slots__ = [ ]
     Class = Tag
+    def setclass ( self, c ):
+        self.Class = c
+
     def __call__ ( self, **kw ):
         return self.Class ( self )( **kw )
     
