@@ -11,7 +11,11 @@ if __name__ == '__main__':
 from breve.tags.html import tags
 from breve.tags.entities import entities
 from breve.flatten import flatten
-from breve.tools.soup2breve import convert_file, meta_handler
+try:
+    from breve.tools.soup2breve import convert_file, meta_handler
+    souptests = True
+except ImportError:
+    souptests = False
 from breve.tests.lib import diff, test_root, template_root, my_name, expected_output
 
 class Soup2BreveTestCase ( unittest.TestCase ):
@@ -58,13 +62,11 @@ class PluginHelpersTestCase ( unittest.TestCase ):
         self.assertEqual ( actual, expected )
 
 
-
-
-
 def suite ( ):
     suite = unittest.TestSuite ( )
 
-    suite.addTest ( unittest.makeSuite ( Soup2BreveTestCase, 'test' ) )
+    if souptests:
+        suite.addTest ( unittest.makeSuite ( Soup2BreveTestCase, 'test' ) )
     suite.addTest ( unittest.makeSuite ( PluginHelpersTestCase, 'test' ) )
 
     return suite
