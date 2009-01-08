@@ -125,17 +125,17 @@ class Tag ( object ):
         return self
 
 class Proto ( unicode ):
-    __slots__ = [ ]
+    __slots__ = [ 'Class' ]
     Class = Tag
-    def setclass ( self, c ):
-        self.Class = c
-
     def __call__ ( self, **kw ):
         return self.Class ( self )( **kw )
     
     def __getitem__ ( self, children ):
         return self.Class ( self )[ children ]
         
+    def __str__ ( self ):
+        return unicode ( self.Class ( self ) )
+    
 class cdata ( unicode ):
     def __init__ ( self, children ):
         self.children = children
@@ -210,3 +210,23 @@ register_flattener ( comment, flatten_comment )
 register_flattener ( xml, flatten_xml )
 register_flattener ( type ( lambda: None ), flatten_callable )
 register_flattener ( Macro, flatten_macro )
+
+
+def custom_tag ( tag_name, class_name = None, flattener = flatten_tag, attrs = None ):
+    ''' class factory for defining tags with custom type (i.e. not of class Tag) '''
+        
+    if not class_name:
+        class_name = tag_name
+    if not attrs:
+        attrs = { }
+    
+    def __init__ ( self, *args, **kw ):
+        Tag.__init__ ( self, tag_name, **attrs )
+        
+    TagClass = type ( "c_%sTag" % class_name, ( Tag, ), { '__init__': __init__ } )
+    ProtoClass = type ( "c_%sProto" % class_name, ( Proto, ), { 'Class': TagClass } )
+    register_flattener ( ProtoClass, lambda o: flattener ( o  ( ) ) )
+    register_flattener ( TagClass, flattener )
+    
+    return ProtoClass ( tag_name )
+    

@@ -1,5 +1,5 @@
 from breve.flatten import flatten, register_flattener
-from breve.tags import Proto, Tag, Namespace, cdata, xml, flatten_tag
+from breve.tags import Proto, Tag, Namespace, cdata, xml, flatten_tag, flatten_proto, custom_tag
 
 xmlns = "http://www.w3.org/1999/xhtml"
 doctype = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
@@ -65,14 +65,6 @@ register_flattener ( inlineJS, flatten_inlineJS )
 
 
 # convenience tags
-class Checkbox ( Tag ):
-    def __init__ ( self, *args, **kw ):
-        Tag.__init__ ( self, 'input' )
-        # self ( self, *args, **kw )
-        self.attrs [ 'type' ] = 'checkbox'
-class CheckboxProto ( Proto ):
-    Class = Checkbox
-checkbox = CheckboxProto ( 'input' )
 
 def flatten_checkbox ( o ):
     if o.attrs.get ( 'checked', False ):
@@ -83,12 +75,7 @@ def flatten_checkbox ( o ):
         except KeyError:
             pass
     return flatten_tag ( o )
-register_flattener ( Checkbox, flatten_checkbox )
-
-class Option ( Tag ): pass
-class OptionProto ( Proto ):
-    Class = Option
-option = OptionProto ( 'option' )
+checkbox = custom_tag ( 'input', 'checkbox', flatten_checkbox, attrs = { 'type': 'checkbox' } )
 
 def flatten_option ( o ):
     if o.attrs.get ( 'selected', False ):
@@ -99,8 +86,8 @@ def flatten_option ( o ):
         except KeyError:
             pass
     return flatten_tag ( o )
-register_flattener ( Option, flatten_option )
-        
+option = custom_tag ( 'option', flattener = flatten_option )
+
 class lorem_ipsum ( Tag ):
     ''' silliness ensues '''
     children = [
@@ -119,7 +106,7 @@ class lorem_ipsum ( Tag ):
 tags = Namespace ( )
 for t in tag_names:
     tags [ t ] = HtmlProto ( t )
-
+    
 for t in empty_tag_names:
     tags [ t ] = Proto ( t )
     
@@ -130,3 +117,8 @@ tags.update ( dict (
     lorem_ipsum = lorem_ipsum,
 ) )
 
+# TAGS = Namespace ( )
+# for t in tags:
+#    TAGS [ t.upper ( ) ] = tags [ t ]
+
+    
