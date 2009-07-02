@@ -184,19 +184,21 @@ class Template ( object ):
             # return p.parse ( output )
             return output
 
-    def render ( T, template, vars = None, loader = None, **kw ):
+    def render ( T, template, vars = None, loader = None, fragment = False, **kw ):
         if loader:
             T.loaders.append ( loader )
         output = T.render_partial ( template, vars = vars, **kw )
         if loader:
             T.loaders.pop ( )
-        return u'\n'.join ( [ T.xml_encoding or '', T.doctype or '', output ] )
+        if fragment:
+            return output
+        return u'\n'.join ( [ T.xml_encoding or u'', T.doctype or u'', output ] )
 
     def debug_out ( T, exc_info, filename ):
         import cgitb; cgitb.enable ( )
         raise
 
-        ( etype, evalue )= exc_info
+        ( etype, evalue ) = exc_info
 
         exception = [
             '<span class="template_exception">',
