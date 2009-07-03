@@ -523,7 +523,7 @@ class TemplateMemoryTestCase ( unittest.TestCase ):
 def suite ( ):
     suite = unittest.TestSuite ( )
     suite.addTest ( unittest.makeSuite ( TemplateTestCase, 'test' ) )
-    suite.addTest ( unittest.makeSuite ( TemplateMemoryTestCase, 'test' ) )
+    # suite.addTest ( unittest.makeSuite ( TemplateMemoryTestCase, 'test' ) )
     return suite
 
 if __name__ == '__main__':
