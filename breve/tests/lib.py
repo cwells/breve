@@ -35,4 +35,4 @@ def template_root ( ):
     return os.path.join ( test_root ( ), 'templates', callers_name ( ) )
 
 def expected_output ( ):
-    return file ( os.path.join ( test_root ( ), 'output', '%s.html' % callers_name ( ) ) ).read ( ).strip ( )
+    return file ( os.path.join ( test_root ( ), 'output', '%s.html' % callers_name ( ) ) ).read ( ).strip ( ).decode ( 'utf8' )

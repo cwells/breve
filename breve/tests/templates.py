@@ -497,6 +497,24 @@ class TemplateTestCase ( unittest.TestCase ):
             diff ( actual, expected )
             raise
 
+    def test_encoding ( self ):
+        '''encoding comments'''
+
+        vars = dict ( 
+            title = my_name ( )
+        )
+        t = Template ( html, root = template_root ( ) )
+        actual = t.render ( 'wrong', vars, namespace = 'v' )
+        expected = expected_output ( )
+        self.assertNotEqual ( actual, expected )
+        actual = t.render ( 'correct', vars, namespace = 'v' )
+        try:
+            self.assertEqual ( actual, expected )
+        except AssertionError:
+            diff ( actual, expected )
+            raise
+
+
 class TemplateMemoryTestCase ( unittest.TestCase ):
 
     def test_let_memory_freed ( self ):
