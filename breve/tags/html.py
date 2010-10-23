@@ -67,9 +67,12 @@ register_flattener ( inlineJS, flatten_inlineJS )
 class minJS ( unicode ):
     def __init__ (self, children ):
         self.children = children
+        self._cachedjs = ''
 
 def flatten_minJS ( o ):
-    return u'\n<script type="text/javascript">\n//<![CDATA[\n%s\n//]]></script>\n' % jsmin ( o.children )
+    if not o._cachedjs:
+        o._cachedjs = u'\n<script type="text/javascript">\n//<![CDATA[\n%s\n//]]></script>\n' % jsmin ( o.children )
+    return o._cachedjs
 register_flattener ( minJS, flatten_minJS )
 
 
