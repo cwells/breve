@@ -9,6 +9,7 @@ Brevé is relatively small, being around 300 lines of code for the engine proper
 Brevé supports the Buffet template engine API which means it works automatically with several frameworks, including Pylons, CherryPy and TurboGears. Brevé can also be used with Django, Tornado, or even standalone outside a framework.
 
 A short example::
+
  html [
      head [
          title [ 'A Brevé Template' ]
