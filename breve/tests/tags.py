@@ -51,7 +51,7 @@ class SerializationTestCase ( unittest.TestCase ):
         output = flatten ( template )
         self.assertEqual ( 
             output,
-            u'<html><body>\n<script type="text/javascript">\n//<![CDATA[%s\n//]]></script>\n</body></html>' % js
+            u'<html><body>\n<script type="text/javascript">\n//<![CDATA[\n%s\n//]]></script>\n</body></html>' % js
         )
 
     def test_minJS ( self ):
@@ -71,7 +71,7 @@ class SerializationTestCase ( unittest.TestCase ):
         output = flatten ( template )
         self.assertEqual ( 
             output,
-            u'<html><body>\n<script type="text/javascript">\n//<![CDATA[if(x=1){y=2;}\n//]]></script>\n</body></html>'
+            u'<html><body>\n<script type="text/javascript">\n//<![CDATA[\nif(x=1){y=2;}\n//]]></script>\n</body></html>'
         )
 
     def test_unicode ( self ):

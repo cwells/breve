@@ -61,7 +61,7 @@ class inlineJS ( unicode ):
         self.children = children
 
 def flatten_inlineJS ( o ):
-    return u'\n<script type="text/javascript">\n//<![CDATA[%s\n//]]></script>\n' % o.children
+    return u'\n<script type="text/javascript">\n//<![CDATA[\n%s\n//]]></script>\n' % o.children
 register_flattener ( inlineJS, flatten_inlineJS )
 
 class minJS ( unicode ):
@@ -69,7 +69,7 @@ class minJS ( unicode ):
         self.children = children
 
 def flatten_minJS ( o ):
-    return u'\n<script type="text/javascript">\n//<![CDATA[%s\n//]]></script>\n' % jsmin ( o.children )
+    return u'\n<script type="text/javascript">\n//<![CDATA[\n%s\n//]]></script>\n' % jsmin ( o.children )
 register_flattener ( minJS, flatten_minJS )
 
 
