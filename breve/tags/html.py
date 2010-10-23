@@ -1,5 +1,6 @@
 from breve.flatten import flatten, register_flattener
 from breve.tags import Proto, Tag, Namespace, cdata, xml, flatten_tag, flatten_proto, custom_tag
+from breve.tags.jsmin import jsmin
 
 xmlns = "http://www.w3.org/1999/xhtml"
 doctype = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
@@ -63,6 +64,14 @@ def flatten_inlineJS ( o ):
     return u'\n<script type="text/javascript">\n//<![CDATA[%s\n//]]></script>\n' % o.children
 register_flattener ( inlineJS, flatten_inlineJS )
 
+class minJS ( unicode ):
+    def __init__ (self, children ):
+        self.children = children
+
+def flatten_minJS ( o ):
+    return u'\n<script type="text/javascript">\n//<![CDATA[%s\n//]]></script>\n' % jsmin ( o.children )
+register_flattener ( minJS, flatten_minJS )
+
 
 # convenience tags
 
@@ -114,6 +123,7 @@ tags.update ( dict (
     checkbox = checkbox,
     option = option,
     inlineJS = inlineJS,
+    minJS = minJS,
     lorem_ipsum = lorem_ipsum,
 ) )
 

@@ -34,6 +34,46 @@ class SerializationTestCase ( unittest.TestCase ):
               u'<body><div>okay</div></body></html>' )
         )
 
+    def test_inlineJS ( self ):
+        '''inline Javascript flattening'''
+
+        js = '''
+            if (x=1) {
+                y=2;
+            }
+        '''
+        T = tags
+        template = T.html [
+            T.body [ 
+                T.inlineJS ( js ) 
+            ]
+        ]
+        output = flatten ( template )
+        self.assertEqual ( 
+            output,
+            u'<html><body>\n<script type="text/javascript">\n//<![CDATA[%s\n//]]></script>\n</body></html>' % js
+        )
+
+    def test_minJS ( self ):
+        '''inline minified Javascript flattening'''
+
+        js = '''
+            if (x=1) {
+                y=2;
+            }
+        '''
+        T = tags
+        template = T.html [
+            T.body [ 
+                T.minJS ( js ) 
+            ]
+        ]
+        output = flatten ( template )
+        self.assertEqual ( 
+            output,
+            u'<html><body>\n<script type="text/javascript">\n//<![CDATA[if(x=1){y=2;}\n//]]></script>\n</body></html>'
+        )
+
     def test_unicode ( self ):
         '''unicode and string coercion'''
 

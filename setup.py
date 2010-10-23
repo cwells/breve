@@ -13,7 +13,7 @@ setup (
         `internal DSL`_ rather than a parser.
 
         Breve was heavily inspired by `Nevow Stan`_ and is, in fact, the successor to
-        TurboStan_, my earlier attempt to bring a Stan-like engine to TurboGears.
+        TurboStan (defunct), my earlier attempt to bring a Stan-like engine to TurboGears.
 
         Breve supports the Buffet_ template engine API which means it works
         automatically with several frameworks, including Pylons_, CherryPy_ and
@@ -24,7 +24,6 @@ setup (
         .. _TurboGears: http://www.turbogears.org
         .. _Pylons: http://www.pylonshq.com
         .. _CherryPy: http://www.cherrypy.org
-        .. _TurboStan: http://www.develix.com/software
         .. _Django: http://www.djangoproject.com
         .. _`internal DSL`: http://martinfowler.com/bliki/DomainSpecificLanguage.html
     ''',
@@ -33,7 +32,7 @@ setup (
     url = 'http://breve.twisty-industries.com/',
     download_url = 'http://breve.twisty-industries.com/downloads/',
     classifiers = [
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production',
         'Environment :: Web Environment',
         'Environment :: Web Environment :: Buffet',
         'Operating System :: OS Independent',
