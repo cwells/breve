@@ -60,7 +60,10 @@ class Tag ( object ):
     def __call__ ( self, render = None, data = None, *args, **kw ):
         self.render = render or self.render
         self.data = data or self.data
-        self.attrs.update ( kw )
+        self.attrs.update ( 
+            dict ( [ (k.strip (u'_'), v) 
+                     for k, v in kw.items () ] ) 
+        )
         self.args = args or self.args
         return self
 

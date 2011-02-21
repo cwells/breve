@@ -8,10 +8,14 @@ Requires BeautifulSoup - http://www.crummy.com/software/BeautifulSoup/
 
 import sys
 from breve.tools.soup2breve import convert_file, usage, meta_handler
+import codecs 
 
-if len ( sys.argv ) < 2:
-    usage ( )
+if len (sys.argv) < 3:
+    usage ()
     raise SystemExit
 
-result = convert_file ( sys.argv [ 1 ], dict ( meta=meta_handler ) )
-print ''.join ( result )
+result = convert_file (sys.argv [1], dict (meta=meta_handler))
+
+out = codecs.open (sys.argv [2], 'w', 'utf-8')
+out.write (u''.join (result))
+out.close ()

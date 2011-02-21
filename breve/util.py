@@ -44,7 +44,7 @@ def quoteattrs ( attrs ):
             ).replace ( u">", u"&gt;"
             ).replace ( u"<", u"&lt;"
             ).replace ( u'"', u"&quot;" ) + u'"'
-        quoted.append ( u' %s=%s' % ( a.strip ( u'_' ), v ) )
+        quoted.append ( u' %s=%s' % ( a, v ) )
     return quoted
 
 def escape ( s ):

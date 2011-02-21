@@ -1,6 +1,7 @@
 #! /usr/bin/python
 
 import os, sys
+import types
 import pprint
 import cgitb
 
@@ -101,22 +102,47 @@ class Template ( object ):
 
     def include ( T, template, vars = None, loader = None ):
         ''' 
-        evalutes a template fragment in the current context
+        evalutes template fragment(s) in the current (caller's) context
         '''
-        locals = { }
-        if vars:
-            locals.update ( vars )
-        frame = caller ( )
-        filename = "%s.%s" % ( template, T.extension )
-        if loader:
-            T.loaders.append ( loader )            
-        try:
-            code = _cache.compile ( filename, T.root, T.loaders [ -1 ] )
-            result = eval ( code, frame.f_globals, locals )
-        finally:
+        if not hasattr (template, '__iter__'):
+            template = [template]
+
+        results = [ ]
+        for tpl in template:
+            locals = { }
+            if vars:
+                locals.update ( vars )
+            frame = caller ( )
+            filename = "%s.%s" % ( tpl, T.extension )
             if loader:
-                T.loaders.pop ( )
-        return result
+                T.loaders.append ( loader )            
+            try:
+                code = _cache.compile ( filename, T.root, T.loaders [ -1 ] )
+                result = eval ( code, frame.f_globals, locals )
+            finally:
+                if loader:
+                    T.loaders.pop ( )
+            results.append (result)
+        return results
+
+    # def old_include ( T, template, vars = None, loader = None ):
+    #     ''' 
+    #     evalutes a template fragment in the current (caller's) context
+    #     '''
+    #     locals = { }
+    #     if vars:
+    #         locals.update ( vars )
+    #     frame = caller ( )
+    #     filename = "%s.%s" % ( template, T.extension )
+    #     if loader:
+    #         T.loaders.append ( loader )            
+    #     try:
+    #         code = _cache.compile ( filename, T.root, T.loaders [ -1 ] )
+    #         result = eval ( code, frame.f_globals, locals )
+    #     finally:
+    #         if loader:
+    #             T.loaders.pop ( )
+    #     return result
     
     def _evaluate ( T, template, fragments = None, vars = None, loader = None, **kw ):
         filename = "%s.%s" % ( template, T.extension )
@@ -125,6 +151,7 @@ class Template ( object ):
         T._update_params ( **kw )
 
         T.render_path.append ( template )
+        T.vars [ '__this__' ] = T
         T.vars [ '__templates__' ] = T.render_path 
         T.vars [ '__namespace' ] = T.namespace
         

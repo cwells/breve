@@ -4,7 +4,7 @@ soup2breve - Robert Leftwich
 Requires BeautifulSoup - http://www.crummy.com/software/BeautifulSoup/
 '''
 
-import sys
+import sys, codecs
 import htmlentitydefs
 
 from BeautifulSoup import BeautifulSoup, Tag, NavigableString, Comment
@@ -167,13 +167,15 @@ def convert_file(filename, handlers):
 def usage ( ):
     print '''
         Usage:
-            %s <htmlfile>
+            %s <htmlfile> <outfile>
     ''' % sys.argv [ 0 ]
     
 if __name__ == '__main__':
-    if len ( sys.argv ) < 2:
+    if len ( sys.argv ) < 3:
         usage ( )
         raise SystemExit
 
-    result = convert_file(sys.argv [ 1 ], dict(meta=meta_handler))
-    print ''.join(result)
+    result = convert_file(sys.argv [1], dict(meta=meta_handler))
+    out = codecs.open (sys.argv [2], 'w', 'utf-8')
+    out.write (u''.join(result))
+    out.close ()
