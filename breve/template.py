@@ -104,7 +104,7 @@ class Template ( object ):
         ''' 
         evalutes template fragment(s) in the current (caller's) context
         '''
-        if not hasattr (template, '__iter__'):
+        if type (template) is types.StringType:
             template = [template]
 
         results = [ ]
