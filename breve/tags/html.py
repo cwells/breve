@@ -3,7 +3,7 @@ from breve.tags import Proto, Tag, Namespace, cdata, xml, flatten_tag, flatten_p
 from breve.tags.jsmin import jsmin
 
 xmlns = "http://www.w3.org/1999/xhtml"
-doctype = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+doctype = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n'''
 
 #
@@ -15,7 +15,7 @@ class HtmlProto ( unicode ):
     __slots__ = [ ]
     def __call__ ( self, **kw ):
         return Tag ( self )( **kw )
-    
+
     def __getitem__ ( self, children ):
         return Tag ( self )[ children ]
 
@@ -29,33 +29,40 @@ register_flattener ( HtmlProto, flatten_htmlproto )
 # register common HTML elements
 #
 tag_names = [
-    'a','abbr','acronym','address','applet',
-    'b','bdo','big','blockquote', 'body','button',
-    'canvas', 'caption','center','cite','code','colgroup',
-    'dd','dfn','div','dl','dt',
+    'a', 'abbr', 'address', 'article', 'aside', 'audio',
+    'b', 'bdi', 'bdo', 'blockquote', 'body', 'button',
+    'canvas', 'caption', 'cite', 'code', 'colgroup',
+    'datalist', 'dd', 'del', 'details', 'dfn', 'div', 'dl', 'dt',
     'em',
-    'fieldset','font','form','frameset',
-    'h1','h2','h3','h4','h5','h6','head','html',
-    'i','iframe','ins',
+    'fieldset', 'figcaption', 'figure', 'footer', 'form',
+    'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'head', 'header', 'hgroup', 'html',
+    'i', 'iframe', 'ins',
     'kbd',
-    'label','legend','li',
-    'menu',
-    'nobr', 'noframes','noscript',
-    'ol','optgroup',
-    'pre',
+    'label', 'legend', 'li',
+    'map', 'mark', 'menu', 'meter',
+    'nav', 'noscript',
+    'object', 'ol', 'optgroup', 'option', 'output',
+    'pre', 'progress',
     'q',
-    's','samp','script', 'select','small','span','strike','strong','style','sub','sup',
-    'table','tbody','td','textarea','tfoot','th','thead','title','tr','tt',
-    'u','ul',
-    'var'
+    'rp', 'rt', 'ruby',
+    's', 'samp', 'script', 'section', 'select', 'small', 'span', 'strong', 'style', 'sub', 'summary', 'sup',
+    'table', 'tbody', 'td', 'textarea', 'tfoot', 'th', 'thead', 'time', 'title', 'tr',
+    'u', 'ul',
+    'var', 'video',
+
+    # Deprecated elements
+    'acronym', 'applet', 'big', 'center', 'font', 'frameset', 'nobr', 'noframes', 'strike', 'tt',
 ]
 
 empty_tag_names = [
-    'area', 'base', 'basefont', 'br', 'col', 'frame', 'hr',
-    'img', 'input', 'isindex', 'link', 'meta', 'p', 'param'
+    'area', 'base', 'br', 'col', 'command', 'embed', 'hr',
+    'img', 'input', 'keygen', 'link', 'meta', 'p', 'param', 'source', 'track', 'wbr',
+
+    # Deprecated elements
+    'basefont', 'isindex', 'frame',
 ]
-    
-    
+
+
 class inlineJS ( unicode ):
     def __init__ ( self, children ):
         self.children = children
@@ -110,15 +117,15 @@ class lorem_ipsum ( Tag ):
 
     def __init__ ( self ):
         Tag.__init__ ( self, 'span' )
-        
+
 
 tags = Namespace ( )
 for t in tag_names:
     tags [ t ] = HtmlProto ( t )
-    
+
 for t in empty_tag_names:
     tags [ t ] = Proto ( t )
-    
+
 tags.update ( dict (
     checkbox = checkbox,
     option = option,
@@ -131,4 +138,4 @@ tags.update ( dict (
 # for t in tags:
 #    TAGS [ t.upper ( ) ] = tags [ t ]
 
-    
+
